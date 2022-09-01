@@ -1,6 +1,6 @@
 import React from 'react'
 
-const MyMessagesPage = () => {
+function MyMessagesPage() {
   return (
     <div>MyMessagesPage</div>
   )

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const FindSwapPage = () => {
+function FindSwapPage() {
   return (
     <div>FindSwapPage</div>
   )

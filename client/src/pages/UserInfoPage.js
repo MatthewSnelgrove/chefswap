@@ -1,6 +1,6 @@
 import React from 'react'
 
-const UserInfoPage = () => {
+function UserInfoPage() {
   return (
     <div>UserInfoPage</div>
   )
