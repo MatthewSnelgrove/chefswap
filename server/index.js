@@ -1,7 +1,7 @@
 const pg = require("pg")
 const express = require('express');
 const { pool } = require("./dbConfig");
-
+const path = require('path');
 
 
 const PORT = process.env.PORT || 3001;
@@ -27,6 +27,6 @@ app.get("/api", (req, res) => {
 
 // All other GET requests not handled before will return our React app
 app.get('*', (req, res) => {
-  res.json({ message: "error: wrong path"});
+  res.json({ message: "error: wrong path" });
   // res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
 });
