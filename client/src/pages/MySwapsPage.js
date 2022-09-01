@@ -1,6 +1,6 @@
 import React from 'react'
 
-const MySwapsPage = () => {
+function MySwapsPage() {
   return (
     <div>MySwapsPage</div>
   )

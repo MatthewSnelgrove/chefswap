@@ -1,15 +1,15 @@
 import React from "react";
 // import ReactDOM from 'react-dom';
 import "./App.css";
-import AboutPage from "./components/AboutPage";
-import AboutUsPage from "./components/AboutUsPage";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
+import AboutPage from "./pages/AboutPage";
+import AboutUsPage from "./pages/AboutUsPage";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
-import MySwapsPage from "./components/MySwapsPage";
-import MyMessagesPage from "./components/MyMessagesPage"
-import FindSwapPage from "./components/FindSwapPage";
-import UserInfoPage from "./components/UserInfoPage";
+import MySwapsPage from "./pages/MySwapsPage";
+import MyMessagesPage from "./pages/MyMessagesPage"
+import FindSwapPage from "./pages/FindSwapPage";
+import UserInfoPage from "./pages/UserInfoPage";
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
