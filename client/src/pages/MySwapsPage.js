@@ -1,8 +1,11 @@
-import React from 'react'
+import React from 'react';
+import Navbar from "../components/Navbar";
 
 function MySwapsPage() {
   return (
-    <div>MySwapsPage</div>
+    <div>
+      <Navbar />
+    </div>
   )
 }
 
