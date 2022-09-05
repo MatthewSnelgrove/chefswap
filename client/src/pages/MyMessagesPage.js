@@ -1,8 +1,9 @@
 import React from 'react'
+import Avatar from "../components/Avatar";
 
 function MyMessagesPage() {
   return (
-    <div>MyMessagesPage</div>
+    <Avatar />
   )
 }
 
