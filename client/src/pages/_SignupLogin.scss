@@ -1,0 +1,51 @@
+body {
+  display: flex;
+  justify-content: center;
+}
+
+.signup-login-form {
+  width: 50vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  fieldset {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  legend {
+    text-align: center;
+  }
+
+  input {
+    display: block;
+    margin-bottom: 10px;
+    width: 50%;
+    
+    border-radius: 5px;
+    padding: 3px 8px;
+  }
+
+  input:valid {
+    border: 1px solid green;
+  }
+
+  input:invalid {
+    border: 1px solid red;
+  }
+
+  .submit-btn {
+    margin-top: 20px;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 100px;
+  }
+
+  .submit-btn:active {
+    opacity: 0.7;
+  }
+}
