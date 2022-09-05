@@ -1,10 +1,12 @@
-import bcrypt from "bcryptjs";
+// import bcrypt from "bcryptjs";
 
-export function hashPassword(password, salt){
-    return bcrypt.hashSync(password, salt);
-}
+// export async function hashPassword(password, salt){
+//     return await bcrypt.hash(password, salt);
+// }
 
-export function generateHashedPassword(password){
-    const salt = bcrypt.genSaltSync();
-    return { passhash:bcrypt.hashSync(password, salt), salt:salt };
-}
+// export async function generateHashedPassword(password){
+//     bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
+//         // Store hash in your password DB.
+//     });
+//     return bcrypt.hashSync(password, salt);
+// }

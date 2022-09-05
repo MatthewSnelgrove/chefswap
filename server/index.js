@@ -1,19 +1,30 @@
 import express from 'express';
 import session from 'express-session';
 import { pool } from "./dbConfig.js";
-import path from 'path';
 import cookieParser from "cookie-parser";
+import * as dotenv from "dotenv";
+dotenv.config();
+import pgSession from "connect-pg-simple";
 
 const PORT = process.env.PORT || 3001;
 const app = express();
-// // Have Node serve the files for our built React app
-// app.use(express.static(path.resolve(__dirname, '../client/build')));
-
+app.use(express.json());
 app.use(cookieParser());
+
+const store = new (pgSession(session))({
+  pool: pool
+});
+
+
 app.use(session({
-  secret: "g66gGG7goHjfanAAaD138m",
+  store: store,
+  secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+      httpOnly: false,
+      secure: false
+  }
 }));
 
 // Handle GET requests to /api route
