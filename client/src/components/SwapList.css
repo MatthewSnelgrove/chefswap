@@ -1,0 +1,11 @@
+.list-container {
+   overflow-y: auto;
+   height: 175px;
+}
+
+
+.type-container {
+   display: flex;
+}
+
+

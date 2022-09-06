@@ -31,7 +31,7 @@ function Navbar() {
             </li>
             <li className="nav-item dropdown pe-3">
               <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="covid-victor.jpg" alt="Covid Victor" style={{ height: 30, width: 30, borderRadius: 30 }} />
+                <img src="../covid-victor.jpg" alt="Covid Victor" style={{ height: 30, width: 30, borderRadius: 30 }} />
               </a>
               <ul className="dropdown-menu">
                 <li><a className="dropdown-item" href="/user/">My Profile</a></li>

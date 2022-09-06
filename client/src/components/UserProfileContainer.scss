@@ -1,0 +1,42 @@
+.user-container {
+    display: flex;
+    min-width: min-content;
+    margin: 0 auto;
+    width: 60%;
+    border-radius: 30px;
+    background-color: aqua;
+    flex-direction: column;
+    align-items: center;
+    min-height: 700px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 5px;
+}
+
+.profile_picture {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 0px;
+    position: relative;
+    bottom: 60px;
+}
+
+.user-data {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.gallery > img {
+    width: 100px;
+    height: 100px;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    row-gap: 10px;
+}
+
