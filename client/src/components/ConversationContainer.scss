@@ -1,0 +1,30 @@
+$border-divider: rgb(210, 210, 210);
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.conversation-container {
+  width: 80vw;
+  height: 80vh;
+
+  border: 2px solid $border-divider;
+  border-radius: 10px;
+
+  z-index: 5;
+
+  display: flex;
+}
+
+@media (max-width: 660px) {
+  .conversation-container {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .people-container {
+    width: 40%;
+  }
+}
