@@ -1,0 +1,28 @@
+$chat-header-bc: rgb(240, 240, 240);
+
+.chat-header {
+  width: 100%;
+  min-height: 65px;   // change to scale
+  background-color: $chat-header-bc;
+  padding-left: 3%;
+  padding-right: 3%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex: 1;
+
+  .avatar-container {
+    margin-right: 13px;
+  }
+
+  .username-container {
+    font-weight: 600;
+  }
+}
+
+.chat-user-info {
+  display: flex;
+  align-items: center;
+}
