@@ -10,7 +10,7 @@ export default class ChatHeader extends Component {
       <div className="chat-header">
         <div className="chat-user-info">
           <Avatar size={40} />
-          <Username username="Albert kun" />
+          <Username username="Matthew Snelgrove" />
         </div>
 
         <ChatInteract status={1} />
