@@ -13,7 +13,7 @@ body {
   border: 2px solid $border-divider;
   border-radius: 10px;
 
-  z-index: 5;
+  overflow: hidden;
 
   display: flex;
 }
@@ -21,7 +21,6 @@ body {
 @media (max-width: 660px) {
   .conversation-container {
     width: 100vw;
-    height: 100vh;
   }
 
   .people-container {

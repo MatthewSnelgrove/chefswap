@@ -5,9 +5,10 @@ import "./Username.scss";
 export default class Username extends Component {
   render() {
     const size = this.props.size;
+    const username = this.props.username;
 
     return (
-      <div className="username-container" style={{ fontSize: size }}>{this.props.username}</div>
+      <div className="username-container" style={{ fontSize: size }}>{username}</div>
     )
   }
 }

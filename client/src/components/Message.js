@@ -7,22 +7,34 @@ export default class Message extends Component {
     const content = this.props.content;
     const who = this.props.who;     // testing, 0 - other user, 1 - you, 2 - system
 
+    let msg = (<div>Empty</div>);
+    let rowStyle = {};
+
     // If message belongs to other user
     if (who === 0) {
-      return (
+      msg = (
         <div className="their-message-bubble">{content}</div>
-      )
+      );
+      rowStyle.justifyContent = "left";
     }
     if (who === 1) {
-      return (
+      msg = (
         <div className="my-message-bubble">{content}</div>
-      )
+      );
+      rowStyle.justifyContent = "right";
     }
     if (who === 2) {
-      return (
+      msg = (
         <div className="system-message">{content}</div>
       )
+      rowStyle.justifyContent = "center";
     }
+
+    return (
+      <div className="message-row" style={rowStyle}>
+        {msg}
+      </div>
+    );
   }
 }
 
