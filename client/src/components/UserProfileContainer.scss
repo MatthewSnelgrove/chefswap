@@ -4,20 +4,31 @@
     margin: 0 auto;
     width: 60%;
     border-radius: 30px;
-    background-color: aqua;
     flex-direction: column;
     align-items: center;
-    min-height: 700px;
+    min-height: 550px;
     padding-left: 20px;
     padding-right: 20px;
     padding-bottom: 5px;
+    background-image: linear-gradient(to right top, #f0f0f0, #e7e6e7, #deddde, #d5d3d4, #cdcaca);
+    position: relative;
+}
+
+.user-container * {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-size: 22px;
 }
 
 .profile_picture {
     display: flex;
     align-items: center;
     flex-direction: column;
-    margin-bottom: 0px;
+    margin-bottom: 10px;
+    gap: 5px;
+    
+}
+
+.shift-upwards {
     position: relative;
     bottom: 60px;
 }
@@ -26,7 +37,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 8px;
 }
 
 .gallery > img {
@@ -34,9 +45,26 @@
     height: 100px;
 }
 
-.gallery {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    row-gap: 10px;
+.user-data span {
+    word-break: break-all;
 }
 
+.user-button {
+    position: absolute;
+    right: 30px;
+    top: 25px;
+}
+
+.gallery {
+    margin-top: 5px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+}
+
+.profile-img {
+    width: 120px;
+    height: 120px; 
+    border-radius: 45px;
+    border: 2px solid #cdcaca
+}

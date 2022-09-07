@@ -14,7 +14,7 @@ function SwapList(props) {
         
         <div className="list-container">
             {props.data.map((person) => 
-                <SwapInfo key = {person.id} date={person.date} img={person.img} address={person.address} />
+                <SwapInfo key = {person.id} date={person.date} img={person.img} username={person.username} distance={person.distance} />
             )}
         </div>
       </div>

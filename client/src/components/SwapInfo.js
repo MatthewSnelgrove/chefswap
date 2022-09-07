@@ -13,10 +13,15 @@ function SwapInfo(props) {
   return (
     <div>
         <div className="main-container">
-            <span>{props.date}</span>
-            <img src={props.img} style={{ height: 30, width: 30, borderRadius: 30 }}/>
-            <span>{props.address}</span>
-            <button className="bg-info">XD</button>
+            <div className="user-info" >
+              <img src={props.img} style={{ height: 55, width: 55, borderRadius: 30 }}/>
+              <span className="flow-tag">{props.username}</span>
+            </div>
+            
+            <span className="date-tag">{props.date}</span>
+            <span className="distance-tag">{props.distance} from you</span>
+            
+            <button className="bg-info">Message</button>
         </div>
     </div>
   )

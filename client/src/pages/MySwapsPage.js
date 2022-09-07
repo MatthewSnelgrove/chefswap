@@ -10,14 +10,16 @@ function MySwapsPage() {
   people[0] = {
     date: "10/10/2020",
     img: "covid-victor.jpg",
-    address: "100 XD Road",
+    username: "bigsucc69ioijndiqwndiqwondiqwndoqwidnoqwindoqwidnqowidnqwoidnoid",
+    distance: "4km",
     id: 1
   }
 
   people[1] =  {
     date: "10/10/2021",
     img: "covid-victor.jpg",
-    address: "100 XD Road",
+    username: "iliketoes420",
+    distance: "4km",
     id: 2
   }
   

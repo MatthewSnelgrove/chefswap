@@ -8,32 +8,17 @@ function UserProfileContainer(props) {
     return (
       <div>
         <div className="user-container">
-            <div className="profile_picture">
-                <img src={user.img} style={{width: 100, height: 100, borderRadius: 30}} />
+            <div className="profile_picture shift-upwards">
+                <img src={user.img} className="profile-img" />
                 <span>{user.name}</span>
             </div>
-            <div className="user-data">
-                <span>Cuisine Preferences:</span>
-                <span>Cuisine Specialties:</span>
-                <span>Bio:</span>
-                <span>Gallery:</span>
+            <button className="user-button">Message</button>
+            <div className="user-data shift-upwards">
+                <span>Cuisine Preferences: {user.prefrences}</span>
+                <span>Cuisine Specialties: {user.specialties}</span>
+                <span>{user.bio}</span>
+                <span>Image Gallery:</span>
                 <div className="gallery">
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
-                    <img src={user.img}  />
                     <img src={user.img}  />
                     <img src={user.img}  />
                     <img src={user.img}  />
