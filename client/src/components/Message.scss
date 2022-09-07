@@ -1,0 +1,38 @@
+$message-border: rgb(220, 220, 220);
+$message-bc: rgb(240, 240, 240);
+$sys-msg-col: rgb(160, 160, 160);
+
+.message-row {
+  display: flex;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+%user-message {
+  border-radius: 20px;
+  padding: 10px 15px;
+  max-width: 40%;
+  word-break: break-word;
+  margin-left: 15px;
+  margin-right: 15px;
+
+  display: flex;
+}
+
+.their-message-bubble {
+  @extend %user-message;
+  border: 1px solid $message-border;
+}
+
+.my-message-bubble {
+  @extend %user-message;
+  background-color: $message-bc;
+}
+
+.system-message {
+  color: $sys-msg-col;
+  font-size: 0.8em;
+  
+  padding-top: 5px;
+  padding-bottom: 5px;
+}

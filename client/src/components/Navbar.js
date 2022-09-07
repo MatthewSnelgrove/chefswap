@@ -1,9 +1,9 @@
 import React from 'react';
-import "./Navbar.css";
+import "./Navbar.scss";
 
 function Navbar() {
   return (
-    <nav className="navbar navbar-expand-sm bg-light">
+    <nav className="navbar navbar-expand-sm bg-light navbar-fixed">
       <div className="container-fluid">
         <a className="navbar-brand" href="/about">Chefswap</a>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,7 +31,7 @@ function Navbar() {
             </li>
             <li className="nav-item dropdown pe-3">
               <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="../covid-victor.jpg" alt="Covid Victor" style={{ height: 30, width: 30, borderRadius: 30 }} />
+                <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" alt="Profile" style={{ height: 25, width: 25, borderRadius: 30 }} />
               </a>
               <ul className="dropdown-menu">
                 <li><a className="dropdown-item" href="/user/">My Profile</a></li>
