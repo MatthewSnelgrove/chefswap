@@ -1,0 +1,48 @@
+.main-container {
+    display: grid;
+    background-color:rgb(240, 240, 240);
+    width: 100%;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    align-items: center;
+    height: 72px;
+    border-radius: 25px;
+    height: fit-content;
+}
+
+.main-container * {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-size: 22px;
+}
+
+.user-info {
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    column-gap: 10px;
+    margin-left: 17px;
+    align-items: center;
+}
+
+.flow-tag {
+    overflow: hidden;
+    max-width: 80%;
+}
+
+.date-tag {
+    margin-right: 7px;
+}
+
+.distance-tag {
+    overflow: hidden;
+    margin-right: 7px;
+}
+
+.bg-info {
+    border-radius: 20px;
+    border: 1px;
+    height: 70%;
+    margin-right: 7px;
+}
+
+
+
+
