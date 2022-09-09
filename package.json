@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "camelize": "^1.0.0",
     "connect-pg-simple": "^7.0.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.2",
@@ -23,6 +24,7 @@
     "pg": "^8.8.0",
     "pg-pool": "^3.5.2",
     "react-router-dom": "^6.3.0",
+    "snakeize": "^0.1.0",
     "uuid": "^8.3.2"
   },
   "engines": {
