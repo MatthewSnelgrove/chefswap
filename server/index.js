@@ -41,9 +41,10 @@ import { router as authRouter } from "./routers/auth.js";
 app.use("/api/v1/auth", authRouter);
 import { router as profilesRouter } from "./routers/profiles.js";
 app.use("/api/v1/profiles", profilesRouter);
-
 import { router as manageAccountRouter } from "./routers/manage-account.js";
 app.use("/api/v1/manage-account", manageAccountRouter);
+import { router as mySwapsRouter } from "./routers/my-swaps.js"; 
+app.use("/api/v1/my-swaps", mySwapsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
