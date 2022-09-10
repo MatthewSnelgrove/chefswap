@@ -3,6 +3,10 @@ import CuisineSearch from './CuisineSearch';
 import CuisineSearchList from './CuisineSearchList';
 import "../general.scss";
 
+/**
+ * Container component for filtering swap results by cuisine name
+ * @use CuisineSearch, CuisineSearchList
+ */
 export default class FilterByCuisineSection extends Component {
   render() {
     return (

@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import "./CuisineSearch.scss";
 import "../general.scss";
 
+/**
+ * Text input for filtering cuisine list checkboxes
+ */
 export default class CuisineSearch extends Component {
   render() {
     return (

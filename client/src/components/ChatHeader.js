@@ -4,6 +4,10 @@ import Username from './Username';
 import ChatInteract from './ChatInteract';
 import "./ChatHeader.scss";
 
+/**
+ * Container component for chat status bar/header
+ * @use Avatar, Username, ChatInteract
+ */
 export default class ChatHeader extends Component {
   render() {
     return (

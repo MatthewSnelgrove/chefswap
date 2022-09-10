@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import "../general.scss";
 import "./FilterByRating.scss";
 
+/**
+ * Container component for filtering swap results by rating
+ */
 export default class FilterByRating extends Component {
   render() {
     return (

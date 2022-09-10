@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 import ConversationTab from '../components/ConversationTab';
 import "./PeopleContainer.scss";
 
+/**
+ * Container component for people sidebar in /my-messages
+ * @use ConversationTab
+ */
 export default class PeopleContainer extends Component {
   render() {
     // Mock users

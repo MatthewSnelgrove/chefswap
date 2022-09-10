@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import "./FilterByDistance.scss";
 import "../general.scss";
 
+/**
+ * Container component for filtering swap results by distance
+ */
 export default class FilterByDistance extends Component {
   render() {
     return (

@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import CuisineListItem from "./CuisineListItem";
 import "./CuisineSearchList.scss";
 
+/**
+ * List of cuisine checkboxes to filter list by
+ * @use CuisineListItem
+ */
 export default class CuisineSearchList extends Component {
   render() {
     return (

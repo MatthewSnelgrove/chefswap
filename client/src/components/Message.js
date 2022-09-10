@@ -2,6 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import "./Message.scss";
 
+/**
+ * Models a message in chat content
+ * @param content Message content
+ * @param who 0: from other user, 1: from you, 2: system message
+ */
 export default class Message extends Component {
   render() {
     const content = this.props.content;

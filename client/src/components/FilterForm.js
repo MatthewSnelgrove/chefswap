@@ -4,6 +4,10 @@ import FilterByRating from "./FilterByRating";
 import FilterByDistance from "./FilterByDistance";
 import "./FilterForm.scss";
 
+/**
+ * Container component for FILTERING swap results (sidebar of /find-swap)
+ * @use FilterByCuisineSection, FilterByRating, FilterByDistance
+ */
 export default class FilterForm extends Component {
   render() {
     return (

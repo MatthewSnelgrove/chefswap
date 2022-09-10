@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import "./ChatInput.scss";
 
+/**
+ * User input chatbar for sending messages (bottom bar of chat)
+ */
 export default class ChatInput extends Component {
   render() {
     function handleSend(e) {

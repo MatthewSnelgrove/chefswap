@@ -4,6 +4,8 @@ import "./Avatar.scss";
 
 /**
  * Takes in user data to display user profile picture
+ * @param pfpURL URL to profile picture
+ * @param size Width and height size in px
  */
 export default class Avatar extends Component {
   render() {

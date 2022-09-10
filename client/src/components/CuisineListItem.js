@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from "prop-types";
 import "./CuisineListItem.scss";
 
+/**
+ * Checkbox with cuisine name
+ * @param tag Cuisine name
+ */
 export default class CuisineListItem extends Component {
   render() {
     const tag = this.props.tag;

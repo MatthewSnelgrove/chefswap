@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import "./InteractButton.scss";
 
+/**
+ * Models a button for user interactivity (e.g., sending swap request, completing swap, etc.)
+ * @param text Button text
+ * @param color Background color
+ * @param onClick Function to call when button is clicked
+ */
 export default class InteractButton extends Component {
   render() {
     const text = this.props.text;
