@@ -12,16 +12,16 @@ data {
 function SwapInfo(props) {
   return (
     <div>
-        <div className="main-container">
-            <div className="user-info" >
+        <div className="main-container-i">
+            <div className="user-info-i" >
               <img src={props.img} style={{ height: 55, width: 55, borderRadius: 30 }}/>
-              <span className="flow-tag">{props.username}</span>
+              <span className="flow-tag-i">{props.username}</span>
             </div>
             
-            <span className="date-tag">{props.date}</span>
-            <span className="distance-tag">{props.distance} from you</span>
+            <div className="date-tag-i">{props.date}</div>
+            <div className="distance-tag-i">{props.distance} from you</div>
             
-            <button className="bg-info">Message</button>
+            <button className="bg-info-i">Message</button>
         </div>
     </div>
   )
