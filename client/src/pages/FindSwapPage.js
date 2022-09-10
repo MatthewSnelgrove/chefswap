@@ -1,8 +1,11 @@
-import React from 'react'
+import React from 'react';
+import FilterForm from '../components/FilterForm';
 
 function FindSwapPage() {
   return (
-    <div>FindSwapPage</div>
+    <div>
+      <FilterForm />
+    </div>
   )
 }
 

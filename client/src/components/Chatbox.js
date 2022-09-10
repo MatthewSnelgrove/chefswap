@@ -4,6 +4,10 @@ import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
 import "./Chatbox.scss";
 
+/**
+ * Container component for entire chatting section of /my-messages
+ * @use ChatHeader, ChatContent, ChatInput
+ */
 export default class Chatbox extends Component {
   render() {
     return (

@@ -1,0 +1,26 @@
+$form-background-gray: rgb(230, 230, 230);
+$label-color: rgb(130, 130, 130);
+
+.filter-container {
+  background-color: $form-background-gray;
+  
+  // change
+  width: 200px;
+
+  padding: 10px 5px;
+  border-radius: 10px;
+}
+
+.label-gray {
+  display: block;
+  color: $label-color;
+}
+
+// Filled icons settings from Google Material Icons
+.symbol-fill {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
+}

@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 import Message from './Message';
 import "./ChatContent.scss";
 
+/**
+ * Container component for all chat messages
+ * @use Message
+ */
 export default class ChatContent extends Component {
   render() {
     return (

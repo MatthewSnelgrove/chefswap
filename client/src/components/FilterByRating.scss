@@ -1,0 +1,13 @@
+.star-rating-buttons {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.star-rating-buttons:active {
+  opacity: 0.7;
+}
