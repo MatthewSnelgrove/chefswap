@@ -1,6 +1,5 @@
 .list-container {
-   overflow-y: auto;
-   height: 175px;
+   overflow: visible;
 }
 
 .list-container > div {

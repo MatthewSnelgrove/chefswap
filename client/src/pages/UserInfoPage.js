@@ -6,8 +6,27 @@ function UserInfoPage() {
   const user = {
     img: "../covid-victor.jpg",
     name: "XD Man",
-    prefrences: "Indian, Thai",
-    specialties: "Thai, Mongolian",
+    cuisinePrefrences: {
+      "indian": true,
+      "italian": true
+    },
+    cuisineSpecialties: {
+      "indian": true,
+      "italian": true,
+      "a": true,
+      "itd": true,
+      "idian": true,
+      "idn": true,
+      "italai7an": true,
+      "italia4dn": true,
+      "itdi1an": true,
+      "ital2ian": true,
+      "italdi5an": true,
+      "ita4lian": true,
+      "it4ali2dan": true,
+      "it555alian": true,
+      "ita55323lian": true,
+    },
     bio: "Hey guys XDDDas;d;oasndlasnaskldkasnldkansdlkasnkldnaslkdn askldnkasndklasndlkdm;awkdmaslkdmalksmdlkasmdlkasmdkladlksndlasndlasnldnasljdnalsjdnlajsndlaslndn"
   }
   

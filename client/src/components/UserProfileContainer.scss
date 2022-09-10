@@ -1,16 +1,16 @@
 .user-container {
-    display: flex;
-    min-width: min-content;
+    //display: flex;
+    //min-width: min-content;
+
     margin: 0 auto;
     width: 60%;
     border-radius: 30px;
-    flex-direction: column;
-    align-items: center;
     min-height: 550px;
     padding-left: 20px;
     padding-right: 20px;
     padding-bottom: 5px;
     background-image: linear-gradient(to right top, #f0f0f0, #e7e6e7, #deddde, #d5d3d4, #cdcaca);
+    box-sizing: border-box;
     position: relative;
 }
 
@@ -34,20 +34,17 @@
 }
 
 .user-data {
-    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
 .gallery > img {
-    width: 100px;
-    height: 100px;
+    width: 300px;
+    height: 300px;
 }
 
-.user-data span {
-    word-break: break-all;
-}
+
 
 .user-button {
     position: absolute;
@@ -58,8 +55,8 @@
 .gallery {
     margin-top: 5px;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
     gap: 5px;
+    grid-template-columns:  repeat(auto-fill, minmax(300px, 1fr));
 }
 
 .profile-img {
@@ -67,4 +64,13 @@
     height: 120px; 
     border-radius: 45px;
     border: 2px solid #cdcaca
+}
+
+.add-tags {
+    white-space: wrap;
+    width: 100%;
+}
+
+.bio {
+    word-wrap: break-word;
 }
