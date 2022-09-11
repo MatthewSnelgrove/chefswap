@@ -10,9 +10,11 @@ import Chatbox from './Chatbox';
 export default class ConversationContainer extends Component {
   render() {
     return (
-      <div className="conversation-container">
-        <PeopleContainer />
-        <Chatbox />
+      <div className="conversation-flex">
+        <div className="conversation-container">
+          <PeopleContainer />
+          <Chatbox />
+        </div>
       </div>
     )
   }
