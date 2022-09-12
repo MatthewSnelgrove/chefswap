@@ -14,7 +14,7 @@ function SwapInfo(props) {
     <div>
       <div className="main-container-i">
         <div className="user-info-i" >
-          <img src={props.img} style={{ height: 55, width: 55, borderRadius: 30 }} />
+          <img alt="User profile" src={props.img} style={{ height: 55, width: 55, borderRadius: 30 }} />
           <span className="flow-tag-i">{props.username}</span>
         </div>
 

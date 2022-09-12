@@ -1,7 +1,6 @@
 import React from 'react';
 import SwapInfo from './SwapInfo';
-import "./styles/SwapList.css"
-import SwapListing from './SwapListing';
+import "./styles/SwapList.css";
 
 //type: tpy
 function SwapList(props) {

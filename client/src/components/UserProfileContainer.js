@@ -10,7 +10,7 @@ function UserProfileContainer(props) {
         <div>
             <div className="user-container">
                 <div className="profile_picture shift-upwards">
-                    <img src={user.img} className="profile-img" />
+                    <img src={user.img} alt="User profile" className="profile-img" />
                     <span>{user.name}</span>
                 </div>
                 <button className="user-button">Message</button>
@@ -25,27 +25,21 @@ function UserProfileContainer(props) {
                     <span className="bio">{user.bio}</span>
                     <span>Image Gallery:</span>
                     <div className="gallery">
-                        <img src={user.img} />
-                        <img src={user.img} />
-                        <img src={user.img} />
-                        <img src={user.img} />
-                        <img src={user.img} />
-                        <img src={user.img} />
-                        <img src={user.img} />
-                        <img src={user.img} />
-                        <img src={user.img} />
+                        <img alt="Food" src={user.img} />
+                        <img alt="Food" src={user.img} />
+                        <img alt="Food" src={user.img} />
+                        <img alt="Food" src={user.img} />
+                        <img alt="Food" src={user.img} />
+                        <img alt="Food" src={user.img} />
+                        <img alt="Food" src={user.img} />
+                        <img alt="Food" src={user.img} />
+                        <img alt="Food" src={user.img} />
                     </div>
                 </div>
 
             </div>
         </div>
     )
-}
-
-function getCuisineTags(cuisineObject) {
-    Object.keys(cuisineObject).map((ky, index) => {
-        <Tag key={index} cuisine={ky} />
-    })
 }
 
 export default UserProfileContainer

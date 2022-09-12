@@ -12,18 +12,18 @@ function SwapListing(props) {
       <div className="main-container">
         <div className="info-container">
           <div className="image-container">
-            <img src="../profile.png" style={{ height: 55, width: 55, borderRadius: 30 }} />
+            <img alt="User profile" src="../profile.png" style={{ height: 55, width: 55, borderRadius: 30 }} />
           </div>
           <div className="user-tag">
             <div className="username">{props.username}</div>
           </div>
 
           <div className="distance-tag">
-            <img style={{ height: 33, width: 33 }} src="../location.png"></img>
+            <img alt="location icon" style={{ height: 33, width: 33 }} src="../location.png"></img>
             <span>{props.distance}</span>
           </div>
           <div className="rating-tag">
-            <img style={{ height: 33, width: 33 }} src="../star.png"></img>
+            <img alt="star icon" style={{ height: 33, width: 33 }} src="../star.png"></img>
             <div >{props.rating}</div>
           </div>
         </div>
