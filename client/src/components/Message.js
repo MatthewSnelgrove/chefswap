@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import "./Message.scss";
+import "./styles/Message.scss";
 
 /**
  * Models a message in chat content

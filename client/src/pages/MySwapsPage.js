@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from "../components/Navbar";
 import SwapList from "../components/SwapList";
 import MySwapSwitch from '../components/MySwapSwitch';
-import "./MySwapsPage.css"
+import "./styles/MySwapsPage.css"
 
 function MySwapsPage() {
   const people = [
@@ -55,7 +55,7 @@ function MySwapsPage() {
 
 
 
-  
+
   return (
     <div>
       <Navbar />
@@ -65,19 +65,19 @@ function MySwapsPage() {
           <MySwapSwitch hl={"swaps"} />
         </div>
       </div>
-      
-      <div style={{ display: "flex", flexDirection: "column", gap: "20px", justifyContent: "center", marginTop: "33px"}}>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "20px", justifyContent: "center", marginTop: "33px" }}>
         <div>
-          <SwapList data = {people} type={"Pending"} />
+          <SwapList data={people} type={"Pending"} />
         </div>
         <div>
-          <SwapList data = {people} type={"Ongoing"} />
+          <SwapList data={people} type={"Ongoing"} />
         </div>
         <div>
-          <SwapList data = {people} type={"Past"} />
+          <SwapList data={people} type={"Past"} />
         </div>
       </div>
-      
+
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import "./FilterByDistance.scss";
+import "./styles/FilterByDistance.scss";
 import "../general.scss";
 
 /**

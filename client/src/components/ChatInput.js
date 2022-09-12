@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import "./ChatInput.scss";
+import "./styles/ChatInput.scss";
 
 /**
  * User input chatbar for sending messages (bottom bar of chat)

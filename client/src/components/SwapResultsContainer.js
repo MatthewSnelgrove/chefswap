@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import SwapListing from "./SwapListing";
-import "./SwapResultsContainer.scss";
+import "./styles/SwapResultsContainer.scss";
 
 /**
  * Container component for all swap results on /find-swap

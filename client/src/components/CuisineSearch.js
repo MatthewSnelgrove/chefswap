@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import "./CuisineSearch.scss";
+import "./styles/CuisineSearch.scss";
 import "../general.scss";
 
 /**

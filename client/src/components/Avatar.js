@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import "./Avatar.scss";
+import "./styles/Avatar.scss";
 
 /**
  * Takes in user data to display user profile picture

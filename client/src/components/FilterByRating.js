@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import "../general.scss";
-import "./FilterByRating.scss";
+import "./styles/FilterByRating.scss";
 
 /**
  * Container component for filtering swap results by rating

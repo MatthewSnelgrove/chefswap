@@ -2,7 +2,7 @@ import React from 'react';
 import FilterForm from '../components/FilterForm';
 import Navbar from "../components/Navbar";
 import SwapResultsContainer from "../components/SwapResultsContainer";
-import "./FindSwapPage.scss";
+import "./styles/FindSwapPage.scss";
 
 function FindSwapPage() {
   return (
