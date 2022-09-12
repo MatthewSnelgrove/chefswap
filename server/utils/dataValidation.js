@@ -53,3 +53,8 @@ export function validateBio(bio, error){
         error.invalidBio = true;
     }
 }
+export function validateImageName(imageName, error){
+    if(!/(.png|.jpg|.jpeg)$/.test(imageName)){
+        error.invalidImageName = true;
+    }
+}

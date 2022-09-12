@@ -21,7 +21,8 @@ router.post("/sign-in", async (req, res) => {
     if(!username || !password){
         res.status(400);
     }
-    const account = camelize(await pool.query("SELECT account_uid, username, passhash FROM account WHERE username=$1", [username])).rows[0];
+    const account = camelize(await pool.query(`SELECT account_uid, username, passhash FROM account 
+    WHERE username=$1`, [username])).rows[0];
     //No user with username
     if(!account){
         res.status(401).json({ invalidCredentials: true });

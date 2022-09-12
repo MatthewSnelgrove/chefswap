@@ -17,9 +17,8 @@ router.get("/:username", async (req, res) => {
         return;
     }
     accountUid = accountUid.accountUid;
-    const account = camelize(await pool.query(`SELECT account.username, account.bio, circle.circle_radius,
-    circle.circle_centre, pfp.pfp_link
-    FROM account LEFT JOIN circle USING (circle_uid) LEFT JOIN pfp USING (pfp_uid) 
+    const account = camelize(await pool.query(`SELECT account.username, account.bio, account.pfp_link,
+    circle.circle_radius, circle.circle_centre FROM account LEFT JOIN circle USING (circle_uid)
     WHERE username=$1`, [username])).rows[0];
     console.log(account);
     const cuisinePreferences = camelize(await pool.query(`SELECT preference FROM 

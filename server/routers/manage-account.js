@@ -3,7 +3,7 @@ import { pool } from "../utils/dbConfig.js";
 import camelize from "camelize";
 import snakeize from "snakeize";
 import checkAuth from "../middlewares.js/checkAuth.js";
-import { validateAddress, validateUsername, validateBio } from "../utils/dataValidation.js";
+import { validateAddress, validateUsername, validateBio, validateImageName } from "../utils/dataValidation.js";
 import { createSetString } from "../utils/queryHelpers.js";
 import { bucket } from "../utils/cloudStorageConfig.js";
 import { uploadHandler } from "../utils/imageHelpers.js";
@@ -21,10 +21,11 @@ export const router = express.Router();
 router.get("/", checkAuth, async (req, res) => {
     const accountUid = req.session.accountUid;
     const account = camelize(await pool.query(`SELECT account.username, account.email, account.bio,
-    account.create_time, account.update_time, address.address1, address.address2, address.address3, 
-    address.city, address.province, address.postal_code, circle.circle_radius, circle.circle_centre, 
-    pfp.pfp_link FROM account JOIN address USING (address_uid) LEFT JOIN circle USING (circle_uid)
-    LEFT JOIN pfp USING (pfp_uid) WHERE account_uid=$1`, [accountUid])).rows[0];
+    account.pfp_link, account.create_time, account.update_time, address.address1, address.address2, 
+    address.address3, address.city, address.province, address.postal_code, circle.circle_radius, 
+    circle.circle_centre FROM account JOIN address USING (address_uid) LEFT JOIN circle USING 
+    (circle_uid) WHERE account_uid=$1`, [accountUid])).rows[0];
+    account.pfpLink = account.pfpLink ? generateImageLink(account.pfpLink) : null;
     const images = camelize(await pool.query(`SELECT image_link, timestamp FROM image WHERE 
     account_uid=$1`, [accountUid])).rows;
     for(const image of images){
@@ -136,11 +137,14 @@ router.delete("/gallery/", checkAuth, async (req, res) => {
 
 router.post("/gallery", checkAuth, uploadHandler.single("file"), async (req, res) => {
     const accountUid = req.session.accountUid;
-    if(!/(.png|.jpg|.jpeg)$/.test(req.file.originalname)){
+    const imageName = req.file.originalname;
+    const error = {};
+    validateImageName(imageName, error);
+    if(Object.keys(error).length){
         res.status(400).send("image must be a .png, .jpg, or .jpeg");
         return;
     }
-    const blob = bucket.file(uuid4() + req.file.originalname);
+    const blob = bucket.file(uuid4() + imageName);
     const blobStream = blob.createWriteStream();
     blobStream.on("error", err => (console.log(err)));
     blobStream.on("finish", async () => {
@@ -149,4 +153,24 @@ router.post("/gallery", checkAuth, uploadHandler.single("file"), async (req, res
     })
     blobStream.end(req.file.buffer);
     res.send(`uploaded file ${req.file.originalname}`);
+});
+
+router.put("/pfp", checkAuth, uploadHandler.single("file"), async (req, res) => {
+    const accountUid = req.session.accountUid;
+    const imageName = req.file.originalname;
+    const error = {};
+    validateImageName(imageName, error);
+    if(Object.keys(error).length){
+        res.status(400).send("image must be a .png, .jpg, or .jpeg");
+        return;
+    }
+    const blob = bucket.file(uuid4() + imageName);
+    const blobStream = blob.createWriteStream();
+    blobStream.on("error", err => (console.log(err)));
+    blobStream.on("finish", async () => {
+            await pool.query(`UPDATE account SET pfp_link=$1 WHERE account_uid=$2`, 
+            [blob.name, accountUid]);
+    })
+    blobStream.end(req.file.buffer);
+    res.send(`uploaded file ${imageName}`);
 });
