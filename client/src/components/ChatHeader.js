@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import Avatar from './Avatar';
 import Username from './Username';
 import ChatInteract from './ChatInteract';
-import "./ChatHeader.scss";
+import "./styles/ChatHeader.scss";
 
+/**
+ * Container component for chat status bar/header
+ * @use Avatar, Username, ChatInteract
+ */
 export default class ChatHeader extends Component {
   render() {
     return (

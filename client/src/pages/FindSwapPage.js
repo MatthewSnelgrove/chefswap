@@ -1,8 +1,18 @@
-import React from 'react'
+import React from 'react';
+import FilterForm from '../components/FilterForm';
+import Navbar from "../components/Navbar";
+import SwapResultsContainer from "../components/SwapResultsContainer";
+import "./styles/FindSwapPage.scss";
 
 function FindSwapPage() {
   return (
-    <div>FindSwapPage</div>
+    <div className="find-swap-page">
+      <Navbar />
+      <div className="find-swap-content">
+        <FilterForm />
+        <SwapResultsContainer />
+      </div>
+    </div>
   )
 }
 

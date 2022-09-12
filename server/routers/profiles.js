@@ -39,5 +39,4 @@ router.get("/:username", async (req, res) => {
     }
     account.images = images;
     res.status(200).json(account);
-    
 });

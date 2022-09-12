@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import "./Avatar.scss";
+import "./styles/Avatar.scss";
 
 /**
  * Takes in user data to display user profile picture
+ * @param pfpURL URL to profile picture
+ * @param size Width and height size in px
  */
 export default class Avatar extends Component {
   render() {

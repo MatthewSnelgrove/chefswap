@@ -1,5 +1,5 @@
 import React from 'react';
-import "./_SignupLogin.scss";
+import "./styles/_SignupLogin.scss";
 
 function Signup() {
 

@@ -2,9 +2,14 @@ import React, { Component } from 'react'
 import InteractButton from './InteractButton';
 import PropTypes from "prop-types";
 
+/**
+ * Handles interaction buttons (top right of chat header) depending on swap status
+ * @param status 0: no swap, 1: pending swap, 2: ongoing swap
+ * @use InteractButton
+ */
 export default class ChatInteract extends Component {
   render() {
-    const status = this.props.status;   // 0 - no swap, 1 - swap pending, 2 - swap ongoing
+    const status = this.props.status;
     let btn = (<InteractButton />);
 
     if (status === 0) {

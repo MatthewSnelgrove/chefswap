@@ -1,0 +1,14 @@
+.filter-form-container {
+  position: fixed;
+  top: 60px;   // matches navbar
+  bottom: 0;
+  overflow-y: auto;
+
+  .filter-fieldset-section {
+    margin-bottom: 10px;
+  }
+
+  legend {
+    font-size: 1.2em;
+  }
+}

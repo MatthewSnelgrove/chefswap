@@ -1,0 +1,9 @@
+.swap-container {
+    display: flex;
+    align-items: center;
+    width: 100vw;
+}
+
+.swap-text {
+    font-size: 40px;
+}
