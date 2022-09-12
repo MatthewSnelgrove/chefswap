@@ -10,7 +10,7 @@ import "../general.scss";
 export default class FilterByCuisineSection extends Component {
   render() {
     return (
-      <fieldset>
+      <fieldset className="filter-fieldset-section">
         <legend>Filter by Cuisine</legend>
         <div className="filter-by-cuisine-section filter-container">
           <CuisineSearch />
