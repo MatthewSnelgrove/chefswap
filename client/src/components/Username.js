@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import "./Username.scss";
+import "./styles/Username.scss";
 
 /**
  * Displays username of user

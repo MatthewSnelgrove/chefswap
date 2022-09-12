@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CuisineListItem from "./CuisineListItem";
-import "./CuisineSearchList.scss";
+import "./styles/CuisineSearchList.scss";
 
 /**
  * List of cuisine checkboxes to filter list by

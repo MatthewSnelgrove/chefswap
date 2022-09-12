@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import "./MessageSwapSwitch.scss";
+import "./styles/MessageSwapSwitch.scss";
 
 export default class MessageSwapSwitch extends Component {
   render() {

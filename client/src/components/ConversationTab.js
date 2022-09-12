@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import "./ConversationTab.scss";
+import "./styles/ConversationTab.scss";
 import Avatar from "./Avatar";
 import Username from "./Username";
 

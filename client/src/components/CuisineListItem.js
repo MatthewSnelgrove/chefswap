@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
-import "./CuisineListItem.scss";
+import "./styles/CuisineListItem.scss";
 
 /**
  * Checkbox with cuisine name

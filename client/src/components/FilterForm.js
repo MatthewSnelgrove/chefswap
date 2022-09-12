@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import FilterByCuisineSection from './FilterByCuisineSection';
 import FilterByRating from "./FilterByRating";
 import FilterByDistance from "./FilterByDistance";
-import "./FilterForm.scss";
+import "./styles/FilterForm.scss";
 
 /**
  * Container component for FILTERING swap results (sidebar of /find-swap)

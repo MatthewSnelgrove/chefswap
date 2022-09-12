@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Message from './Message';
-import "./ChatContent.scss";
+import "./styles/ChatContent.scss";
 
 /**
  * Container component for all chat messages

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ConversationTab from '../components/ConversationTab';
-import "./PeopleContainer.scss";
+import "./styles/PeopleContainer.scss";
 
 /**
  * Container component for people sidebar in /my-messages

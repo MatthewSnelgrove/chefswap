@@ -2,7 +2,7 @@ import React from 'react';
 import ConversationContainer from '../components/ConversationContainer';
 import MessageSwapSwitch from '../components/MessageSwapSwitch';
 import Navbar from "../components/Navbar";
-import "./MyMessagesPage.scss";
+import "./styles/MyMessagesPage.scss";
 
 function MyMessagesPage() {
   return (

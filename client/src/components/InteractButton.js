@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import "./InteractButton.scss";
+import "./styles/InteractButton.scss";
 
 /**
  * Models a button for user interactivity (e.g., sending swap request, completing swap, etc.)

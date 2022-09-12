@@ -1,10 +1,10 @@
 import React from 'react';
-import "./Tag.css"
+import "./styles/Tag.css"
 
 function Tag(props) {
   return (
     <div className="tag">
-        {props.cuisine}
+      {props.cuisine}
     </div>
   )
 }
