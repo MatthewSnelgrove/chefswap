@@ -1,5 +1,5 @@
 import express from "express";
-import { pool } from "../dbConfig.js";
+import { pool } from "../utils/dbConfig.js";
 import camelize from "camelize";
 
 export const router = express.Router();
@@ -32,5 +32,11 @@ router.get("/:username", async (req, res) => {
         account.longitude = account.centre[1];
         delete account.centre;
     }
+    const images = camelize(await pool.query(`SELECT image_link, timestamp FROM image WHERE 
+    account_uid=$1`, [accountUid])).rows;
+    for(const image of images){
+        image.imageLink = generateImageLink(image.imageLink);
+    }
+    account.images = images;
     res.status(200).json(account);
 });

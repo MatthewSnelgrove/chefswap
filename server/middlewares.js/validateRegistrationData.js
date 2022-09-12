@@ -1,4 +1,4 @@
-import { pool } from "../dbConfig.js";
+import { pool } from "../utils/dbConfig.js";
 import { validateUsername } from "../utils/dataValidation.js";
 import { validateEmail } from "../utils/dataValidation.js";
 import { validatePassword } from "../utils/dataValidation.js";
