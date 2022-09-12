@@ -1,6 +1,7 @@
 import express from "express";
 import { pool } from "../utils/dbConfig.js";
 import camelize from "camelize";
+import { generateImageLink } from "../utils/imageHelpers.js";
 
 export const router = express.Router();
 
