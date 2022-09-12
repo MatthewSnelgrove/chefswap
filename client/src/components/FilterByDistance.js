@@ -8,7 +8,7 @@ import "../general.scss";
 export default class FilterByDistance extends Component {
   render() {
     return (
-      <fieldset>
+      <fieldset className="filter-fieldset-section">
         <legend>Filter by Distance</legend>
 
         <div className="filter-distance-container filter-container">

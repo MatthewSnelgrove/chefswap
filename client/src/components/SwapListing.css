@@ -49,6 +49,8 @@
     grid-row: 2;
     min-width: fit-content;
     display: flex;
+
+    white-space: nowrap;
 }
 
 .rating-tag {

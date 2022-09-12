@@ -8,10 +8,10 @@ import "./FilterByRating.scss";
 export default class FilterByRating extends Component {
   render() {
     return (
-      <fieldset>
+      <fieldset className="filter-fieldset-section">
         <legend>Filter by Rating</legend>
 
-        <div className="filter-rating-container filter-container d-flex justify-content-center align-items-center">
+        <div className="filter-rating-container filter-container">
           <button type="button" id="star1" className="star-rating-buttons">
             <span className="material-symbols-rounded symbol-fill">star</span>
           </button>
