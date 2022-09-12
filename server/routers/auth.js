@@ -1,5 +1,5 @@
 import express from "express";
-import { pool } from "../dbConfig.js";
+import { pool } from "../utils/dbConfig.js";
 import bcrypt from "bcryptjs";
 import camelize from "camelize";
 import snakeize from "snakeize";

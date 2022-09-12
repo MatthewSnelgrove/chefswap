@@ -1,4 +1,4 @@
-import { pool } from "../dbConfig.js";
+import { pool } from "./dbConfig.js";
 export async function validateUsername(username, error){
     if(!username || username.length > 30){
         error.invalidUsername = true;

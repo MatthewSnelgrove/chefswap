@@ -1,5 +1,5 @@
 import express from "express";
-import { pool } from "../dbConfig.js";
+import { pool } from "../utils/dbConfig.js";
 import camelize from "camelize";
 import checkAuth from "../middlewares.js/checkAuth.js";
 
