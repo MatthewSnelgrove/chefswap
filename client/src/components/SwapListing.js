@@ -28,8 +28,8 @@ function SwapListing(props) {
           </div>
         </div>
         <div className="tags">{
-          Object.keys(props.cuisineSpecialties).map((cuisine, index) =>
-            <Tag key={index} cuisine={cuisine} />
+          props.cuisineSpecialties.map((cuisine) =>
+            <Tag key={cuisine} cuisine={cuisine} />
           )}</div>
         <button className="bg-info">Swap Request</button>
       </div>
