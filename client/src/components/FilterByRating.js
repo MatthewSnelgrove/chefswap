@@ -6,8 +6,19 @@ import "./styles/FilterByRating.scss";
 /**
  * Container component for filtering swap results by rating
  * @param rating Min review filter from 1-5
+ * @param fcn... for handling form change
  */
 export default class FilterByRating extends Component {
+  constructor(props) {
+    super(props);
+    this.handleRatingChange = this.handleRatingChange.bind(this);
+  }
+
+  handleRatingChange(i) {
+    this.props.onRatingChange(i);
+    console.log(i);
+  }
+
   render() {
     const rating = this.props.rating;
 
@@ -18,7 +29,7 @@ export default class FilterByRating extends Component {
       let starClassString = (i < rating) ? "material-symbols-rounded symbol-fill" : "material-symbols-rounded";
 
       starButtons.push(
-        <button type="button" className="star-rating-buttons" key={`star${i}`} >
+        <button type="button" className="star-rating-buttons" key={i} onClick={() => this.handleRatingChange(i + 1)} >
           <span className={starClassString}>star</span>
         </button>
       );

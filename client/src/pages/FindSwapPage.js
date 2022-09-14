@@ -52,6 +52,7 @@ export default class FindSwapPage extends Component {
   }
 
   handleRatingChange(minRating) {
+    console.log("min rating state changed");
     this.setState({
       rating: minRating,
     });
