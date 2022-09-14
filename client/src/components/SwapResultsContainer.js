@@ -38,7 +38,7 @@ export default class SwapResultsContainer extends Component {
       else if (user.avg_rating < minRating) pass = false;
 
       // Check max distance
-      else if (user.distance > maxDist) pass = false;
+      if (user.distance > maxDist) pass = false;
 
       return pass;
     };
@@ -46,37 +46,37 @@ export default class SwapResultsContainer extends Component {
     const exUsers = {
       user0: {
         username: "Matthew Snelgrove",
-        distance: "2km",
+        distance: 2,
         avg_rating: 1,
         cuisineSpecialties: ["Pizza", "Cereal"],
       },
       user1: {
         username: "Andre Fong",
-        distance: "10.2km",
+        distance: 10.2,
         avg_rating: 2,
         cuisineSpecialties: ["Korean", "Chinese"],
       },
       user2: {
         username: "Victor Hurst",
-        distance: "99km",
+        distance: 99,
         avg_rating: 3,
         cuisineSpecialties: ["Italian"],
       },
       user3: {
         username: "Mock user 1",
-        distance: "42km",
+        distance: 42,
         avg_rating: 2.4,
         cuisineSpecialties: ["Vietnamese", "Chinese"],
       },
       user4: {
         username: "Mock user 2",
-        distance: "1.3km",
+        distance: 1.3,
         avg_rating: 5,
         cuisineSpecialties: ["Cereal", "Italian", "Pizza"],
       },
       user5: {
         username: "Mock user 3",
-        distance: "74km",
+        distance: 74,
         avg_rating: 3.9,
         cuisineSpecialties: ["Indian", "Vietnamese", "Italian", "Chinese", "Korean"],
       },
