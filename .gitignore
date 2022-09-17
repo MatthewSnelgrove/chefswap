@@ -22,6 +22,8 @@ node_modules/
 
 google-credentials.json
 
+.eslintrc.json
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

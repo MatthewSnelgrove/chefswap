@@ -23,19 +23,30 @@
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "express-session": "^1.17.3",
+    "geolib": "^3.3.3",
     "multer": "^1.4.5-lts.1",
     "multer-google-storage": "^1.3.0",
+    "node-fetch": "^3.2.10",
     "pg": "^8.8.0",
     "pg-pool": "^3.5.2",
     "react-router-dom": "^6.3.0",
+    "slugid": "^3.1.0",
     "snakeize": "^0.1.0",
+    "swagger-jsdoc": "^6.2.5",
+    "swagger-ui-express": "^4.5.0",
     "uuid": "^8.3.2",
-    "uuid4": "^2.0.3"
+    "uuid4": "^2.0.3",
+    "validator": "^13.7.0"
   },
   "engines": {
     "node": "v16.15.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.19"
+    "eslint": "^8.23.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.8",
+    "nodemon": "^2.0.19",
+    "prettier": "^2.7.1"
   }
 }
