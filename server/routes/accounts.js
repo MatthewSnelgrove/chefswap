@@ -165,7 +165,9 @@ router.get("/:slug", async (req, res) => {
               'address3', address3, 
               'city', address.city, 
               'province', address.province, 
-              'postal_code', address.postal_code
+              'postal_code', address.postal_code,
+              'latitude', address.latitude,
+              'longitude', address.longitude
             ) address 
             FROM account 
             JOIN address USING (address_uid) 
