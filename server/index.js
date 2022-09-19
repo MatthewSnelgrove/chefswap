@@ -61,8 +61,6 @@ import { router as sessionRouter } from "./routes/session.js";
 app.use("/api/v1/session", sessionRouter);
 import { router as accountsRouter } from "./routes/accounts.js";
 app.use("/api/v1/accounts", accountsRouter);
-import { router as manageAccountRouter } from "./routes/manage-account.js";
-app.use("/api/v1/manage-account", manageAccountRouter);
 import { router as mySwapsRouter } from "./routes/my-swaps.js";
 app.use("/api/v1/my-swaps", mySwapsRouter);
 
