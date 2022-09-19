@@ -8,11 +8,11 @@ dotenv.config();
 export const router = express.Router();
 
 router.get("/", async (req, res) => {
-  if (!res.session) {
+  if (!req.session.accountUid) {
     res.sendStatus(404);
     return;
   }
-  res.json(res.session);
+  res.json(req.session);
 });
 
 /**
@@ -64,6 +64,10 @@ router.delete("/", async (req, res) => {
     return;
   }
   req.session.destroy(() => {
-    res.sendStatus(204);
+    res
+      .clearCookie("connect.sid", {
+        path: "/",
+      })
+      .sendStatus(204);
   });
 });
