@@ -12,6 +12,7 @@ router.get("/", async (req, res) => {
     res.sendStatus(404);
     return;
   }
+  req.session.touch();
   res.json(req.session);
 });
 

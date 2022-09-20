@@ -76,6 +76,10 @@ export function validadtePostalCode(postalCode, error) {
 }
 //if strict, address must set values for all non-null fields (address1, city, province postalCode)
 export function validateAddress(address, error) {
+  if (!address) {
+    error.noAddress = true;
+    return;
+  }
   const { address1, address2, address3, city, province, postalCode } = address;
   //for non-null fieds, if req has field => validate value, else => check if strict mode
   validateAddress1(address1, error);
@@ -103,5 +107,10 @@ export function validateCircleRadius(circleRadius, error) {
     circleRadius > 3000
   ) {
     error.invalidRadius = true;
+  }
+}
+export function validateRating(rating, error) {
+  if (!rating || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+    error.invalidRating = true;
   }
 }
