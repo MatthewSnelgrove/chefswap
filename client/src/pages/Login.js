@@ -8,17 +8,19 @@ function Login() {
   }
 
   return (
-    // <form action="/api/auth/login" method="post" className="signup-login-form">
-    <form onSubmit={handleSubmit} className="signup-login-form">
-      <fieldset>
-        <legend>Login</legend>
+    <div className="form-container">
+      {/* <form action="/api/auth/login" method="post" className="signup-login-form"> */}
+      <form onSubmit={handleSubmit} className="signup-login-form">
+        <fieldset>
+          <legend>Login</legend>
 
-        <input type="text" id="username" name="username" placeholder="*Username" required />
-        <input type="password" id="password" name="password" placeholder="*Password" minLength={3} required />
-      </fieldset>
+          <input type="text" id="username" name="username" placeholder="*Username" required />
+          <input type="password" id="password" name="password" placeholder="*Password" minLength={3} required />
+        </fieldset>
 
-      <button type="submit" className="submit-btn">Submit</button>
-    </form>
+        <button type="submit" className="submit-btn">Submit</button>
+      </form>
+    </div>
   )
 }
 
