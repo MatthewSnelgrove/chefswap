@@ -9,14 +9,14 @@ import "../components/styles/CredentialField.scss";
  * @param {Function} validateFcn Input validation function from validationFunctions.js
  * @param {Number} size Percent width of input field
  */
-function CredentialField({ type = "text", label, validateFcn, size = 60 }) {
+function CredentialField({ type = "text", label, validateFcn, size = 100, onUpdate }) {
   const [error, setError] = useState({
     error: false,
     msg: "",
   });
   const [clicked, setClicked] = useState(false);
 
-  if (!label || !validateFcn || typeof validateFcn !== "function") {
+  if (!label || !validateFcn || !onUpdate || typeof validateFcn !== "function" || typeof onUpdate !== "function") {
     throw new Error("Missing arguments");
   }
 
@@ -49,8 +49,11 @@ function CredentialField({ type = "text", label, validateFcn, size = 60 }) {
     if (!inputValue) animateLabelDown();
 
     // validate input
-    setError(validateFcn(inputValue));
+    let newError = validateFcn(inputValue);
+    setError(newError);
     setClicked(true);
+
+    onUpdate(name, newError.error)
   }
 
   function handleInputChange() {

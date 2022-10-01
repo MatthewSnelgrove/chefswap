@@ -1,28 +1,35 @@
 .cred-modal-container {
-  // visibility: hidden;
   position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
+  
+  display: flex;
+  justify-content: center;
 
-  background-color: rgba(128, 128, 128, 0.701);
-  z-index: 10;
+  background-color: rgba(128, 128, 128, 0.3);
+  background-size: cover;
+
+  overflow: auto;
 }
 
 .popup {
-  position: fixed;
-  top: 15vh;
-  bottom: 15vh;
-  left: 25vw;
-  right: 25vw;
+  // position: absolute;
+  // top: 10vh;
+  // left: 25vw;
+  // right: 25vw;
+
+  width: 50%;
+  height: fit-content;
+  margin-top: 5%;
+  margin-bottom: 5%;
 
   background-color: white;
-  padding: 2% 3%;
+  padding: 2.5% 3%;
+  padding-bottom: 6%;
   border-radius: 20px;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 8px 15px;
-  
-  z-index: 11;
 }
 
 .cred-modal-header {
@@ -33,7 +40,7 @@
   width: 100%;
   padding-bottom: 8px;
   border-bottom: 1px solid black;
-  margin-bottom: 10px;
+  margin-bottom: 25px;
 }
 
 .header-title {
@@ -57,5 +64,5 @@
 
   max-height: 80%;
   width: 100%;
-  overflow: auto;
+  // overflow-y: auto;
 }
