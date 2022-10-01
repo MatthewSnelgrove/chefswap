@@ -7,6 +7,7 @@
  * @param {String} text 3 <= length <= 30
  */
 export function validateUsername(text) {
+  console.log(text);
   if (text.length < 3) {
     return {
       error: true,
@@ -17,6 +18,12 @@ export function validateUsername(text) {
     return {
       error: true,
       msg: "Username too long",
+    }
+  }
+  if (text.match(/[!*'();:@&=+$,/?%#[\]]/)) {
+    return {
+      error: true,
+      msg: "Username contains illegal characters",
     }
   }
   else return {
