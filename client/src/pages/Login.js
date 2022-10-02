@@ -15,7 +15,8 @@ function Login() {
 
     // Check for form errors
     if (Object.values(hasError).includes(true)) {
-      alert("Form error found");    // replace
+      // TODO: Replace with error message shown on screen
+      alert("Form error found");
     }
 
     else {
@@ -45,7 +46,7 @@ function Login() {
             onUpdate={handleErrorUpdate} size={80} />
         </fieldset>
 
-        <button type="submit" className="submit-btn">Submit</button>
+        <button type="submit" className="submit-btn">Log in</button>
       </form>
     </Modal>
   )
