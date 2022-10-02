@@ -1,0 +1,357 @@
+openapi: 3.0.0
+info:
+  version: "1"
+  title: chefswap
+  description: The API for chefswap
+servers:
+  - url: http://localhost:3001/api/v1
+    description: development
+paths:
+  /accounts:
+    get:
+      summary: Read public data from accounts
+      parameters:
+        - in: query
+          name: username
+          description: username of account
+          schema:
+            $ref: "#/components/schemas/Username"
+        - in: query
+          name: maxDistance
+          description: max distance (measured from centre of circle)
+          schema:
+            type: integer
+            format: int32
+            minimum: 50
+            maximum: 3000
+        - in: query
+          name: minRating
+          description: min rating of accounts
+          schema:
+            type: number
+            format: float
+            minimum: 1
+            maximum: 5
+        - in: query
+          name: maxRating
+          description: max rating of accounts
+          schema:
+            type: number
+            format: float
+            minimum: 1
+            maximum: 5
+        - in: query
+          name: cuisinePreference
+          description: cuisine preferences of accounts
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/CuisineType"
+        - in: query
+          name: cuisine-speciality
+          description: cuisinSpeciality of accounts
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/CuisineType"
+        - in: query
+          name: offset
+          description: offset for filtering results
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: limit
+          description: max number of records to return
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: Public data from matching accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  required:
+                    - public
+                  properties:
+                    public:
+                      $ref: "#/components/schemas/AccountPublic"
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
+    post:
+      summary: Create an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Account"
+      responses:
+        201:
+          description: The account was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        400:
+          description: The request body is poorly formated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
+  /accounts/{accountUid}:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read an account
+      responses:
+        200:
+          description: The account corresponding to the provided uid. Includes only public information unless authenticated with target account.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Account"
+                  - $ref: "#/components/schemas/AccountPublic"
+        404:
+          description: No account found for the provided uid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: integer
+components:
+  schemas:
+    Image:
+      type: object
+      description: representation of image
+      required:
+        - imageUid
+        - accountUid
+        - imageLink
+        - imageName
+        - timestamp
+      properties:
+        imageUid:
+          readOnly: true
+          type: string
+          format: uuid
+        accountUid:
+          readOnly: true
+          type: string
+          format: uuid
+        imageLink:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/ImageLink"
+        imageName:
+          type: string
+        timestamp:
+          readOnly: true
+          type: string
+          format: date-time
+    ImageLink:
+      type: string
+      description: link to image in google cloud storage
+      pattern: '^https:\/\/storage\.googleapis\.com\/.+$'
+    CuisineType:
+      type: string
+      enum:
+        - Indian
+        - Italian
+    AccountPublic:
+      type: object
+      description: public data available without authentication
+      required:
+        - accountUid
+        - username
+        - numRatings
+        - createTime
+        - updateTime
+      properties:
+        accountUid:
+          readOnly: true
+          type: string
+          format: uuid
+        username:
+          $ref: "#/components/schemas/Username"
+        bio:
+          type: string
+          maxLength: 500
+        circle:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/Circle"
+        pfpLink:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/ImageLink"
+        avgRating:
+          readOnly: true
+          type: number
+          minimum: 1
+          maximum: 5
+        numRatings:
+          readOnly: true
+          type: integer
+          minimum: 0
+        createTime:
+          readOnly: true
+          type: string
+          format: date-time
+        updateTime:
+          readOnly: true
+          type: string
+          format: date-time
+        images:
+          readOnly: true
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
+        cuisinePreferences:
+          type: array
+          items:
+            $ref: "#/components/schemas/CuisineType"
+        cuisineSpecialities:
+          type: array
+          items:
+            $ref: "#/components/schemas/CuisineType"
+    Account:
+      type: object
+      required:
+        - public
+        - email
+        - password
+      properties:
+        public:
+          $ref: "#/components/schemas/AccountPublic"
+        email:
+          type: string
+          format: email
+          maxLength: 80
+        password:
+          writeOnly: true
+          allOf:
+            - $ref: "#/components/schemas/Password"
+        address:
+          $ref: "#/components/schemas/Address"
+    Address:
+      type: object
+      required:
+        - addressUid
+        - address1
+        - city
+        - province
+        - postalCode
+      properties:
+        addressUid:
+          readOnly: true
+          type: string
+          format: uuid
+        address1:
+          type: string
+          maxLength: 80
+        address2:
+          type: string
+          maxLength: 80
+        address3:
+          type: string
+          maxLength: 80
+        city:
+          type: string
+          maxLength: 35
+        province:
+          type: string
+          enum:
+            - Ontario
+            - Quebec
+            - British Columbia
+            - Alberta
+            - Manitoba
+            - Saskatchewan
+            - Nova Scotia
+            - New Brusnwick
+            - Newfoundland and Labrador
+            - Prince Edward Island
+            - Northwest Territories
+            - Yukon
+            - Nunavut
+        postalCode:
+          type: string
+          pattern: '^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJ-NPRSTV-Z]\d[ABCEGHJ-NPRSTV-Z]\d$'
+    Circle:
+      type: object
+      required:
+        - circleUid
+        - radius
+        - latitude
+        - longitude
+      properties:
+        circleUid:
+          type: string
+          format: uuid
+        radius:
+          type: integer
+          minimum: 50
+          maximum: 3000
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+    Username:
+      type: string
+      minLength: 3
+      maxLength: 80
+      pattern: '[^!*''();:@&=+$,/?%#[\]]{3-80}' #can't conatain any url reserved characters
+    Password:
+      type: string
+      minLength: 8
+      maxLength: 50
+      pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,50}$' #must contain lowercase, uppercase, number
+    Errors:
+      type: array
+      items:
+        $ref: "#/components/schemas/Error"
+    Error:
+      type: object
+      required:
+        - message
+        - detail
+      properties:
+        message:
+          type: string
+        detail:
+          type: string
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+security:
+  - ApiKey: [thisisanapikey]
