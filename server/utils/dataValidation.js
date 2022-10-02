@@ -70,7 +70,12 @@ export function validadteProvince(province, error) {
   }
 }
 export function validadtePostalCode(postalCode, error) {
-  if (!postalCode || !validator.isPostalCode(postalCode, "CA")) {
+  if (
+    !postalCode ||
+    !/^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJ-NPRSTV-Z]\d[ABCEGHJ-NPRSTV-Z]\d$/.test(
+      postalCode
+    )
+  ) {
     error.invalidPostalCode = true;
   }
 }
