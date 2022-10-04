@@ -36,7 +36,7 @@ import { validateUsername2 } from "../middlewares/dataValidation.js";
 router.get("/", async (req, res, next) => {
   const {
     username,
-    maxDistance,
+    maxDistanceFrom,
     minRating,
     maxRating,
     cuisinePreference,
@@ -88,74 +88,101 @@ router.get("/", async (req, res, next) => {
                         LEFT JOIN account_image USING (account_uid)
                         LEFT JOIN account_cuisine_preference USING (account_uid)
                         LEFT JOIN account_cuisine_speciality USING (account_uid)`;
-  let fliterString = ``;
-  let numFilters = 0;
-  let filterArray = [];
+  let filterString = ``;
+  let numParams = 0;
+  let paramArray = [];
   //filter by username
   if (username) {
-    numFilters++;
-    fliterString += fliterString
-      ? ` WHERE account.username=$${numFilters} `
-      : ` AND account.username=$${numFilters} `;
-    filterArray.concat(username);
+    numParams++;
+    filterString += filterString
+      ? ` AND username = $${numParams} `
+      : ` WHERE username = $${numParams} `;
+    paramArray.push(username);
   }
-  //If not signed in, do nothing
-  //If signed in filter by distance
-  if (maxDistance && req.session.accountUid) {
-    numFilters += 4;
-    const position = await pool.query(
-      `SELECT address.latitude, address.longitude 
-      FROM account JOIN address USING (account_uid)
-      WHERE account_uid=$1`,
-      [req.session.accountUid]
-    );
+  // filter by distance from location
+  if (
+    maxDistanceFrom &&
+    maxDistanceFrom.distance &&
+    maxDistanceFrom.latitude &&
+    maxDistanceFrom.longitude
+  ) {
+    //gets min/max lat/long of square circumscribed over circle of radius distance
     const geoBounds = getBoundsOfDistance(
-      { latitude: position.latitude, longitude: position.longitude },
-      maxDistance
+      {
+        latitude: maxDistanceFrom.latitude,
+        longitude: maxDistanceFrom.longitude,
+      },
+      maxDistanceFrom.distance
     );
-    fliterString += fliterString
-      ? ` WHERE circle.latitude>$${numFilters - 3} 
-      AND circle.latitude<$${numFilters - 2} 
-      AND circle.longitude>$${numFilters - 1} 
-      AND circle.longitude<$${numFilters} `
-      : ` AND circle.latitude>$${numFilters - 3} 
-      AND circle.latitude<$${numFilters - 2} 
-      AND circle.longitude>$${numFilters - 1} 
-      AND circle.longitude<$${numFilters} `;
-    filterArray.concat([
+    numParams += 4;
+    filterString += filterString
+      ? ` AND circle.latitude>$${numParams - 3} 
+      AND circle.latitude<$${numParams - 2} 
+      AND circle.longitude>$${numParams - 1} 
+      AND circle.longitude<$${numParams} `
+      : ` WHERE circle.latitude>$${numParams - 3} 
+      AND circle.latitude<$${numParams - 2} 
+      AND circle.longitude>$${numParams - 1} 
+      AND circle.longitude<$${numParams} `;
+    paramArray.push(
       geoBounds[0].latitude,
       geoBounds[1].latitude,
       geoBounds[0].longitude,
-      geoBounds[1].longitude,
-    ]);
+      geoBounds[1].longitude
+    );
   }
   if (minRating) {
-    numFilters++;
-    fliterString += fliterString
-      ? ` WHERE account.avg_rating>$${numFilters} `
-      : ` AND account.avg_rating>$${numFilters} `;
-    filterArray.concat(minRating);
+    numParams++;
+    filterString += filterString
+      ? ` AND account.avg_rating>=$${numParams} `
+      : ` WHERE account.avg_rating>=$${numParams} `;
+    paramArray.push(minRating);
   }
-  if (minRating) {
-    numFilters++;
-    fliterString += fliterString
-      ? ` WHERE account.avg_rating<$${numFilters} `
-      : ` AND account.avg_rating<$${numFilters} `;
-    filterArray.concat(maxRating);
+  if (maxRating) {
+    numParams++;
+    filterString += filterString
+      ? ` AND account.avg_rating<=$${numParams} `
+      : ` WHERE account.avg_rating<=$${numParams} `;
+    paramArray.push(maxRating);
   }
   if (cuisinePreference) {
-    numFilters++;
-    fliterString += fliterString
-      ? ` WHERE account.avg_rating<$${numFilters} `
-      : ` AND account.avg_rating<$${numFilters} `;
-    filterArray.concat(maxRating);
+    const prefArr = [].concat(cuisinePreference);
+    filterString += filterString ? " AND (" : " WHERE (";
+    let flag = false;
+    for (const preference of prefArr) {
+      numParams++;
+      filterString += flag
+        ? ` OR (account_cuisine_preference.preferences)::jsonb ? $${numParams} `
+        : ` (account_cuisine_preference.preferences)::jsonb ? $${numParams} `;
+      paramArray.push(preference);
+      flag = true;
+    }
+    filterString += ")";
   }
-
-  const accounts = camelize(await pool.query(queryString)).rows;
+  if (cuisineSpeciality) {
+    if (Array.isArray(cuisineSpeciality)) {
+      for (const speciality of cuisineSpeciality) {
+        numParams++;
+        filterString += filterString
+          ? ` AND (account_cuisine_speciality.specialities)::jsonb ? $${numParams} `
+          : ` WHERE (account_cuisine_speciality.specialities)::jsonb ? $${numParams} `;
+        paramArray.push(speciality);
+      }
+    } else {
+      numParams++;
+      filterString += filterString
+        ? ` AND (account_cuisine_speciality.specialities)::jsonb ? $${numParams} `
+        : ` WHERE (account_cuisine_speciality.specialities)::jsonb ? $${numParams} `;
+      paramArray.push(cuisineSpeciality);
+    }
+  }
+  console.log(filterString, paramArray);
+  const accounts = camelize(
+    await pool.query(`${queryString} ${filterString}`, paramArray)
+  ).rows;
   for (const account in accounts) {
     await formatAccountData(accounts[account]);
   }
-  console.log(accounts);
   res.status(200).json(accounts);
 });
 
