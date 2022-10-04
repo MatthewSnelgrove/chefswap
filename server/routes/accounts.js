@@ -36,11 +36,14 @@ import { validateUsername2 } from "../middlewares/dataValidation.js";
 router.get("/", async (req, res, next) => {
   const {
     username,
-    maxDistanceFrom,
+    includeDistanceFrom,
+    maxDistance,
     minRating,
     maxRating,
     cuisinePreference,
     cuisineSpeciality,
+    orderBy,
+    key,
   } = req.query;
   const queryString = `WITH account_image AS (
                         SELECT account_uid, 
@@ -63,6 +66,17 @@ router.get("/", async (req, res, next) => {
                         FROM cuisine_speciality JOIN account USING (account_uid)
                         GROUP BY account_uid
                       )
+                      ${
+                        includeDistanceFrom
+                          ? `, distance AS (
+                        SELECT account_uid, 
+                        ST_DistanceSphere(
+                          ST_MakePoint($1, $2), ST_MakePoint(circle.longitude, circle.latitude)
+                        ) AS distance
+                        FROM account JOIN circle USING (circle_uid)
+                      )`
+                          : ``
+                      }
                       SELECT 
                         json_build_object(
                           'account_uid', account.account_uid, 
@@ -82,15 +96,33 @@ router.get("/", async (req, res, next) => {
                           'images', account_image.images,
                           'cuisine_preferences', account_cuisine_preference.preferences,
                           'cuisine_specialities', account_cuisine_speciality.specialities
+                          ${
+                            includeDistanceFrom
+                              ? `, 'distance', distance.distance`
+                              : ``
+                          }
                         ) public 
                         FROM account 
                         LEFT JOIN circle USING (circle_uid)
                         LEFT JOIN account_image USING (account_uid)
                         LEFT JOIN account_cuisine_preference USING (account_uid)
-                        LEFT JOIN account_cuisine_speciality USING (account_uid)`;
+                        LEFT JOIN account_cuisine_speciality USING (account_uid)
+                        ${
+                          includeDistanceFrom
+                            ? ` LEFT JOIN distance USING (account_uid)`
+                            : ``
+                        }
+                        `;
   let filterString = ``;
-  let numParams = 0;
+  let numParams = includeDistanceFrom ? 2 : 0;
   let paramArray = [];
+  if (includeDistanceFrom) {
+    paramArray.push(
+      includeDistanceFrom.longitude,
+      includeDistanceFrom.latitude
+    );
+  }
+
   //filter by username
   if (username) {
     numParams++;
@@ -99,37 +131,14 @@ router.get("/", async (req, res, next) => {
       : ` WHERE username = $${numParams} `;
     paramArray.push(username);
   }
-  // filter by distance from location
-  if (
-    maxDistanceFrom &&
-    maxDistanceFrom.distance &&
-    maxDistanceFrom.latitude &&
-    maxDistanceFrom.longitude
-  ) {
-    //gets min/max lat/long of square circumscribed over circle of radius distance
-    const geoBounds = getBoundsOfDistance(
-      {
-        latitude: maxDistanceFrom.latitude,
-        longitude: maxDistanceFrom.longitude,
-      },
-      maxDistanceFrom.distance
-    );
-    numParams += 4;
+  //must also have 'includeDistanceFrom' query param
+  //filter by distance from location specified in 'includeDistannceFrom' to centre of accounts' circles
+  if (maxDistance && includeDistanceFrom) {
+    numParams++;
     filterString += filterString
-      ? ` AND circle.latitude>$${numParams - 3} 
-      AND circle.latitude<$${numParams - 2} 
-      AND circle.longitude>$${numParams - 1} 
-      AND circle.longitude<$${numParams} `
-      : ` WHERE circle.latitude>$${numParams - 3} 
-      AND circle.latitude<$${numParams - 2} 
-      AND circle.longitude>$${numParams - 1} 
-      AND circle.longitude<$${numParams} `;
-    paramArray.push(
-      geoBounds[0].latitude,
-      geoBounds[1].latitude,
-      geoBounds[0].longitude,
-      geoBounds[1].longitude
-    );
+      ? ` AND distance<=$${numParams} `
+      : ` WHERE distance<=$${numParams} `;
+    paramArray.push(maxDistance);
   }
   if (minRating) {
     numParams++;
@@ -146,6 +155,7 @@ router.get("/", async (req, res, next) => {
     paramArray.push(maxRating);
   }
   if (cuisinePreference) {
+    //Create array of 1 or many preferences
     const prefArr = [].concat(cuisinePreference);
     filterString += filterString ? " AND (" : " WHERE (";
     let flag = false;
@@ -160,23 +170,34 @@ router.get("/", async (req, res, next) => {
     filterString += ")";
   }
   if (cuisineSpeciality) {
-    if (Array.isArray(cuisineSpeciality)) {
-      for (const speciality of cuisineSpeciality) {
-        numParams++;
-        filterString += filterString
-          ? ` AND (account_cuisine_speciality.specialities)::jsonb ? $${numParams} `
-          : ` WHERE (account_cuisine_speciality.specialities)::jsonb ? $${numParams} `;
-        paramArray.push(speciality);
-      }
-    } else {
+    //Create array of 1 or many specialities
+    const specArr = [].concat(cuisineSpeciality);
+    filterString += filterString ? " AND (" : " WHERE (";
+    let flag = false;
+    for (const speciality of prefArr) {
       numParams++;
-      filterString += filterString
-        ? ` AND (account_cuisine_speciality.specialities)::jsonb ? $${numParams} `
-        : ` WHERE (account_cuisine_speciality.specialities)::jsonb ? $${numParams} `;
-      paramArray.push(cuisineSpeciality);
+      filterString += flag
+        ? ` OR (account_cuisine_speciality.specialities)::jsonb ? $${numParams} `
+        : ` (account_cuisine_speciality.specialities)::jsonb ? $${numParams} `;
+      paramArray.push(speciality);
+      flag = true;
     }
+    filterString += ")";
   }
-  console.log(filterString, paramArray);
+  console.log(queryString, filterString, paramArray);
+  let orderString = "";
+  switch (orderBy) {
+    case "avgRatingAsc":
+      orderString = ` ORDER BY account.avg_rating, account.account_uid `;
+    case "avgRatingDesc":
+      orderString = ` ORDER BY account.avg_rating DESC, account.account_uid `;
+    case "distanceAsc":
+      orderString = ` ORDER BY distance.distance, account.account_uid`;
+    case "distanceDesc":
+      orderString = ` ORDER BY distance.distance DESC, account.account_uid`;
+    default:
+      orderString = ` ORDER BY account.account_uid`;
+  }
   const accounts = camelize(
     await pool.query(`${queryString} ${filterString}`, paramArray)
   ).rows;
@@ -202,6 +223,7 @@ router.post("/", validateRegistrationData, async (req, res, next) => {
   const response = await fetch(url);
   const location = (await response.json()).results[0].geometry.location;
   const passhash = await bcrypt.hash(password, 12);
+  await pool.query("BEGIN");
   const addressUid = camelize(
     await pool.query(
       `INSERT INTO address(
@@ -213,7 +235,7 @@ router.post("/", validateRegistrationData, async (req, res, next) => {
         postal_code, 
         latitude, 
         longitude) 
-        VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING address_uid`,
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         address1,
         address2,
@@ -226,18 +248,19 @@ router.post("/", validateRegistrationData, async (req, res, next) => {
       ]
     )
   ).rows[0].addressUid;
-
   const account = camelize(
     await pool.query(
-      `BEGIN
-
-      INSERT INTO account (username, email, address_uid, passhash)
+      `INSERT INTO account (username, email, address_uid, passhash)
      VALUES ($1, $2, $3, $4) RETURNING *`,
       [username, email, addressUid, passhash]
     )
   ).rows[0];
-  await formatAccountData(account);
-  res.status(201).json(account);
+  if (account) {
+    await pool.query("COMMIT");
+    await formatAccountData(account);
+    res.status(201).json(account);
+  }
+  next();
 });
 
 /**
@@ -548,8 +571,8 @@ router.post("/:slug/circle", checkAuth, async (req, res) => {
   ).rows[0];
   const circleCentre = computeDestinationPoint(
     {
-      latitude: position.latitude,
-      longitude: position.longitude,
+      latitude: position.latitude | 0,
+      longitude: position.longitude | 0,
     },
     //multiply radius by sqrt of random number from 0-1 to prevent clumping around centre
     Math.sqrt(Math.random()) * radius,

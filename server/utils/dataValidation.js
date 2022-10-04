@@ -109,7 +109,7 @@ export function validateCircleRadius(circleRadius, error) {
     !circleRadius ||
     isNaN(circleRadius) ||
     circleRadius < 50 ||
-    circleRadius > 3000
+    circleRadius > 5000
   ) {
     error.invalidRadius = true;
   }

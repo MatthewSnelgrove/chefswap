@@ -20,24 +20,18 @@ paths:
           schema:
             $ref: "#/components/schemas/Username"
         - in: query
-          name: maxDistanceFrom
-          description: filter for accounts with a circle centred less than max distance from specified latitude/longitude
+          name: includeDistanceFrom
+          description: distance from specified latitude/longitude to centre of account's circle will be added to response body
           explode: true
           style: deepObject
-          schema: #if maxDistanceFrom exists, it must have all of distance, latitude, and longitude
+          schema: #if includeDistance exists, it must have both latitude and longitude
             oneOf:
               - type: object
                 additionalProperties: false
                 required:
-                  - distance
                   - latitude
                   - longitude
                 properties:
-                  distance:
-                    type: integer
-                    format: int32
-                    minimum: 50
-                    maximum: 20000
                   latitude:
                     type: number
                     format: float
@@ -82,19 +76,61 @@ paths:
             items:
               $ref: "#/components/schemas/CuisineType"
         - in: query
-          name: offset
-          description: offset for filtering results
+          name: maxDistance
+          description: max distance to account
           schema:
             type: integer
             format: int32
-            default: 0
+            minimum: 50
+            maximum: 2000000000
         - in: query
-          name: limit
-          description: max number of records to return
+          name: orderBy
+          description: how to order results
           schema:
-            type: integer
-            format: int32
-            default: 40
+            type: string
+            enum:
+              - avgRatingAsc
+              - avgRatingDesc
+              - distanceAsc
+              - distanceDesc
+        - in: query
+          name: keyset
+          description: max item before first result of new query
+          explode: true
+          style: deepObject
+          schema:
+            oneOf:
+              - type: object #no ordering (just order by uuidsAsc)
+                additionalProperties: false
+                properties:
+                  accountUid:
+                    type: string
+                    format: uuid
+                    default: 00000000-0000-0000-0000-000000000000
+              - type: object #ordering by distance
+                additionalProperties: false
+                properties:
+                  accountUid:
+                    type: string
+                    format: uuid
+                    default: 00000000-0000-0000-0000-000000000000
+                  distance:
+                    oneOf:
+                      - type: integer
+                        format: int32
+              - type: object #ordering by rating
+                additionalProperties: false
+                properties:
+                  accountUid:
+                    type: string
+                    format: uuid
+                    default: 00000000-0000-0000-0000-000000000000
+                  avgRating:
+                    type: number
+                    format: float
+              - type: object #workaround to have optional param with required fields
+                nullable: true
+                additionalProperties: false
       responses:
         200:
           description: Public data from matching accounts
@@ -371,9 +407,11 @@ components:
     Error:
       type: object
       required:
+        - path
         - message
-        - detail
       properties:
+        path:
+          type: string
         message:
           type: string
         detail:
