@@ -30,7 +30,6 @@ app.use(
     extended: true,
   })
 );
-
 app.use(
   "/docs",
   swaggerUi.serve,
@@ -69,7 +68,7 @@ app.use(
 app.use(
   OpenApiValidator.middleware({
     apiSpec: "./server/openapi.yaml",
-    validateRequests: false, // (default)
+    validateRequests: true, // (default)
     validateResponses: false, // false by default
   })
 );

@@ -4,6 +4,9 @@ info:
   title: chefswap
   description: The API for chefswap
 servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/MATTHEWS13542/chefswap/1
   - url: http://localhost:3001/api/v1
     description: development
 paths:
@@ -17,13 +20,37 @@ paths:
           schema:
             $ref: "#/components/schemas/Username"
         - in: query
-          name: maxDistance
-          description: max distance (measured from centre of circle)
-          schema:
-            type: integer
-            format: int32
-            minimum: 50
-            maximum: 3000
+          name: maxDistanceFrom
+          description: filter for accounts with a circle centred less than max distance from specified latitude/longitude
+          explode: true
+          style: deepObject
+          schema: #if maxDistanceFrom exists, it must have all of distance, latitude, and longitude
+            oneOf:
+              - type: object
+                additionalProperties: false
+                required:
+                  - distance
+                  - latitude
+                  - longitude
+                properties:
+                  distance:
+                    type: integer
+                    format: int32
+                    minimum: 50
+                    maximum: 20000
+                  latitude:
+                    type: number
+                    format: float
+                    minimum: -90
+                    maximum: 90
+                  longitude:
+                    type: number
+                    format: float
+                    minimum: -180
+                    maximum: 180
+              - type: object #workaround to have optional param with required fields
+                nullable: true
+                additionalProperties: false
         - in: query
           name: minRating
           description: min rating of accounts
@@ -48,8 +75,8 @@ paths:
             items:
               $ref: "#/components/schemas/CuisineType"
         - in: query
-          name: cuisine-speciality
-          description: cuisinSpeciality of accounts
+          name: cuisineSpeciality
+          description: cuisineSpecialities of accounts
           schema:
             type: array
             items:
@@ -60,12 +87,14 @@ paths:
           schema:
             type: integer
             format: int32
+            default: 0
         - in: query
           name: limit
           description: max number of records to return
           schema:
             type: integer
             format: int32
+            default: 40
       responses:
         200:
           description: Public data from matching accounts
@@ -183,6 +212,7 @@ components:
       enum:
         - Indian
         - Italian
+        - Greek
     AccountPublic:
       type: object
       description: public data available without authentication
@@ -328,7 +358,7 @@ components:
       type: string
       minLength: 3
       maxLength: 80
-      pattern: '[^!*''();:@&=+$,/?%#[\]]{3-80}' #can't conatain any url reserved characters
+      pattern: '[^!*''();:@&=+$,/?%#[\]]{3,80}' #can't conatain any url reserved characters
     Password:
       type: string
       minLength: 8
