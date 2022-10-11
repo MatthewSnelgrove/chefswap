@@ -18,7 +18,10 @@ paths:
           name: username
           description: username of account
           schema:
-            $ref: "#/components/schemas/Username"
+            type: string
+            minLength: 3
+            maxLength: 80
+            pattern: '[^!*''();:@&=+$,/?%#[\]]{3,80}' #can't conatain any url reserved characters
         - in: query
           name: includeDistanceFrom
           description: distance from specified latitude/longitude to centre of account's circle will be added to response body
@@ -94,13 +97,13 @@ paths:
               - distanceAsc
               - distanceDesc
         - in: query
-          name: keyset
+          name: key
           description: max item before first result of new query
           explode: true
           style: deepObject
           schema:
             oneOf:
-              - type: object #no ordering (just order by uuidsAsc)
+              - type: object #no ordering (just order by uuidAsc)
                 additionalProperties: false
                 properties:
                   accountUid:
@@ -128,9 +131,15 @@ paths:
                   avgRating:
                     type: number
                     format: float
-              - type: object #workaround to have optional param with required fields
-                nullable: true
-                additionalProperties: false
+        - in: query
+          name: limit
+          description: number of records to retrieve
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 1000
+            default: 20
       responses:
         200:
           description: Public data from matching accounts
@@ -409,6 +418,7 @@ components:
       required:
         - path
         - message
+        - detail
       properties:
         path:
           type: string

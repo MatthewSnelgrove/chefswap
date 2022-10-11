@@ -44,6 +44,7 @@ router.get("/", async (req, res, next) => {
     cuisineSpeciality,
     orderBy,
     key,
+    limit,
   } = req.query;
   const queryString = `WITH account_image AS (
                         SELECT account_uid, 
@@ -125,6 +126,7 @@ router.get("/", async (req, res, next) => {
 
   //filter by username
   if (username) {
+    console.log(username);
     numParams++;
     filterString += filterString
       ? ` AND username = $${numParams} `
@@ -136,22 +138,22 @@ router.get("/", async (req, res, next) => {
   if (maxDistance && includeDistanceFrom) {
     numParams++;
     filterString += filterString
-      ? ` AND distance<=$${numParams} `
-      : ` WHERE distance<=$${numParams} `;
+      ? ` AND distance <= $${numParams} `
+      : ` WHERE distance <= $${numParams} `;
     paramArray.push(maxDistance);
   }
   if (minRating) {
     numParams++;
     filterString += filterString
-      ? ` AND account.avg_rating>=$${numParams} `
-      : ` WHERE account.avg_rating>=$${numParams} `;
+      ? ` AND account.avg_rating >= $${numParams} `
+      : ` WHERE account.avg_rating >= $${numParams} `;
     paramArray.push(minRating);
   }
   if (maxRating) {
     numParams++;
     filterString += filterString
-      ? ` AND account.avg_rating<=$${numParams} `
-      : ` WHERE account.avg_rating<=$${numParams} `;
+      ? ` AND account.avg_rating <= $${numParams} `
+      : ` WHERE account.avg_rating <= $${numParams} `;
     paramArray.push(maxRating);
   }
   if (cuisinePreference) {
@@ -169,6 +171,68 @@ router.get("/", async (req, res, next) => {
     }
     filterString += ")";
   }
+  if (key) {
+    if (key.distance) {
+      switch (orderBy) {
+        case "distanceAsc":
+          numParams += 2;
+          paramArray.push(key.distance, key.accountUid);
+          filterString += filterString
+            ? ` AND (distance > $${numParams - 1} OR (distance = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`
+            : ` WHERE (distance > $${numParams - 1} OR (distance = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`;
+        case "distanceDesc":
+          numParams += 2;
+          paramArray.push(key.distance, key.accountUid);
+          filterString += filterString
+            ? ` AND (distance < $${numParams - 1} OR (distance = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`
+            : ` WHERE (distance < $${numParams - 1} OR (distance = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`;
+        default:
+          next({
+            message: "invalid query",
+            detail: `query param orderBy must equal 'distance' to paginate by distance`,
+          });
+          return;
+      }
+    }
+    if (key.avgRating) {
+      switch (orderBy) {
+        case "avgRatingAsc":
+          numParams += 2;
+          paramArray.push(key.rating, key.accountUid);
+          filterString += filterString
+            ? ` AND (avg_rating > $${numParams - 1} OR (avg_rating = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`
+            : ` WHERE (avg_rating > $${numParams - 1} OR (avg_rating = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`;
+        case "avgRatingDesc":
+          numParams += 2;
+          paramArray.push(key.rating, key.accountUid);
+          filterString += filterString
+            ? ` AND (avg_rating < $${numParams - 1} OR (avg_rating = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`
+            : ` WHERE (avg_rating < $${numParams - 1} OR (avg_rating = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`;
+        default:
+          next({
+            message: "invalid query",
+            detail: `query param orderBy must equal 'avgRating' to paginate by avgRating`,
+          });
+          return;
+      }
+    }
+  }
   if (cuisineSpeciality) {
     //Create array of 1 or many specialities
     const specArr = [].concat(cuisineSpeciality);
@@ -184,22 +248,54 @@ router.get("/", async (req, res, next) => {
     }
     filterString += ")";
   }
-  console.log(queryString, filterString, paramArray);
+  // console.log(queryString, filterString, paramArray);
   let orderString = "";
   switch (orderBy) {
     case "avgRatingAsc":
       orderString = ` ORDER BY account.avg_rating, account.account_uid `;
+      break;
     case "avgRatingDesc":
       orderString = ` ORDER BY account.avg_rating DESC, account.account_uid `;
+      break;
     case "distanceAsc":
-      orderString = ` ORDER BY distance.distance, account.account_uid`;
+      //query must have includeDistanceFrom query param to order by distance
+      if (includeDistanceFrom) {
+        orderString = ` ORDER BY distance.distance, account.account_uid`;
+        break;
+      } else {
+        next({
+          message: "invalid query params",
+          detail:
+            "query params includeDistanceFrom[latitude] and includeDistanceFrom[longitude] are required to order by distance",
+        });
+        return;
+      }
     case "distanceDesc":
-      orderString = ` ORDER BY distance.distance DESC, account.account_uid`;
+      //query must have includeDistanceFrom query param to order by distance
+      if (includeDistanceFrom) {
+        orderString = ` ORDER BY distance.distance DESC, account.account_uid`;
+        break;
+      } else {
+        next({
+          message: "invalid query params",
+          detail:
+            "query params includeDistanceFrom[latitude] and includeDistanceFrom[longitude] are required to order by distance",
+        });
+        return;
+      }
     default:
       orderString = ` ORDER BY account.account_uid`;
   }
+  numParams++;
+  paramArray.push(limit);
+  // console.log(
+  //   `${queryString} ${filterString} ${orderString} LIMIT $${numParams}`
+  // );
   const accounts = camelize(
-    await pool.query(`${queryString} ${filterString}`, paramArray)
+    await pool.query(
+      `${queryString} ${filterString} ${orderString} LIMIT $${numParams}`,
+      paramArray
+    )
   ).rows;
   for (const account in accounts) {
     await formatAccountData(accounts[account]);
@@ -216,12 +312,12 @@ router.get("/", async (req, res, next) => {
  * if invalid, sets field invalidFIELD to true where FIELD is username, password, email, address1,
  * city, province, or postalCode. also sets usernameTaken and emailTaken to true if username/email taken
  */
-router.post("/", validateRegistrationData, async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   const { username, email, password, address } = req.body;
   const { address1, address2, address3, city, province, postalCode } = address;
-  const url = addressToGmapsUrl(address);
-  const response = await fetch(url);
-  const location = (await response.json()).results[0].geometry.location;
+  const gmapsUrl = addressToGmapsUrl(address);
+  const gmapsData = await fetch(gmapsUrl);
+  const location = (await gmapsData.json()).results[0].geometry.location;
   const passhash = await bcrypt.hash(password, 12);
   await pool.query("BEGIN");
   const addressUid = camelize(
