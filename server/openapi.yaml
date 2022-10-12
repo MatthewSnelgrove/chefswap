@@ -12,7 +12,7 @@ servers:
 paths:
   /accounts:
     get:
-      summary: Read public data from accounts
+      summary: Read profile data from accounts
       parameters:
         - in: query
           name: username
@@ -142,17 +142,17 @@ paths:
             default: 20
       responses:
         200:
-          description: Public data from matching accounts
+          description: Profile data from matching accounts
           content:
             application/json:
               schema:
                 type: array
                 items:
                   required:
-                    - public
+                    - profile
                   properties:
-                    public:
-                      $ref: "#/components/schemas/AccountPublic"
+                    profile:
+                      $ref: "#/components/schemas/AccountProfile"
         500:
           description: Unexpected error
           content:
@@ -196,16 +196,22 @@ paths:
           type: string
           format: uuid
     get:
-      summary: Read an account
+      summary: Read an account. Returns all data in signed in as account and only profile data otherwise
       responses:
         200:
-          description: The account corresponding to the provided uid. Includes only public information unless authenticated with target account.
+          description: The account corresponding to the provided uid. Includes only profile information unless authenticated with target account.
           content:
             application/json:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/Account"
-                  - $ref: "#/components/schemas/AccountPublic"
+                  - $ref: "#/components/schemas/AccountProfile"
+        400:
+          description: accountUid is not a valid uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
         404:
           description: No account found for the provided uid
           content:
@@ -218,6 +224,100 @@ paths:
             application/json:
               schema:
                 type: integer
+  /accounts/{accountUid}/username:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read username of an account.
+      responses:
+        200:
+          description: The username of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Username"
+        400:
+          description: accountUid is not a valid uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
+        404:
+          description: No account found for the provided uid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: integer
+    put:
+      summary: Update the username of an account.
+      responses:
+        200:
+          description: The updated username of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Username"
+        400:
+          description: accountUid is not a valid uuid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
+        401:
+          description: client not signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
+        403:
+          description: client signed in, but not as targetted account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
+        404:
+          description: No account found for the provided uid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
+        409:
+          description: username taken
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: integer
+  /session:
+    post:
+      summary: Update the username of an account.
+      responses:
+        200:
+          description: The updated username of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Username"
 components:
   schemas:
     Image:
@@ -258,15 +358,20 @@ components:
         - Indian
         - Italian
         - Greek
-    AccountPublic:
+    AccountProfile:
       type: object
-      description: public data available without authentication
+      description: profile data available without authentication
       required:
         - accountUid
         - username
+        - bio
+        - circle
         - numRatings
         - createTime
         - updateTime
+        - images
+        - cuisinePreferences
+        - cuisineSpecialities
       properties:
         accountUid:
           readOnly: true
@@ -278,9 +383,7 @@ components:
           type: string
           maxLength: 500
         circle:
-          readOnly: true
-          allOf:
-            - $ref: "#/components/schemas/Circle"
+          $ref: "#/components/schemas/Circle"
         pfpLink:
           readOnly: true
           allOf:
@@ -308,22 +411,25 @@ components:
           items:
             $ref: "#/components/schemas/Image"
         cuisinePreferences:
+          readOnly: true
           type: array
           items:
             $ref: "#/components/schemas/CuisineType"
         cuisineSpecialities:
+          readOnly: true
           type: array
           items:
             $ref: "#/components/schemas/CuisineType"
     Account:
       type: object
       required:
-        - public
+        - profile
         - email
         - password
+        - address
       properties:
-        public:
-          $ref: "#/components/schemas/AccountPublic"
+        profile:
+          $ref: "#/components/schemas/AccountProfile"
         email:
           type: string
           format: email
@@ -387,6 +493,7 @@ components:
         - longitude
       properties:
         circleUid:
+          readOnly: true
           type: string
           format: uuid
         radius:
@@ -394,9 +501,11 @@ components:
           minimum: 50
           maximum: 3000
         latitude:
+          readOnly: true
           type: number
           format: float
         longitude:
+          readOnly: true
           type: number
           format: float
     Username:

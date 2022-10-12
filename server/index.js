@@ -96,13 +96,23 @@ app.use("/api/v1/swaps", swapsRouter);
 app.use((err, req, res, next) => {
   //if multiple errors (from openapi validator) return those errors.
   //if one error (my custom errors) return array with just that error
+  const apiKeyMsg = `'X-Api-Key' header required`;
   const errors = err.errors
     ? err.errors.map((error) => ({
-        path: err.path,
-        message: `${error.path} not valid`,
+        path: req.originalUrl,
+        message:
+          error.message === apiKeyMsg
+            ? "Api key required"
+            : `${error.path} not valid`,
         detail: `${error.message}`,
       }))
-    : [{ path: err.path, message: err.message, detail: err.detail }];
+    : [
+        {
+          path: req.originalUrl,
+          message: err.message || "unknown server error",
+          detail: err.detail || "unknown server error",
+        },
+      ];
   res.status(err.status || 500).json({
     errors: errors,
   });
