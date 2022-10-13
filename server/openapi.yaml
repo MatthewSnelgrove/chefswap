@@ -850,9 +850,12 @@ components:
           type: string
           pattern: '^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJ-NPRSTV-Z]\d[ABCEGHJ-NPRSTV-Z]\d$'
         latitude:
-          $ref: "#/components/schemas/Latitude"
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/Latitude"
         longitude:
-          $ref: "#/components/schemas/Longitude"
+          allOf:
+            - $ref: "#/components/schemas/Longitude"
     Circle:
       type: object
       required:
@@ -870,9 +873,11 @@ components:
           minimum: 50
           maximum: 3000
         latitude:
-          $ref: "#/components/schemas/Latitude"
+          allOf:
+            - $ref: "#/components/schemas/Latitude"
         longitude:
-          $ref: "#/components/schemas/Longitude"
+          allOf:
+            - $ref: "#/components/schemas/Longitude"
     Username:
       type: string
       minLength: 3
@@ -884,13 +889,11 @@ components:
       maxLength: 50
       pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,50}$' #must contain lowercase, uppercase, number
     Latitude:
-      readOnly: true
       type: number
       format: float
       maximum: 90
       minimum: -90
     Longitude:
-      readOnly: true
       type: number
       format: float
       maximum: 180

@@ -66,7 +66,6 @@ router.get("/", async (req, res, next) => {
 
   //filter by username
   if (username) {
-    console.log(username);
     numParams++;
     filterString += filterString
       ? ` AND username = $${numParams} `
@@ -232,15 +231,17 @@ router.get("/", async (req, res, next) => {
   }
   numParams++;
   paramArray.push(limit);
-  console.log(
-    `${queryString} ${filterString} ${orderString} LIMIT $${numParams}`
-  );
+  // console.log(
+  //   `${queryString} ${filterString} ${orderString} LIMIT $${numParams}`,
+  //   paramArray
+  // );
   const accounts = camelize(
     await pool.query(
       `${queryString} ${filterString} ${orderString} LIMIT $${numParams}`,
       paramArray
     )
   ).rows;
+  // console.log(accounts);
   res.status(200).json(accounts);
 });
 
