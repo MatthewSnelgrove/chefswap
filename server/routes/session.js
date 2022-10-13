@@ -7,9 +7,15 @@ dotenv.config();
 
 export const router = express.Router();
 
-router.get("/", async (req, res) => {
+const accountNotFound = {
+  status: 404,
+  message: "account not found",
+  detail: "account with specified accountUid not found",
+};
+
+router.get("/", async (req, res, next) => {
   if (!req.session.accountUid) {
-    res.sendStatus(404);
+    next({ accountNotFound });
     return;
   }
   req.session.touch();

@@ -683,6 +683,26 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
   /session:
+    get:
+      summary: get the session of an account.
+      responses:
+        200:
+          description: The session current session.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - cookie
+                  - accountUid
+                properties:
+                  cookie:
+                    $ref: "#/components/schemas/Cookie"
+                  accountUid:
+                    type: string
+                    format: uuid
+        404:
+          $ref: "#/components/responses/NotFound"
     post:
       summary: Update the username of an account.
       responses:
@@ -914,6 +934,26 @@ components:
       readOnly: true
       type: integer
       minimum: 0
+    Cookie:
+      type: object
+      required:
+        - originalMaxAge
+        - expires
+        - secure
+        - httpOnly
+        - path
+      properties:
+        originalMaxAge:
+          type: integer
+        expires:
+          type: string
+          format: date-time
+        secure:
+          type: boolean
+        httpOnly:
+          type: boolean
+        path:
+          type: string
     Errors:
       type: array
       items:
