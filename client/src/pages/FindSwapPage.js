@@ -7,7 +7,6 @@ import "./styles/FindSwapPage.scss";
 function FindSwapPage() {
   return (
     <div className="find-swap-page">
-      <Navbar />
       <div className="find-swap-content">
         <FilterForm />
         <SwapResultsContainer />

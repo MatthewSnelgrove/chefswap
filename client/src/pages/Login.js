@@ -1,15 +1,31 @@
 import React from 'react'
 import "./styles/_SignupLogin.scss";
+import { fetchLogin } from "./fetchFunctions"
+
 
 function Login() {
+
+
+  function isSuccess(userObj) {
+    if (userObj == 401) {
+      alert("Invalid Credentials")
+      return;
+    }
+
+    window.location = "http://localhost:3000/"
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-    alert("Prevented form submit.");
+    const username = document.getElementById("username").value
+    const password = document.getElementById("password").value
+
+    fetchLogin(password, username).then((data) => isSuccess(data))
   }
 
   return (
     // <form action="/api/auth/login" method="post" className="signup-login-form">
-    <form onSubmit={handleSubmit} className="signup-login-form">
+    <form onSubmit={handleSubmit} className="signup-login-form" style ={{marginTop: "100px"}}>
       <fieldset>
         <legend>Login</legend>
 
