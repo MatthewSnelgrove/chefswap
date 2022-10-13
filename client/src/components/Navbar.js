@@ -1,7 +1,32 @@
-import React from 'react';
+import { React, useState, useEffect} from 'react';
 import "./styles/Navbar.scss";
+import { getUser, signoutUser } from "../pages/fetchFunctions"
 
 function Navbar() {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    getUser(setUser)
+  }, [])
+
+  if (user === null) {
+    return (
+      <>
+      </>
+    )
+  }
+  else {
+    return (
+      <>
+        {user != "N" ? <LoggedIn user={user} /> : <LoggedOut /> }
+      </>
+    )
+  }
+}
+
+function LoggedIn(props) {
+  
+  const user = props.user
+
   return (
     <nav className="navbar navbar-expand-sm bg-light navbar-fixed">
       <div className="container-fluid">
@@ -31,13 +56,47 @@ function Navbar() {
             </li>
             <li className="nav-item dropdown pe-3">
               <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" alt="Profile" style={{ height: 25, width: 25, borderRadius: 30 }} />
+                <img src={user.pfpName} alt="Profile" style={{ height: 25, width: 25, borderRadius: 30 }} />
               </a>
               <ul className="dropdown-menu">
-                <li><a className="dropdown-item" href="/user/">My Profile</a></li>
-                <li><a className="dropdown-item" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Logout</a></li>
+                <li><a className="dropdown-item" href={"/".concat(user.username)}>My Profile</a></li>
+                <li><button className="dropdown-item" onClick={signoutUser}>Logout</button></li>
               </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  )
+}
 
+function LoggedOut() {
+  return (
+    <nav className="navbar navbar-expand-sm bg-light navbar-fixed">
+      <div className="container-fluid">
+        <a className="navbar-brand" href="/about">Chefswap</a>
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div className="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul className="navbar-nav ms-auto">
+            <li className="nav-item dropdown">
+              <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Learn More
+              </a>
+              <ul className="dropdown-menu">
+                <li><a className="dropdown-item" href="/about">About Chefswap</a></li>
+                <li><a className="dropdown-item" href="/about-us">About Us</a></li>
+                <li><a className="dropdown-item" href="/help">Help</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul className="navbar-nav">
+            <li className="nav-item">
+              <a className="nav-link" aria-current="page" href="/login">Login</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" href="/signup">Signup</a>
             </li>
           </ul>
         </div>
