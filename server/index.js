@@ -96,14 +96,11 @@ app.use("/api/v1/swaps", swapsRouter);
 app.use((err, req, res, next) => {
   //if multiple errors (from openapi validator) return those errors.
   //if one error (my custom errors) return array with just that error
-  const apiKeyMsg = `'X-Api-Key' header required`;
+  console.log(err);
   const errors = err.errors
     ? err.errors.map((error) => ({
         path: req.originalUrl,
-        message:
-          error.message === apiKeyMsg
-            ? "Api key required"
-            : `${error.path} not valid`,
+        message: `${error.path} not valid`,
         detail: `${error.message}`,
       }))
     : [

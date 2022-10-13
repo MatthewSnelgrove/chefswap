@@ -241,9 +241,6 @@ router.get("/", async (req, res, next) => {
       paramArray
     )
   ).rows;
-  for (const account in accounts) {
-    await formatAccountData(accounts[account]);
-  }
   res.status(200).json(accounts);
 });
 
@@ -304,7 +301,7 @@ router.post("/", async (req, res, next) => {
       [circleCentre.latitude, circleCentre.longitude, radius]
     )
   ).rows[0];
-  const accountsRes = camelize(
+  const allAccountsRes = camelize(
     await pool
       .query(
         `INSERT INTO account (username, bio, circle_uid, email, passhash, address_uid)
@@ -340,7 +337,7 @@ router.post("/", async (req, res, next) => {
         }
       })
   );
-  const accountRes = accountsRes ? accountsRes.rows[0] : null;
+  const accountRes = allAccountsRes ? allAccountsRes.rows[0] : null;
   if (accountRes) {
     await pool.query("COMMIT");
     const resBody = {
@@ -370,7 +367,7 @@ router.post("/", async (req, res, next) => {
  * if signed authenticated with requested account, return all data about account
  * otherwise, return only profile data
  */
-router.get("/:accountUid", async (req, res) => {
+router.get("/:accountUid", async (req, res, next) => {
   const accountUid = req.params.accountUid;
   const includeDistanceFrom = req.query.includeDistanceFrom;
   //return all data
@@ -410,52 +407,35 @@ router.get("/:accountUid", async (req, res) => {
 /**
  * return username associated with accountUid
  */
-router.get("/:accountUid/username", async (req, res) => {
+router.get("/:accountUid/username", async (req, res, next) => {
   await getSingleFieldFromAccount(req, res, "username");
 });
 
 /**
  * if authenticated with requested account, update username if available
  */
-router.put(
-  "/:slug/username",
-  checkAuth,
-  validateUsername2,
-  async (req, res) => {
-    await setSingleFieldInAccount(req, res, "username");
-  }
-);
+router.put("/:accountUid/username", checkAuth, async (req, res, next) => {
+  await setSingleFieldInAccount(req, res, next, "username");
+});
 
 /**
  * return email associated with accountUid. requires authentication
  */
-router.get("/:slug/email", checkAuth, async (req, res) => {
+router.get("/:accountUid/email", checkAuth, async (req, res, next) => {
   await getSingleFieldFromAccount(req, res, "email");
 });
 
 /**
  * if authenticated with requested account, update email if available
  */
-router.put("/:slug/email", checkAuth, async (req, res) => {
-  const error = {};
-  await validateEmail(req.body.email, error);
-  if (Object.keys(error).length) {
-    res.status(400).json(error);
-    return;
-  }
-  await setSingleFieldInAccount(req, res, "email");
+router.put("/:accountUid/email", checkAuth, async (req, res, next) => {
+  await setSingleFieldInAccount(req, res, next, "email");
 });
 
 /**
  * if authenticated with requested account, update password
  */
-router.put("/:slug/password", checkAuth, async (req, res) => {
-  const error = {};
-  validatePassword(req.body.password, error);
-  if (Object.keys(error).length) {
-    res.status(400).json(error);
-    return;
-  }
+router.put("/:accountUid/password", checkAuth, async (req, res, next) => {
   req.body.passhash = await bcrypt.hash(req.body.password, 12);
   await setSingleFieldInAccount(req, res, "passhash");
 });
@@ -463,14 +443,23 @@ router.put("/:slug/password", checkAuth, async (req, res) => {
 /**
  * return address associated with accountUid. requires authentication
  */
-router.get("/:slug/address", checkAuth, async (req, res) => {
-  const accountUid = slugToUuid(req.params.slug);
-  if (!accountUid) {
-    res.status(400).json({ error: "invalid slug" });
-  }
+router.get("/:accountUid/address", checkAuth, async (req, res, next) => {
+  const accountUid = req.params.accountUid;
   const address = (
     await pool.query(
-      `SELECT address.* 
+      `SELECT 
+        json_strip_nulls(
+          json_build_object(
+            'address1', address.address1,
+            'address2', address.address2,
+            'address3', address.address3,
+            'city', address.city,
+            'province', address.province,
+            'postal_code', address.postal_code
+            'latitude', address.latitude,
+            'longitude', address.longitude
+          )
+        ) address
         FROM account
         JOIN address USING (address_uid) 
         WHERE account_uid=$1`,
@@ -479,35 +468,22 @@ router.get("/:slug/address", checkAuth, async (req, res) => {
   ).rows[0];
   //no account with that accountUid
   if (!address) {
-    res.sendStatus(404);
+    next(accountNotFound);
     return;
   }
-  //replace addressUid with slug
-  const addressUid = address.addressUid;
-  delete address.addressUid;
-  address.slug = slugid.encode(addressUid);
   res.status(200).json(address);
 });
 
 /**
  * if authenticated with requested account, update address if valid
  */
-router.put("/:slug/address", checkAuth, async (req, res) => {
-  const accountUid = slugToUuid(req.params.slug);
-  if (!accountUid) {
-    res.status(400).json({ error: "invalid slug" });
-  }
-  const address = req.body.address;
-  const error = {};
-  validateAddress(address, error);
-  if (Object.keys(error).length) {
-    res.status(400).json(error);
-    return;
-  }
-  const url = addressToGmapsUrl(address);
-  const response = await fetch(url);
-  const location = (await response.json()).results[0].geometry.location;
-  const newAddress = camelize(
+router.put("/:accountUid/address", checkAuth, async (req, res, next) => {
+  const accountUid = req.params.accountUid;
+  const { address1, address2, address3, city, province, postalCode } =
+    req.body.address;
+  const gmapsRes = await fetch(addressToGmapsUrl(address));
+  const location = (await gmapsRes.json()).results[0].geometry.location;
+  const address = camelize(
     await pool.query(
       `UPDATE address 
         SET address1=$1, 
@@ -522,12 +498,12 @@ router.put("/:slug/address", checkAuth, async (req, res) => {
         WHERE account.address_uid=address.address_uid AND account.account_uid=$9
         RETURNING address.*`,
       [
-        address.address1,
-        address.address2,
-        address.address3,
-        address.city,
-        address.province,
-        address.postalCode,
+        address1,
+        address2,
+        address3,
+        city,
+        province,
+        postalCode,
         location.lat,
         location.lng,
         accountUid,
@@ -535,43 +511,29 @@ router.put("/:slug/address", checkAuth, async (req, res) => {
     )
   ).rows[0];
   //no account with that accountUid
-  if (!newAddress) {
-    res.sendStatus(404);
+  if (!address) {
+    next(accountNotFound);
     return;
   }
-  //replace addressUid with slug
-  const addressUid = newAddress.addressUid;
-  delete newAddress.addressUid;
-  newAddress.slug = slugid.encode(addressUid);
-  res.status(200).json(newAddress);
+  res.status(200).json(address);
 });
 
 /**
  * return bio associated with accountUid
  */
-router.get("/:slug/bio", async (req, res) => {
+router.get("/:accountUid/bio", async (req, res, next) => {
   await getSingleFieldFromAccount(req, res, "bio");
 });
 
-router.put("/:slug/bio", checkAuth, async (req, res) => {
-  const error = {};
-  validateBio(req.body.bio, error);
-  if (Object.keys(error).length) {
-    res.status(400).json(error);
-    return;
-  }
+router.put("/:accountUid/bio", checkAuth, async (req, res, next) => {
   await setSingleFieldInAccount(req, res, "bio");
 });
 
 /**
  * return circle associated with accountUid
  */
-router.get("/:slug/circle", async (req, res) => {
-  const accountUid = slugToUuid(req.params.slug);
-  if (!accountUid) {
-    res.send(400).json({ error: "invalid slug" });
-    return;
-  }
+router.get("/:accountUid/circle", async (req, res, next) => {
+  const accountUid = req.params.accountUid;
   const circle = camelize(
     await pool.query(
       `SELECT circle.* 
@@ -583,33 +545,19 @@ router.get("/:slug/circle", async (req, res) => {
   ).rows[0];
   //no account with that accountUid
   if (!circle) {
-    res.sendStatus(404);
+    next(accountNotFound);
     return;
   }
-  //replace circleUid with slug
-  const circleUid = circle.circleUid;
-  delete circle.circleUid;
-  circle.slug = slugid.encode(circleUid);
   res.status(200).json(circle);
 });
 
 /**
- * creates/updates user's circle.
+ * updates user's circle.
  * requires radius field representing radius of circle in metres with 50<=radius<=3000
  */
-router.post("/:slug/circle", checkAuth, async (req, res) => {
-  const accountUid = slugToUuid(req.params.slug);
-  if (!accountUid) {
-    res.send(400).json({ error: "invalid slug" });
-    return;
-  }
+router.post("/:accountUid/circle", checkAuth, async (req, res, next) => {
+  const accountUid = req.params.accountUid;
   const radius = req.body.radius;
-  const error = {};
-  validateCircleRadius(radius, error);
-  if (Object.keys(error).length) {
-    res.status(400).json(error);
-    return;
-  }
   const position = camelize(
     await pool.query(
       `SELECT account.circle_uid, address.latitude, address.longitude 
@@ -624,56 +572,28 @@ router.post("/:slug/circle", checkAuth, async (req, res) => {
     position.longitude,
     radius
   );
-  if (position.circleUid) {
-    const circle = camelize(
-      await pool.query(
-        `UPDATE circle 
+  const circle = camelize(
+    await pool.query(
+      `UPDATE circle 
         SET radius=$1, latitude=$2, longitude=$3
         WHERE circle_uid=$4
         RETURNING *`,
-        [
-          radius,
-          circleCentre.latitude,
-          circleCentre.longitude,
-          position.circleUid,
-        ]
-      )
-    ).rows[0];
-    //replace circleUid with slug
-    const circleUid = circle.circleUid;
-    delete circle.circleUid;
-    circle.slug = slugid.encode(circleUid);
-    res.status(200).json(circle);
-  } else {
-    const circle = camelize(
-      await pool.query(
-        `INSERT INTO circle (radius, latitude, longitude) 
-        VALUES ($1, $2, $3)
-        RETURNING *`,
-        [radius, position.latitude, position.longitude]
-      )
-    ).rows[0];
-    await pool.query(`UPDATE account SET circle_uid=$1 WHERE account_uid=$2`, [
-      circle.circleUid,
-      accountUid,
-    ]);
-    //replace circleUid with slug
-    const circleUid = circle.circleUid;
-    delete circle.circleUid;
-    circle.slug = slugid.encode(circleUid);
-    res.status(201).json(circle);
-  }
+      [
+        radius,
+        circleCentre.latitude,
+        circleCentre.longitude,
+        position.circleUid,
+      ]
+    )
+  ).rows[0];
+  res.status(200).json(circle);
 });
 
 /**
  * return pfp associated with accountUid
  */
-router.get("/:slug/pfp", async (req, res) => {
-  const accountUid = slugToUuid(req.params.slug);
-  if (!accountUid) {
-    res.send(400).json({ error: "invalid slug" });
-    return;
-  }
+router.get("/:accountUid/pfp", async (req, res, next) => {
+  const accountUid = req.params.accountUid;
   const query = camelize(
     await pool.query(
       `SELECT pfp_name 
@@ -684,51 +604,56 @@ router.get("/:slug/pfp", async (req, res) => {
   ).rows[0];
   //no account with that accountUid
   if (!query) {
-    res.sendStatus(404);
+    next(accountNotFound);
     return;
   }
-  query.pfpLink = generateImageLink(query.pfpName);
-  res.status(200).json(query);
+  res.status(200).json(generateImageLink(query.pfpName));
 });
 
 router.put(
-  "/:slug/pfp",
+  "/:accountUid/pfp",
   checkAuth,
   uploadHandler.single("file"),
-  async (req, res) => {
-    const accountUid = slugToUuid(req.params.slug);
+  async (req, res, next) => {
+    const accountUid = req.params.accountUid;
     const imageName = req.file.originalname;
-    const error = {};
-    validateImageName(imageName, error);
-    if (Object.keys(error).length) {
-      res.status(400).send("image must be a .png, .jpg, or .jpeg");
-      return;
-    }
     const blob = bucket.file(uuid4() + imageName);
     const blobStream = blob.createWriteStream();
-    blobStream.on("error", (err) => console.log(err));
+    blobStream.on("error", (err) => {
+      console.log(err);
+      next({});
+    });
     blobStream.on("finish", async () => {
-      await pool.query(`UPDATE account SET pfp_name=$1 WHERE account_uid=$2`, [
-        blob.name,
-        accountUid,
-      ]);
+      const oldImageName = (
+        await pool.query(`SELECT pfp_name FROM account WHERE account_uid=$1`, [
+          accountUid,
+        ])
+      ).rows[0].pfp_name;
+      const pfp = camelize(
+        await pool.query(
+          `UPDATE account SET pfp_name=$1, update_time=now() WHERE account_uid=$2 RETURNING *`,
+          [blob.name, accountUid]
+        )
+      ).rows[0];
+      //delete old pfp from GCS
+      if (oldImageName) {
+        try {
+          await bucket.file(oldImageName).delete();
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      res.status(201).json(generateImageLink(pfp.pfpName));
     });
     blobStream.end(req.file.buffer);
-    res
-      .status(201)
-      .json({ pfpName: blob.name, pfpLink: generateImageLink(blob.name) });
   }
 );
 
 /**
- * return gallery associated with accountUid
+ * return images associated with accountUid
  */
-router.get("/:slug/gallery", async (req, res) => {
-  const accountUid = slugToUuid(req.params.slug);
-  if (!accountUid) {
-    res.send(400).json({ error: "invalid slug" });
-    return;
-  }
+router.get("/:accountUid/images", async (req, res, next) => {
+  const accountUid = req.params.accountUid;
   const images = camelize(
     await pool.query(
       `SELECT * 
@@ -739,38 +664,32 @@ router.get("/:slug/gallery", async (req, res) => {
   ).rows;
   //no account with that accountUid
   if (!images) {
-    res.sendStatus(404);
+    next(accountNotFound);
     return;
   }
-  //replace imageName with imageLink and imageUid with slug
+  //replace imageName with imageLink
   Object.keys(images).forEach((key) => {
     images[key].imageLink = generateImageLink(images[key].imageName);
-    const imageUid = images[key].imageUid;
-    delete images.key.imageUid;
-    images.key.slug = slugid.encode(imageUid);
   });
   res.status(200).json(images);
 });
 
 /**
- * add image to user's gallery
+ * add image to user's images
  */
 router.post(
-  "/:slug/gallery",
+  "/:accountUid/images",
   checkAuth,
   uploadHandler.single("file"),
-  async (req, res) => {
-    const accountUid = slugToUuid(req.params.slug);
+  async (req, res, next) => {
+    const accountUid = req.params.accountUid;
     const imageName = req.file.originalname;
-    const error = {};
-    validateImageName(imageName, error);
-    if (Object.keys(error).length) {
-      res.status(400).send("image must be a .png, .jpg, or .jpeg");
-      return;
-    }
     const blob = bucket.file(uuid4() + imageName);
     const blobStream = blob.createWriteStream();
-    blobStream.on("error", (err) => console.log(err));
+    blobStream.on("error", (err) => {
+      console.log(err);
+      next({});
+    });
     blobStream.on("finish", async () => {
       const image = camelize(
         await pool.query(
@@ -781,10 +700,6 @@ router.post(
         )
       ).rows[0];
       image.imageLink = generateImageLink(image.imageName);
-      //replace imageUid with slug
-      const imageUid = image.imageUid;
-      delete image.imageUid;
-      image.slug = slugid.encode(imageUid);
       res.status(201).json(image);
     });
     blobStream.end(req.file.buffer);
@@ -792,33 +707,37 @@ router.post(
 );
 
 /**
- * delete image from user's gallery
+ * delete image from user's images
  */
-router.delete("/:slug/gallery/:imageUid", checkAuth, async (req, res) => {
-  const imageUid = req.params.imageUid;
-  const image = camelize(
-    await pool.query(`DELETE FROM image WHERE image_uid=$1 RETURNING *`, [
-      imageUid,
-    ])
-  ).rows[0];
-  if (!image) {
-    res.status(400).send(`no image with uid ${imageUid}`);
-    return;
+router.delete(
+  "/:accountUid/images/:imageUid",
+  checkAuth,
+  async (req, res, next) => {
+    const imageUid = req.params.imageUid;
+    const image = camelize(
+      await pool.query(`DELETE FROM image WHERE image_uid=$1 RETURNING *`, [
+        imageUid,
+      ])
+    ).rows[0];
+    if (!image) {
+      next({
+        status: 404,
+        message: "image not found",
+        detail: "image with specified imageUid does not exist",
+      });
+      return;
+    }
+    await bucket.file(image.imageName).delete();
+    res.sendStatus(204);
   }
-  await bucket.file(image.imageName).delete();
-  res.sendStatus(204);
-});
+);
 
 /**
  * return rating associated with accountUid
  */
-router.get("/:slug/rating", async (req, res) => {
-  const accountUid = slugToUuid(req.params.slug);
-  if (!accountUid) {
-    res.send(400).json({ error: "invalid slug" });
-    return;
-  }
-  const query = camelize(
+router.get("/:accountUid/rating", async (req, res, next) => {
+  const accountUid = req.params.accountUid;
+  const rating = camelize(
     await pool.query(
       `SELECT avg_rating, num_ratings 
         FROM account
@@ -827,11 +746,11 @@ router.get("/:slug/rating", async (req, res) => {
     )
   ).rows[0];
   //no account with that accountUid
-  if (!query) {
-    res.sendStatus(404);
+  if (!rating) {
+    next(accountNotFound);
     return;
   }
-  res.status(200).json(query);
+  res.status(200).json(rating);
 });
 
 async function getSingleFieldFromAccount(req, res, field) {
@@ -852,28 +771,42 @@ async function getSingleFieldFromAccount(req, res, field) {
   res.status(200).json(query[field]);
 }
 
-async function setSingleFieldInAccount(req, res, field) {
-  const accountUid = slugToUuid(req.params.slug);
-  if (!accountUid) {
-    res.status(400).json(new InvalidSlugError());
-    return;
-  }
+async function setSingleFieldInAccount(req, res, next, field) {
+  const accountUid = req.params.accountUid;
   const value = req.body[field];
-  if (!value) {
-    res.status(400).json(new MissingRequiredFieldError(field));
-    return;
-  }
-  const query = (
-    await pool.query(
+  console.log(req.body, field, req.body[field]);
+  const allQueryRes = await pool
+    .query(
       `UPDATE account 
-        SET ${field}=$1
+        SET ${field}=$1, update_time=now()
         WHERE account_uid=$2
         RETURNING account_uid`,
       [value, accountUid]
     )
-  ).rows[0];
-  if (!query) {
-    res.status(404).json(new NoAccountError());
+    .catch((e) => {
+      switch (e.constraint) {
+        case "account_username_key":
+          next({
+            staus: 409,
+            message: "invalid username",
+            detail: "username already exists",
+          });
+          return;
+        case "account_email_key":
+          next({
+            status: 409,
+            message: "invalid email",
+            detail: "email already exists",
+          });
+          return;
+        default:
+          next({});
+          return;
+      }
+    });
+  const queryRes = allQueryRes ? allQueryRes.rows[0] : null;
+  if (!queryRes) {
+    next(accountNotFound);
     return;
   }
   res.status(200).json(value);
@@ -891,65 +824,65 @@ function generateCircleCentre(latitude, longitude, radius) {
   );
 }
 
-/**
- * replaces accountUid with slug adds and formats images, cuisine spec/pref, addressUid with slug
- * if part of account, circleUid to slug, sets circle to null if fields don't exist
- */
-async function formatAccountData(account) {
-  //replace accountUid with slug
-  const accountUid = account.profile.accountUid;
-  delete account.profile.accountUid;
-  account.profile.accountSlug = slugid.encode(accountUid);
-  //generate gcs link from file name
-  if (account.profile.pfpName) {
-    account.profile.pfpLink = generateImageLink(account.profile.pfpName);
-    delete account.profile.pfpLink;
-  }
-  const images = camelize(
-    await pool.query(
-      `SELECT * 
-        FROM image 
-        WHERE account_uid=$1`,
-      [accountUid]
-    )
-  ).rows;
-  //replace imageName with imageLink and imageUid with slug
-  Object.keys(images).forEach((key) => {
-    images[key].imageLink = generateImageLink(images[key].imageName);
-    delete images[key].imageName;
-    images[key].imageSlug = slugid.encode(images[key].imageUid);
-    delete images[key].imageUid;
-  });
-  account.profile.images = images;
-  if (!account.profile.circle.circleUid) {
-    account.profile.circle = null;
-  } else {
-    account.profile.circle.circleSlug = slugid.encode(
-      account.profile.circle.circleUid
-    );
-    delete account.profile.circle.circleUid;
-  }
-  const cuisinePreferences = camelize(
-    await pool.query(
-      `SELECT preference 
-        FROM cuisine_preference 
-        WHERE account_uid=$1`,
-      [accountUid]
-    )
-  ).rows.map((pref) => pref.preference);
-  const cuisineSpecialities = camelize(
-    await pool.query(
-      `SELECT speciality 
-        FROM cuisine_speciality 
-        WHERE account_uid=$1`,
-      [accountUid]
-    )
-  ).rows.map((spec) => spec.speciality);
-  account.profile.cuisinePreferences = cuisinePreferences;
-  account.profile.cuisineSpecialities = cuisineSpecialities;
-  if (account.address) {
-    const addressUid = account.address.addressUid;
-    account.address.slug = slugid.encode(addressUid);
-    delete account.address.addressUid;
-  }
-}
+// /**
+//  * replaces accountUid with slug adds and formats images, cuisine spec/pref, addressUid with slug
+//  * if part of account, circleUid to slug, sets circle to null if fields don't exist
+//  */
+// async function formatAccountData(account) {
+//   //replace accountUid with slug
+//   const accountUid = account.profile.accountUid;
+//   delete account.profile.accountUid;
+//   account.profile.accountSlug = slugid.encode(accountUid);
+//   //generate gcs link from file name
+//   if (account.profile.pfpName) {
+//     account.profile.pfpLink = generateImageLink(account.profile.pfpName);
+//     delete account.profile.pfpLink;
+//   }
+//   const images = camelize(
+//     await pool.query(
+//       `SELECT *
+//         FROM image
+//         WHERE account_uid=$1`,
+//       [accountUid]
+//     )
+//   ).rows;
+//   //replace imageName with imageLink and imageUid with slug
+//   Object.keys(images).forEach((key) => {
+//     images[key].imageLink = generateImageLink(images[key].imageName);
+//     delete images[key].imageName;
+//     images[key].imageSlug = slugid.encode(images[key].imageUid);
+//     delete images[key].imageUid;
+//   });
+//   account.profile.images = images;
+//   if (!account.profile.circle.circleUid) {
+//     account.profile.circle = null;
+//   } else {
+//     account.profile.circle.circleSlug = slugid.encode(
+//       account.profile.circle.circleUid
+//     );
+//     delete account.profile.circle.circleUid;
+//   }
+//   const cuisinePreferences = camelize(
+//     await pool.query(
+//       `SELECT preference
+//         FROM cuisine_preference
+//         WHERE account_uid=$1`,
+//       [accountUid]
+//     )
+//   ).rows.map((pref) => pref.preference);
+//   const cuisineSpecialities = camelize(
+//     await pool.query(
+//       `SELECT speciality
+//         FROM cuisine_speciality
+//         WHERE account_uid=$1`,
+//       [accountUid]
+//     )
+//   ).rows.map((spec) => spec.speciality);
+//   account.profile.cuisinePreferences = cuisinePreferences;
+//   account.profile.cuisineSpecialities = cuisineSpecialities;
+//   if (account.address) {
+//     const addressUid = account.address.addressUid;
+//     account.address.slug = slugid.encode(addressUid);
+//     delete account.address.addressUid;
+//   }
+// }

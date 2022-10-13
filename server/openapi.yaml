@@ -36,15 +36,9 @@ paths:
                   - longitude
                 properties:
                   latitude:
-                    type: number
-                    format: float
-                    minimum: -90
-                    maximum: 90
+                    $ref: "#/components/schemas/Latitude"
                   longitude:
-                    type: number
-                    format: float
-                    minimum: -180
-                    maximum: 180
+                    $ref: "#/components/schemas/Longitude"
               - type: object #workaround to have optional param with required fields
                 nullable: true
                 additionalProperties: false
@@ -129,8 +123,7 @@ paths:
                     format: uuid
                     default: 00000000-0000-0000-0000-000000000000
                   avgRating:
-                    type: number
-                    format: float
+                    $ref: "#/components/schemas/AvgRating"
         - in: query
           name: limit
           description: number of records to retrieve
@@ -154,11 +147,7 @@ paths:
                     profile:
                       $ref: "#/components/schemas/AccountProfile"
         500:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/schemas/Email"
     post:
       summary: Create an account
       requestBody:
@@ -175,17 +164,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Account"
         400:
-          description: The request body is poorly formated
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/responses/BadRequest"
         500:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}:
     parameters:
       - name: accountUid
@@ -207,23 +188,11 @@ paths:
                   - $ref: "#/components/schemas/Account"
                   - $ref: "#/components/schemas/AccountProfile"
         400:
-          description: accountUid is not a valid uuid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/responses/BadRequest"
         404:
-          description: No account found for the provided uid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/responses/NotFound"
         500:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                type: integer
+          $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}/username:
     parameters:
       - name: accountUid
@@ -241,72 +210,478 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: "#/components/schemas/Username"
+                $ref: "#/components/schemas/Username"
         400:
-          description: accountUid is not a valid uuid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/responses/BadRequest"
         404:
-          description: No account found for the provided uid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/responses/NotFound"
         500:
-          description: Unexpected error
-          content:
-            application/json:
-              schema:
-                type: integer
+          $ref: "#/components/responses/InternalServerError"
     put:
-      summary: Update the username of an account.
+      summary: Update the username of an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+              properties:
+                username:
+                  $ref: "#/components/schemas/Username"
       responses:
         200:
           description: The updated username of the account corresponding to the provided uid.
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: "#/components/schemas/Username"
+                $ref: "#/components/schemas/Username"
         400:
-          description: accountUid is not a valid uuid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/responses/BadRequest"
         401:
-          description: client not signed in
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/responses/Unauthorized"
         403:
-          description: client signed in, but not as targetted account
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/responses/Forbidden"
         404:
-          description: No account found for the provided uid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/responses/NotFound"
         409:
-          description: username taken
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/responses/Conflict"
         500:
-          description: Unexpected error
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/email:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read email of an account.
+      responses:
+        200:
+          description: The email of the account corresponding to the provided uid.
           content:
             application/json:
               schema:
-                type: integer
+                $ref: "#/components/schemas/Email"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update the email of an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  $ref: "#/components/schemas/Email"
+      responses:
+        200:
+          description: The updated email of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Email"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        409:
+          $ref: "#/components/responses/Conflict"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/password:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      summary: Update the password of an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+              properties:
+                password:
+                  $ref: "#/components/schemas/Password"
+      responses:
+        204:
+          description: Password updated successfully
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/address:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read address of an account.
+      responses:
+        200:
+          description: The address of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Address"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update the address of an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - address
+              properties:
+                address:
+                  $ref: "#/components/schemas/Address"
+      responses:
+        200:
+          description: The updated address of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Address"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/bio:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read bio of an account.
+      responses:
+        200:
+          description: The bio of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bio"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update the bio of an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - bio
+              properties:
+                bio:
+                  $ref: "#/components/schemas/Bio"
+      responses:
+        200:
+          description: The updated bio of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bio"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/circle:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read circle of an account.
+      responses:
+        200:
+          description: The circle of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Circle"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update the circle of an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - circle
+              properties:
+                circle:
+                  $ref: "#/components/schemas/Circle"
+      responses:
+        200:
+          description: The updated circle of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Circle"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/pfp:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read pfp of an account.
+      responses:
+        200:
+          description: The link to the pfp of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageLink"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update the pfp of an account
+      # not working for some reason
+      # requestBody:
+      #   required: true
+      #   content:
+      #     multipart/form-data:
+      #       schema:
+      #         type: object
+      #         properties:
+      #           file:
+      #             type: string
+      #             format: binary
+      responses:
+        200:
+          description: The link to the updated pfp of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageLink"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/images:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read images of an account.
+      responses:
+        200:
+          description: the images of the account corresponding to the provided uid
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Image"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: add an image to account
+      # not working for some reason
+      # requestBody:
+      #   required: true
+      #   content:
+      #     multipart/form-data:
+      #       schema:
+      #         type: object
+      #         properties:
+      #           file:
+      #             type: string
+      #             format: binary
+      responses:
+        201:
+          description: The newly created image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/images/{imageUid}:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: imageUid
+        description: The uuid of the image
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    delete:
+      summary: delete an image to account
+      responses:
+        204:
+          description: successfully deleted image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/rating:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read the rating of an account.
+      responses:
+        200:
+          description: The rating of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - numRating
+                properties:
+                  avgRating:
+                    $ref: "#/components/schemas/AvgRating"
+                  numRatings:
+                    $ref: "#/components/schemas/NumRatings"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
   /session:
     post:
       summary: Update the username of an account.
@@ -316,8 +691,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: "#/components/schemas/Username"
+                $ref: "#/components/schemas/Username"
 components:
   schemas:
     Image:
@@ -327,7 +701,6 @@ components:
         - imageUid
         - accountUid
         - imageLink
-        - imageName
         - timestamp
       properties:
         imageUid:
@@ -342,8 +715,6 @@ components:
           readOnly: true
           allOf:
             - $ref: "#/components/schemas/ImageLink"
-        imageName:
-          type: string
         timestamp:
           readOnly: true
           type: string
@@ -380,8 +751,7 @@ components:
         username:
           $ref: "#/components/schemas/Username"
         bio:
-          type: string
-          maxLength: 500
+          $ref: "#/components/schemas/Bio"
         circle:
           $ref: "#/components/schemas/Circle"
         pfpLink:
@@ -389,14 +759,9 @@ components:
           allOf:
             - $ref: "#/components/schemas/ImageLink"
         avgRating:
-          readOnly: true
-          type: number
-          minimum: 1
-          maximum: 5
+          $ref: "#/components/schemas/AvgRating"
         numRatings:
-          readOnly: true
-          type: integer
-          minimum: 0
+          $ref: "#/components/schemas/NumRatings"
         createTime:
           readOnly: true
           type: string
@@ -431,9 +796,7 @@ components:
         profile:
           $ref: "#/components/schemas/AccountProfile"
         email:
-          type: string
-          format: email
-          maxLength: 80
+          $ref: "#/components/schemas/Email"
         password:
           writeOnly: true
           allOf:
@@ -448,6 +811,8 @@ components:
         - city
         - province
         - postalCode
+        - latitude
+        - longitude
       properties:
         addressUid:
           readOnly: true
@@ -484,6 +849,10 @@ components:
         postalCode:
           type: string
           pattern: '^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJ-NPRSTV-Z]\d[ABCEGHJ-NPRSTV-Z]\d$'
+        latitude:
+          $ref: "#/components/schemas/Latitude"
+        longitude:
+          $ref: "#/components/schemas/Longitude"
     Circle:
       type: object
       required:
@@ -501,13 +870,9 @@ components:
           minimum: 50
           maximum: 3000
         latitude:
-          readOnly: true
-          type: number
-          format: float
+          $ref: "#/components/schemas/Latitude"
         longitude:
-          readOnly: true
-          type: number
-          format: float
+          $ref: "#/components/schemas/Longitude"
     Username:
       type: string
       minLength: 3
@@ -518,6 +883,34 @@ components:
       minLength: 8
       maxLength: 50
       pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,50}$' #must contain lowercase, uppercase, number
+    Latitude:
+      readOnly: true
+      type: number
+      format: float
+      maximum: 90
+      minimum: -90
+    Longitude:
+      readOnly: true
+      type: number
+      format: float
+      maximum: 180
+      minimum: -180
+    Email:
+      type: string
+      format: email
+      maxLength: 80
+    Bio:
+      type: string
+      maxLength: 500
+    AvgRating:
+      readOnly: true
+      type: number
+      minimum: 1
+      maximum: 5
+    NumRatings:
+      readOnly: true
+      type: integer
+      minimum: 0
     Errors:
       type: array
       items:
@@ -535,10 +928,40 @@ components:
           type: string
         detail:
           type: string
-  securitySchemes:
-    ApiKey:
-      type: apiKey
-      in: header
-      name: X-Api-Key
-security:
-  - ApiKey: [thisisanapikey]
+  responses:
+    BadRequest:
+      description: request format is invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Errors"
+    Unauthorized:
+      description: action requires authentication
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Errors"
+    Forbidden:
+      description: insufficient permission for this action
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Errors"
+    NotFound:
+      description: specified resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Errors"
+    Conflict:
+      description: request has correct format but data currently conflicts
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Errors"
+    InternalServerError:
+      description: error processing request on server
+      content:
+        application/json:
+          schema:
+            type: integer

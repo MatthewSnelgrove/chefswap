@@ -1,14 +1,20 @@
 import slugToUuid from "../utils/slugToUuid.js";
 export default function checkAuth(req, res, next) {
-  const slug = req.params.slug;
-  const accountUid = slugToUuid(slug);
-  //invalid slug
-  if (!accountUid) {
-    res.status(400).json({ error: "invalid id slug" });
-    return;
-  }
+  const accountUid = req.params.accountUid;
   if (accountUid !== req.session.accountUid) {
-    res.sendStatus(req.session.accountUid ? 403 : 401);
+    if (req.session.accountUid) {
+      next({
+        staus: 403,
+        message: "not authenticated with targeted account",
+        detail: "this action requires authentication with targeted account",
+      });
+      return;
+    }
+    next({
+      staus: 401,
+      message: "not authenticated",
+      detail: "this action requires authentication with targeted account",
+    });
     return;
   }
   next();
