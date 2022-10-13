@@ -1,0 +1,117 @@
+import slugid from "slugid"
+
+const homepage = "http://localhost:3000/"
+
+export async function fetchLogin(password, username) {
+    const response = await fetch(`http://localhost:3001/api/v1/session`, {
+      method: "POST",
+      mode: "cors",
+      body: JSON.stringify({
+        password: password,
+        username: username
+      }),
+      credentials: "include",
+      headers: {"Content-Type": "application/json"}
+    })
+
+    if (!response.ok) {
+      return response.status
+    }
+
+    const json = await response.json()
+
+    return json
+}
+
+export async function fetchUserFromUid(Uid) {
+  const slug = slugid.encode(Uid)
+
+  const response = await fetch(`http://localhost:3001/api/v1/accounts/${slug}`)
+  const json = await response.json()
+
+  return json
+}
+
+export async function fetchSpecific(Uid, specific) {
+  const slug = slugid.encode(Uid)
+
+  const response = await fetch(`http://localhost:3001/api/v1/accounts/${slug}/${specific}`)
+  const json = await response.json()
+
+  return json
+}
+
+//this is the function you use to get user
+export function getUser(userfunc) {
+  const userPromise = fetchUser().then((userPromise) => {
+    return userPromise
+  })
+
+  userPromise.then((user) => {
+
+    if (user === 404) {
+      userfunc("N")
+      return;
+    }
+
+    userfunc(user.public)
+  })
+
+}
+
+export async function signupUser(userObj) {
+  console.log(userObj)
+
+  const response = await fetch("http://localhost:3001/api/v1/accounts", {
+    method: "POST",
+    mode: "cors",
+    body: JSON.stringify(userObj),
+    credentials: "include",
+    headers: {"Content-Type": "application/json"}
+  })
+
+  if (!response.ok) {
+    return response.status;
+  }
+
+
+  fetchLogin(userObj.password, userObj.username).then((user) => {
+    if (user == 401) {
+      return;
+    }
+
+    window.location = homepage
+  })
+}
+
+export async function signoutUser() {
+  const response = await fetch(`http://localhost:3001/api/v1/session`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    }
+  )
+
+  if (response.status == 204) {
+    window.location = homepage
+  }
+  
+}
+
+async function fetchUser() {
+  
+  const response = await fetch(`http://localhost:3001/api/v1/session`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    }
+  )
+  
+  if (!response.ok) {
+    return response.status
+  }
+
+  const json = await response.json()
+
+  return fetchUserFromUid(json.accountUid)
+}

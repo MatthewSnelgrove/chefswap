@@ -1,11 +1,44 @@
 import React from 'react';
 import "./styles/_SignupLogin.scss";
+import { signupUser } from "./fetchFunctions"
 
 function Signup() {
 
+  // function cleanseObj(Obj) {
+  //   var newObj = {}
+    
+  //   Object.keys(Obj).map((key) => {
+  //     if (Obj[key] != "") {
+  //       newObj[key] = Obj[key]
+  //     }
+  //   })
+
+  //   return newObj
+  // }
+
+  function getVal(id) {
+    return document.getElementById(id).value
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
-    alert("Prevented form submit.");
+    
+    const userObj = {
+      email: getVal("email"),
+      username: getVal("username"),
+      password: getVal("password"),
+      address: {
+        address1: getVal("address"),
+        address2: getVal("address2"),
+        address3: getVal("address3"),
+        city: getVal("city"),
+        province: getVal("province"),
+        postalCode: getVal("postalCode")
+      } 
+    }
+
+    signupUser(userObj)
+    
   }
 
   return (

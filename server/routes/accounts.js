@@ -90,6 +90,7 @@ router.post("/", validateRegistrationData, async (req, res) => {
   const { address1, address2, address3, city, province, postalCode } = address;
   const url = addressToGmapsUrl(address);
   const response = await fetch(url);
+  //console.log((await response.json()).results[0])
   const location = (await response.json()).results[0].geometry.location;
   const addressUid = camelize(
     await pool.query(
