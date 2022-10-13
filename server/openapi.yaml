@@ -687,7 +687,7 @@ paths:
       summary: get the session of an account.
       responses:
         200:
-          description: The session current session.
+          description: The current session.
           content:
             application/json:
               schema:
@@ -704,14 +704,27 @@ paths:
         404:
           $ref: "#/components/responses/NotFound"
     post:
-      summary: Update the username of an account.
+      summary: create session.
       responses:
-        200:
-          description: The updated username of the account corresponding to the provided uid.
+        201:
+          description: The current session.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Username"
+        401:
+          description: Invalid username/password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Errors"
+    delete:
+      summary: End current session
+      responses:
+        204:
+          description: Successfully deleted session.
+        404:
+          $ref: "#/components/responses/NotFound"
 components:
   schemas:
     Image:
