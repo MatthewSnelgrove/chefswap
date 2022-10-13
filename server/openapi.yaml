@@ -1,0 +1,970 @@
+openapi: 3.0.0
+info:
+  version: "1"
+  title: chefswap
+  description: The API for chefswap
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/MATTHEWS13542/chefswap/1
+  - url: http://localhost:3001/api/v1
+    description: development
+paths:
+  /accounts:
+    get:
+      summary: Read profile data from accounts
+      parameters:
+        - in: query
+          name: username
+          description: username of account
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 80
+            pattern: '[^!*''();:@&=+$,/?%#[\]]{3,80}' #can't conatain any url reserved characters
+        - in: query
+          name: includeDistanceFrom
+          description: distance from specified latitude/longitude to centre of account's circle will be added to response body
+          explode: true
+          style: deepObject
+          schema: #if includeDistance exists, it must have both latitude and longitude
+            oneOf:
+              - type: object
+                additionalProperties: false
+                required:
+                  - latitude
+                  - longitude
+                properties:
+                  latitude:
+                    $ref: "#/components/schemas/Latitude"
+                  longitude:
+                    $ref: "#/components/schemas/Longitude"
+              - type: object #workaround to have optional param with required fields
+                nullable: true
+                additionalProperties: false
+        - in: query
+          name: minRating
+          description: min rating of accounts
+          schema:
+            type: number
+            format: float
+            minimum: 1
+            maximum: 5
+        - in: query
+          name: maxRating
+          description: max rating of accounts
+          schema:
+            type: number
+            format: float
+            minimum: 1
+            maximum: 5
+        - in: query
+          name: cuisinePreference
+          description: cuisine preferences of accounts
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/CuisineType"
+        - in: query
+          name: cuisineSpeciality
+          description: cuisineSpecialities of accounts
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/CuisineType"
+        - in: query
+          name: maxDistance
+          description: max distance to account
+          schema:
+            type: integer
+            format: int32
+            minimum: 50
+            maximum: 2000000000
+        - in: query
+          name: orderBy
+          description: how to order results
+          schema:
+            type: string
+            enum:
+              - avgRatingAsc
+              - avgRatingDesc
+              - distanceAsc
+              - distanceDesc
+        - in: query
+          name: key
+          description: max item before first result of new query
+          explode: true
+          style: deepObject
+          schema:
+            oneOf:
+              - type: object #no ordering (just order by uuidAsc)
+                additionalProperties: false
+                properties:
+                  accountUid:
+                    type: string
+                    format: uuid
+                    default: 00000000-0000-0000-0000-000000000000
+              - type: object #ordering by distance
+                additionalProperties: false
+                properties:
+                  accountUid:
+                    type: string
+                    format: uuid
+                    default: 00000000-0000-0000-0000-000000000000
+                  distance:
+                    oneOf:
+                      - type: integer
+                        format: int32
+              - type: object #ordering by rating
+                additionalProperties: false
+                properties:
+                  accountUid:
+                    type: string
+                    format: uuid
+                    default: 00000000-0000-0000-0000-000000000000
+                  avgRating:
+                    $ref: "#/components/schemas/AvgRating"
+        - in: query
+          name: limit
+          description: number of records to retrieve
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 1000
+            default: 20
+      responses:
+        200:
+          description: Profile data from matching accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  required:
+                    - profile
+                  properties:
+                    profile:
+                      $ref: "#/components/schemas/AccountProfile"
+        500:
+          $ref: "#/components/schemas/Email"
+    post:
+      summary: Create an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Account"
+      responses:
+        201:
+          description: The account was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read an account. Returns all data in signed in as account and only profile data otherwise
+      responses:
+        200:
+          description: The account corresponding to the provided uid. Includes only profile information unless authenticated with target account.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Account"
+                  - $ref: "#/components/schemas/AccountProfile"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/username:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read username of an account.
+      responses:
+        200:
+          description: The username of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Username"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update the username of an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+              properties:
+                username:
+                  $ref: "#/components/schemas/Username"
+      responses:
+        200:
+          description: The updated username of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Username"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        409:
+          $ref: "#/components/responses/Conflict"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/email:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read email of an account.
+      responses:
+        200:
+          description: The email of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Email"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update the email of an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  $ref: "#/components/schemas/Email"
+      responses:
+        200:
+          description: The updated email of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Email"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        409:
+          $ref: "#/components/responses/Conflict"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/password:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      summary: Update the password of an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+              properties:
+                password:
+                  $ref: "#/components/schemas/Password"
+      responses:
+        204:
+          description: Password updated successfully
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/address:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read address of an account.
+      responses:
+        200:
+          description: The address of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Address"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update the address of an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - address
+              properties:
+                address:
+                  $ref: "#/components/schemas/Address"
+      responses:
+        200:
+          description: The updated address of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Address"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/bio:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read bio of an account.
+      responses:
+        200:
+          description: The bio of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bio"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update the bio of an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - bio
+              properties:
+                bio:
+                  $ref: "#/components/schemas/Bio"
+      responses:
+        200:
+          description: The updated bio of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bio"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/circle:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read circle of an account.
+      responses:
+        200:
+          description: The circle of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Circle"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update the circle of an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - circle
+              properties:
+                circle:
+                  $ref: "#/components/schemas/Circle"
+      responses:
+        200:
+          description: The updated circle of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Circle"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/pfp:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read pfp of an account.
+      responses:
+        200:
+          description: The link to the pfp of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageLink"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Update the pfp of an account
+      # not working for some reason
+      # requestBody:
+      #   required: true
+      #   content:
+      #     multipart/form-data:
+      #       schema:
+      #         type: object
+      #         properties:
+      #           file:
+      #             type: string
+      #             format: binary
+      responses:
+        200:
+          description: The link to the updated pfp of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImageLink"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/images:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read images of an account.
+      responses:
+        200:
+          description: the images of the account corresponding to the provided uid
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Image"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: add an image to account
+      # not working for some reason
+      # requestBody:
+      #   required: true
+      #   content:
+      #     multipart/form-data:
+      #       schema:
+      #         type: object
+      #         properties:
+      #           file:
+      #             type: string
+      #             format: binary
+      responses:
+        201:
+          description: The newly created image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/images/{imageUid}:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: imageUid
+        description: The uuid of the image
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    delete:
+      summary: delete an image to account
+      responses:
+        204:
+          description: successfully deleted image
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/rating:
+    parameters:
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Read the rating of an account.
+      responses:
+        200:
+          description: The rating of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - numRating
+                properties:
+                  avgRating:
+                    $ref: "#/components/schemas/AvgRating"
+                  numRatings:
+                    $ref: "#/components/schemas/NumRatings"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /session:
+    post:
+      summary: Update the username of an account.
+      responses:
+        200:
+          description: The updated username of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Username"
+components:
+  schemas:
+    Image:
+      type: object
+      description: representation of image
+      required:
+        - imageUid
+        - accountUid
+        - imageLink
+        - timestamp
+      properties:
+        imageUid:
+          readOnly: true
+          type: string
+          format: uuid
+        accountUid:
+          readOnly: true
+          type: string
+          format: uuid
+        imageLink:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/ImageLink"
+        timestamp:
+          readOnly: true
+          type: string
+          format: date-time
+    ImageLink:
+      type: string
+      description: link to image in google cloud storage
+      pattern: '^https:\/\/storage\.googleapis\.com\/.+$'
+    CuisineType:
+      type: string
+      enum:
+        - Indian
+        - Italian
+        - Greek
+    AccountProfile:
+      type: object
+      description: profile data available without authentication
+      required:
+        - accountUid
+        - username
+        - bio
+        - circle
+        - numRatings
+        - createTime
+        - updateTime
+        - images
+        - cuisinePreferences
+        - cuisineSpecialities
+      properties:
+        accountUid:
+          readOnly: true
+          type: string
+          format: uuid
+        username:
+          $ref: "#/components/schemas/Username"
+        bio:
+          $ref: "#/components/schemas/Bio"
+        circle:
+          $ref: "#/components/schemas/Circle"
+        pfpLink:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/ImageLink"
+        avgRating:
+          $ref: "#/components/schemas/AvgRating"
+        numRatings:
+          $ref: "#/components/schemas/NumRatings"
+        createTime:
+          readOnly: true
+          type: string
+          format: date-time
+        updateTime:
+          readOnly: true
+          type: string
+          format: date-time
+        images:
+          readOnly: true
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
+        cuisinePreferences:
+          readOnly: true
+          type: array
+          items:
+            $ref: "#/components/schemas/CuisineType"
+        cuisineSpecialities:
+          readOnly: true
+          type: array
+          items:
+            $ref: "#/components/schemas/CuisineType"
+    Account:
+      type: object
+      required:
+        - profile
+        - email
+        - password
+        - address
+      properties:
+        profile:
+          $ref: "#/components/schemas/AccountProfile"
+        email:
+          $ref: "#/components/schemas/Email"
+        password:
+          writeOnly: true
+          allOf:
+            - $ref: "#/components/schemas/Password"
+        address:
+          $ref: "#/components/schemas/Address"
+    Address:
+      type: object
+      required:
+        - addressUid
+        - address1
+        - city
+        - province
+        - postalCode
+        - latitude
+        - longitude
+      properties:
+        addressUid:
+          readOnly: true
+          type: string
+          format: uuid
+        address1:
+          type: string
+          maxLength: 80
+        address2:
+          type: string
+          maxLength: 80
+        address3:
+          type: string
+          maxLength: 80
+        city:
+          type: string
+          maxLength: 35
+        province:
+          type: string
+          enum:
+            - Ontario
+            - Quebec
+            - British Columbia
+            - Alberta
+            - Manitoba
+            - Saskatchewan
+            - Nova Scotia
+            - New Brusnwick
+            - Newfoundland and Labrador
+            - Prince Edward Island
+            - Northwest Territories
+            - Yukon
+            - Nunavut
+        postalCode:
+          type: string
+          pattern: '^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJ-NPRSTV-Z]\d[ABCEGHJ-NPRSTV-Z]\d$'
+        latitude:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/Latitude"
+        longitude:
+          allOf:
+            - $ref: "#/components/schemas/Longitude"
+    Circle:
+      type: object
+      required:
+        - circleUid
+        - radius
+        - latitude
+        - longitude
+      properties:
+        circleUid:
+          readOnly: true
+          type: string
+          format: uuid
+        radius:
+          type: integer
+          minimum: 50
+          maximum: 3000
+        latitude:
+          allOf:
+            - $ref: "#/components/schemas/Latitude"
+        longitude:
+          allOf:
+            - $ref: "#/components/schemas/Longitude"
+    Username:
+      type: string
+      minLength: 3
+      maxLength: 80
+      pattern: '[^!*''();:@&=+$,/?%#[\]]{3,80}' #can't conatain any url reserved characters
+    Password:
+      type: string
+      minLength: 8
+      maxLength: 50
+      pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,50}$' #must contain lowercase, uppercase, number
+    Latitude:
+      type: number
+      format: float
+      maximum: 90
+      minimum: -90
+    Longitude:
+      type: number
+      format: float
+      maximum: 180
+      minimum: -180
+    Email:
+      type: string
+      format: email
+      maxLength: 80
+    Bio:
+      type: string
+      maxLength: 500
+    AvgRating:
+      readOnly: true
+      type: number
+      minimum: 1
+      maximum: 5
+    NumRatings:
+      readOnly: true
+      type: integer
+      minimum: 0
+    Errors:
+      type: array
+      items:
+        $ref: "#/components/schemas/Error"
+    Error:
+      type: object
+      required:
+        - path
+        - message
+        - detail
+      properties:
+        path:
+          type: string
+        message:
+          type: string
+        detail:
+          type: string
+  responses:
+    BadRequest:
+      description: request format is invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Errors"
+    Unauthorized:
+      description: action requires authentication
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Errors"
+    Forbidden:
+      description: insufficient permission for this action
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Errors"
+    NotFound:
+      description: specified resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Errors"
+    Conflict:
+      description: request has correct format but data currently conflicts
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Errors"
+    InternalServerError:
+      description: error processing request on server
+      content:
+        application/json:
+          schema:
+            type: integer
