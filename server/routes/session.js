@@ -15,7 +15,7 @@ const sessionNotFound = {
 
 router.get("/", async (req, res, next) => {
   if (!req.session.accountUid) {
-    next({ sessionNotFound });
+    next(sessionNotFound);
     return;
   }
   req.session.touch();
