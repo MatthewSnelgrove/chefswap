@@ -577,10 +577,6 @@ paths:
       responses:
         204:
           description: successfully deleted image
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Image"
         400:
           $ref: "#/components/responses/BadRequest"
         401:
@@ -670,6 +666,29 @@ paths:
           $ref: "#/components/responses/Conflict"
         500:
           $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/cuisinePreferences/{preference}:
+    parameters:
+      - $ref: "#/components/parameters/AccountUid"
+      - in: path
+        name: preference
+        description: A cuisine preference of an account
+        required: true
+        schema:
+          $ref: "#/components/schemas/CuisineType"
+    delete:
+      responses:
+        204:
+          description: Successfully deleted preference.
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}/cuisineSpecialities:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
@@ -722,6 +741,29 @@ paths:
           $ref: "#/components/responses/NotFound"
         409:
           $ref: "#/components/responses/Conflict"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/cuisineSpecialities/{speciality}:
+    parameters:
+      - $ref: "#/components/parameters/AccountUid"
+      - in: path
+        name: speciality
+        description: A cuisine speciality of an account
+        required: true
+        schema:
+          $ref: "#/components/schemas/CuisineType"
+    delete:
+      responses:
+        204:
+          description: Successfully deleted speciality.
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
   /session:
@@ -807,6 +849,7 @@ components:
         - Mexican
         - Pizza
         - Thai
+        - BBQ
     AccountProfile:
       type: object
       description: profile data available without authentication

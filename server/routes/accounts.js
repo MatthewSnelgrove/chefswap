@@ -456,7 +456,7 @@ router.get("/:accountUid/address", checkAuth, async (req, res, next) => {
             'address3', address.address3,
             'city', address.city,
             'province', address.province,
-            'postal_code', address.postal_code
+            'postal_code', address.postal_code,
             'latitude', address.latitude,
             'longitude', address.longitude
           )
@@ -482,7 +482,7 @@ router.put("/:accountUid/address", checkAuth, async (req, res, next) => {
   const accountUid = req.params.accountUid;
   const { address1, address2, address3, city, province, postalCode } =
     req.body.address;
-  const gmapsRes = await fetch(addressToGmapsUrl(address));
+  const gmapsRes = await fetch(addressToGmapsUrl(req.body.address));
   const location = (await gmapsRes.json()).results[0].geometry.location;
   const address = camelize(
     await pool.query(
@@ -729,6 +729,271 @@ router.delete(
       return;
     }
     await bucket.file(image.imageName).delete();
+    res.sendStatus(204);
+  }
+);
+
+/**
+ * return cuisinePreferences associated with accountUid
+ */
+router.get("/:accountUid/cuisinePreferences", async (req, res, next) => {
+  const accountUid = req.params.accountUid;
+  const cuisinePreferences = camelize(
+    await pool.query(
+      `SELECT 
+        COALESCE(json_agg(preference ORDER BY preference) 
+                  FILTER (WHERE preference IS NOT NULL), 
+                  '[]'
+        ) AS preferences
+        FROM account 
+        LEFT JOIN cuisine_preference USING(account_uid)
+        WHERE account_uid=$1
+        GROUP BY account_uid;`,
+      [accountUid]
+    )
+  ).rows[0];
+  //no account with that accountUid
+  if (!cuisinePreferences) {
+    next(accountNotFound);
+  }
+  res.status(200).json(cuisinePreferences);
+});
+
+/**
+ * replace account's cuisine preferences
+ */
+router.post(
+  "/:accountUid/cuisinePreferences",
+  checkAuth,
+  async (req, res, next) => {
+    const accountUid = req.params.accountUid;
+    const cuisinePreference = req.body.cuisinePreference;
+    const insertRes = camelize(
+      await pool
+        .query(
+          `INSERT INTO cuisine_preference 
+          (account_uid, preference, preference_num)
+          SELECT $1, $2, 
+            COALESCE(MAX(preference_num), -1) + 1 
+          FROM cuisine_preference
+          WHERE account_uid=$1
+          RETURNING preference;`,
+          [accountUid, cuisinePreference]
+        )
+        .catch((e) => {
+          console.log(e);
+          switch (e.constraint) {
+            case "user_cuisine_preference_pkey":
+              next({
+                staus: 409,
+                message: "preference already set",
+                detail: "account already has specified cuisine preference",
+              });
+              return;
+            case "cuisine_preference_preference_num_check":
+              next({
+                staus: 409,
+                message: "max cuisine preferences",
+                detail: "maximum number of cuisine preferences already reached",
+              });
+              return;
+            default:
+              next({});
+          }
+        })
+    );
+    //no account with that accountUid
+    if (!insertRes || !insertRes.rows[0]) {
+      next(accountNotFound);
+      return;
+    }
+    //get updated preferences
+    const cuisinePreferences = camelize(
+      await pool.query(
+        `SELECT 
+        COALESCE(json_agg(preference ORDER BY preference) 
+                  FILTER (WHERE preference IS NOT NULL), 
+                  '[]'
+        ) AS preferences
+        FROM account 
+        LEFT JOIN cuisine_preference USING(account_uid)
+        WHERE account_uid=$1
+        GROUP BY account_uid;`,
+        [accountUid]
+      )
+    ).rows[0];
+    res.status(200).json(cuisinePreferences);
+  }
+);
+
+/**
+ * delete cuisine preference
+ */
+router.delete(
+  "/:accountUid/cuisinePreferences/:preference",
+  checkAuth,
+  async (req, res, next) => {
+    const { accountUid, preference } = req.params;
+    console.log(preference);
+    await pool.query(`BEGIN`);
+    const prefRes = camelize(
+      await pool.query(
+        `DELETE FROM cuisine_preference 
+          WHERE account_uid=$1 AND preference=$2 RETURNING preference_num`,
+        [accountUid, preference]
+      )
+    );
+    const prefNum = prefRes ? prefRes.rows[0].preferenceNum : null;
+    if (!prefNum) {
+      console.log(prefRes);
+      next({
+        status: 404,
+        message: "preference not found",
+        detail: "account does not have specified preference",
+      });
+      return;
+    }
+    await pool.query(
+      `UPDATE cuisine_preference SET preference_num=$1
+        WHERE account_uid=$2
+        AND preference_num = (SELECT max(preference_num) 
+                              FROM cuisine_preference
+                              WHERE account_uid=$2)`,
+      [prefNum, accountUid]
+    );
+    await pool.query(`COMMIT`);
+    res.sendStatus(204);
+  }
+);
+
+/**
+ * return cuisineSpecialities associated with accountUid
+ */
+router.get("/:accountUid/cuisineSpecialities", async (req, res, next) => {
+  const accountUid = req.params.accountUid;
+  const cuisineSpecialities = camelize(
+    await pool.query(
+      `SELECT 
+        COALESCE(json_agg(speciality ORDER BY speciality) 
+                  FILTER (WHERE speciality IS NOT NULL), 
+                  '[]'
+        ) AS specialities
+        FROM account 
+        LEFT JOIN cuisine_speciality USING(account_uid)
+        WHERE account_uid=$1
+        GROUP BY account_uid;`,
+      [accountUid]
+    )
+  ).rows[0];
+  //no account with that accountUid
+  if (!cuisineSpecialities) {
+    next(accountNotFound);
+  }
+  res.status(200).json(cuisineSpecialities);
+});
+
+/**
+ * replace account's cuisine specialities
+ */
+router.post(
+  "/:accountUid/cuisineSpecialities",
+  checkAuth,
+  async (req, res, next) => {
+    const accountUid = req.params.accountUid;
+    const cuisineSpeciality = req.body.cuisineSpeciality;
+    const insertRes = camelize(
+      await pool
+        .query(
+          `INSERT INTO cuisine_speciality 
+          (account_uid, speciality, speciality_num)
+          SELECT $1, $2, 
+            COALESCE(MAX(speciality_num), -1) + 1 
+          FROM cuisine_speciality
+          WHERE account_uid=$1
+          RETURNING speciality;`,
+          [accountUid, cuisineSpeciality]
+        )
+        .catch((e) => {
+          console.log(e);
+          switch (e.constraint) {
+            case "user_cuisine_speciality_pkey":
+              next({
+                staus: 409,
+                message: "speciality already set",
+                detail: "account already has specified cuisine speciality",
+              });
+              return;
+            case "cuisine_speciality_speciality_num_check":
+              next({
+                staus: 409,
+                message: "max cuisine specialities",
+                detail:
+                  "maximum number of cuisine specialities already reached",
+              });
+              return;
+            default:
+              next({});
+          }
+        })
+    );
+    //no account with that accountUid
+    if (!insertRes || !insertRes.rows[0]) {
+      next(accountNotFound);
+      return;
+    }
+    //get updated specialities
+    const cuisineSpecialities = camelize(
+      await pool.query(
+        `SELECT 
+        COALESCE(json_agg(speciality ORDER BY speciality) 
+                  FILTER (WHERE speciality IS NOT NULL), 
+                  '[]'
+        ) AS specialities
+        FROM account 
+        LEFT JOIN cuisine_speciality USING(account_uid)
+        WHERE account_uid=$1
+        GROUP BY account_uid;`,
+        [accountUid]
+      )
+    ).rows[0];
+    res.status(200).json(cuisineSpecialities);
+  }
+);
+
+/**
+ * delete cuisine speciality
+ */
+router.delete(
+  "/:accountUid/cuisineSpecialities/:speciality",
+  checkAuth,
+  async (req, res, next) => {
+    const { accountUid, speciality } = req.params;
+    await pool.query(`BEGIN`);
+    const specRes = camelize(
+      await pool.query(
+        `DELETE FROM cuisine_speciality 
+          WHERE account_uid=$1 AND speciality=$2 RETURNING speciality_num`,
+        [accountUid, speciality]
+      )
+    );
+    const specNum = specRes ? specRes.rows[0] : null;
+    if (!specNum) {
+      next({
+        status: 404,
+        message: "speciality not found",
+        detail: "account does not have specified speciality",
+      });
+      return;
+    }
+    await pool.query(
+      `UPDATE cuisine_speciality SET speciality_num=$1
+        WHERE account_uid=$2
+        AND speciality_num = (SELECT max(speciality_num) 
+                              FROM cuisine_speciality
+                              WHERE account_uid=$2)`,
+      [specNum, accountUid]
+    );
+    await pool.query(`COMMIT`);
     res.sendStatus(204);
   }
 );
