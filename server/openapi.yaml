@@ -169,13 +169,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read an account. Returns all data in signed in as account and only profile data otherwise
       responses:
@@ -195,13 +189,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}/username:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read username of an account.
       responses:
@@ -251,13 +239,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}/email:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read email of an account.
       responses:
@@ -307,13 +289,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}/password:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     put:
       summary: Update the password of an account
       requestBody:
@@ -342,13 +318,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}/address:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read address of an account.
       responses:
@@ -400,13 +370,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}/bio:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read bio of an account.
       responses:
@@ -454,13 +418,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}/circle:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read circle of an account.
       responses:
@@ -508,13 +466,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}/pfp:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read pfp of an account.
       responses:
@@ -562,13 +514,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}/images:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read images of an account.
       responses:
@@ -618,13 +564,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}/images/{imageUid}:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
       - name: imageUid
         description: The uuid of the image
         in: path
@@ -653,13 +593,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /accounts/{accountUid}/rating:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read the rating of an account.
       responses:
@@ -680,6 +614,114 @@ paths:
           $ref: "#/components/responses/BadRequest"
         404:
           $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/cuisinePreferences:
+    parameters:
+      - $ref: "#/components/parameters/AccountUid"
+    get:
+      summary: Read the cuisine preferences of an account.
+      responses:
+        200:
+          description: The cuisine preferences of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CuisineType"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: Add a cuisine preference to an account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cuisinePreference
+              properties:
+                cuisinePreference:
+                  $ref: "#/components/schemas/CuisineType"
+      responses:
+        200:
+          description: The updated cuisine preferences of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CuisineType"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        409:
+          $ref: "#/components/responses/Conflict"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /accounts/{accountUid}/cuisineSpecialities:
+    parameters:
+      - $ref: "#/components/parameters/AccountUid"
+    get:
+      summary: Read the cuisine specialities of an account.
+      responses:
+        200:
+          description: The cuisine specialities of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CuisineType"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: Add a cuisine speciality to an account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - cuisineSpeciality
+              properties:
+                cuisineSpeciality:
+                  $ref: "#/components/schemas/CuisineType"
+      responses:
+        200:
+          description: The updated cuisine specialities of the account corresponding to the provided uid.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CuisineType"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        409:
+          $ref: "#/components/responses/Conflict"
         500:
           $ref: "#/components/responses/InternalServerError"
   /session:
@@ -762,6 +804,9 @@ components:
         - Indian
         - Italian
         - Greek
+        - Mexican
+        - Pizza
+        - Thai
     AccountProfile:
       type: object
       description: profile data available without authentication
@@ -887,6 +932,7 @@ components:
           allOf:
             - $ref: "#/components/schemas/Latitude"
         longitude:
+          readOnly: true
           allOf:
             - $ref: "#/components/schemas/Longitude"
     Circle:
@@ -906,9 +952,11 @@ components:
           minimum: 50
           maximum: 3000
         latitude:
+          readOnly: true
           allOf:
             - $ref: "#/components/schemas/Latitude"
         longitude:
+          readOnly: true
           allOf:
             - $ref: "#/components/schemas/Longitude"
     Username:
@@ -1021,3 +1069,12 @@ components:
         application/json:
           schema:
             type: integer
+  parameters:
+    AccountUid:
+      name: accountUid
+      description: The uuid of an account
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
