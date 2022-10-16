@@ -409,7 +409,7 @@ router.get("/:accountUid", async (req, res, next) => {
  * return username associated with accountUid
  */
 router.get("/:accountUid/username", async (req, res, next) => {
-  await getSingleFieldFromAccount(req, res, "username");
+  await getSingleFieldFromAccount(req, res, next, "username");
 });
 
 /**
@@ -423,7 +423,7 @@ router.put("/:accountUid/username", checkAuth, async (req, res, next) => {
  * return email associated with accountUid. requires authentication
  */
 router.get("/:accountUid/email", checkAuth, async (req, res, next) => {
-  await getSingleFieldFromAccount(req, res, "email");
+  await getSingleFieldFromAccount(req, res, next, "email");
 });
 
 /**
@@ -438,7 +438,7 @@ router.put("/:accountUid/email", checkAuth, async (req, res, next) => {
  */
 router.put("/:accountUid/password", checkAuth, async (req, res, next) => {
   req.body.passhash = await bcrypt.hash(req.body.password, 12);
-  await setSingleFieldInAccount(req, res, "passhash");
+  await setSingleFieldInAccount(req, res, next, "passhash");
 });
 
 /**
@@ -523,11 +523,11 @@ router.put("/:accountUid/address", checkAuth, async (req, res, next) => {
  * return bio associated with accountUid
  */
 router.get("/:accountUid/bio", async (req, res, next) => {
-  await getSingleFieldFromAccount(req, res, "bio");
+  await getSingleFieldFromAccount(req, res, next, "bio");
 });
 
 router.put("/:accountUid/bio", checkAuth, async (req, res, next) => {
-  await setSingleFieldInAccount(req, res, "bio");
+  await setSingleFieldInAccount(req, res, next, "bio");
 });
 
 /**
@@ -1019,7 +1019,7 @@ router.get("/:accountUid/rating", async (req, res, next) => {
   res.status(200).json(rating);
 });
 
-async function getSingleFieldFromAccount(req, res, field) {
+async function getSingleFieldFromAccount(req, res, next, field) {
   const accountUid = req.params.accountUid;
   const query = (
     await pool.query(
