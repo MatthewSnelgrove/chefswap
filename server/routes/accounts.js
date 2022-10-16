@@ -387,7 +387,6 @@ router.get("/:accountUid", async (req, res, next) => {
     res.status(200).json(account);
   } else {
     //return only profile data
-    console.log(accountProfileQuery(includeDistanceFrom));
     const account = camelize(
       await pool.query(
         `${accountProfileQuery(
@@ -774,7 +773,7 @@ router.post(
           `INSERT INTO cuisine_preference 
           (account_uid, preference, preference_num)
           SELECT $1, $2, 
-            COALESCE(MAX(preference_num), -1) + 1 
+            COALESCE(MAX(preference_num), 0) + 1 
           FROM cuisine_preference
           WHERE account_uid=$1
           RETURNING preference;`,
@@ -845,7 +844,6 @@ router.delete(
     );
     const prefNum = prefRes ? prefRes.rows[0].preferenceNum : null;
     if (!prefNum) {
-      console.log(prefRes);
       next({
         status: 404,
         message: "preference not found",
@@ -854,11 +852,15 @@ router.delete(
       return;
     }
     await pool.query(
-      `UPDATE cuisine_preference SET preference_num=$1
+      `WITH max_num AS (
+        SELECT max(preference_num)
+        FROM cuisine_preference
         WHERE account_uid=$2
-        AND preference_num = (SELECT max(preference_num) 
-                              FROM cuisine_preference
-                              WHERE account_uid=$2)`,
+        )
+        UPDATE cuisine_preference SET preference_num=LEAST(max_num.max, $1)
+        FROM max_num
+        WHERE account_uid=$2
+        AND preference_num = max_num.max`,
       [prefNum, accountUid]
     );
     await pool.query(`COMMIT`);
@@ -907,7 +909,7 @@ router.post(
           `INSERT INTO cuisine_speciality 
           (account_uid, speciality, speciality_num)
           SELECT $1, $2, 
-            COALESCE(MAX(speciality_num), -1) + 1 
+            COALESCE(MAX(speciality_num), 0) + 1 
           FROM cuisine_speciality
           WHERE account_uid=$1
           RETURNING speciality;`,
@@ -986,11 +988,15 @@ router.delete(
       return;
     }
     await pool.query(
-      `UPDATE cuisine_speciality SET speciality_num=$1
+      `WITH max_num AS (
+        SELECT max(speciality_num)
+        FROM cuisine_speciality
         WHERE account_uid=$2
-        AND speciality_num = (SELECT max(speciality_num) 
-                              FROM cuisine_speciality
-                              WHERE account_uid=$2)`,
+        )
+        UPDATE cuisine_speciality SET speciality_num=LEAST(max_num.max, $1)
+        FROM max_num
+        WHERE account_uid=$2
+        AND speciality_num = max_num.max`,
       [specNum, accountUid]
     );
     await pool.query(`COMMIT`);
@@ -1040,7 +1046,6 @@ async function getSingleFieldFromAccount(req, res, next, field) {
 async function setSingleFieldInAccount(req, res, next, field) {
   const accountUid = req.params.accountUid;
   const value = req.body[field];
-  console.log(req.body, field, req.body[field]);
   const allQueryRes = await pool
     .query(
       `UPDATE account 

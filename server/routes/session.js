@@ -27,7 +27,7 @@ router.get("/", async (req, res, next) => {
  * checks credentials and creates session for user if valid
  * if invalid, sets invalidCredentials field to true
  */
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   const { username, password } = req.body;
   const account = camelize(
     await pool.query(
@@ -38,11 +38,11 @@ router.post("/", async (req, res) => {
     )
   ).rows[0];
   //No user with username
-  const invalidCredentials = next({
+  const invalidCredentials = {
     status: 401,
     message: "invalid credentials",
     detail: "the provided username/password is invalid",
-  });
+  };
   if (!account) {
     next(invalidCredentials);
     return;
@@ -64,7 +64,7 @@ router.post("/", async (req, res) => {
  * checks credentials and creates session for user if valid
  * if invalid, sets invalidCredentials field to true
  */
-router.delete("/", async (req, res) => {
+router.delete("/", async (req, res, next) => {
   const accountUid = req.session.accountUid;
   //not signed in
   if (!accountUid) {

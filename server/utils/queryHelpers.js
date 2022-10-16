@@ -11,17 +11,17 @@ export function accountProfileQuery(includeDistanceFrom) {
               'timestamp', timestamp
             )
           ) AS images
-          FROM image JOIN account USING (account_uid)
+          FROM image
           GROUP BY account_uid
         ), temp_preference_table AS (
           SELECT account_uid, 
           json_agg(preference) AS preferences
-          FROM cuisine_preference JOIN account USING (account_uid)
+          FROM cuisine_preference
           GROUP BY account_uid
         ), temp_speciality_table AS (
           SELECT account_uid, 
           json_agg(speciality) AS specialities
-          FROM cuisine_speciality JOIN account USING (account_uid)
+          FROM cuisine_speciality
           GROUP BY account_uid
         )
         ${
@@ -43,7 +43,9 @@ export function accountProfileQuery(includeDistanceFrom) {
               'create_time', account.create_time, 
               'update_time', account.update_time, 
               'bio', account.bio, 
-              'pfp_name', account.pfp_name, 
+              'pfp_link', 'https://storage.googleapis.com/${
+                process.env.GCS_BUCKET
+              }/' || account.pfp_name, 
               'avg_rating', account.avg_rating, 
               'num_ratings', account.num_ratings, 
               'circle', json_build_object(
@@ -87,17 +89,17 @@ export function accountQuery(includeDistanceFrom) {
                 'timestamp', timestamp
               )
             ) AS images
-            FROM image JOIN account USING (account_uid)
+            FROM image
             GROUP BY account_uid
           ), temp_preference_table AS (
             SELECT account_uid, 
             json_agg(preference) AS preferences
-            FROM cuisine_preference JOIN account USING (account_uid)
+            FROM cuisine_preference
             GROUP BY account_uid
           ), temp_speciality_table AS (
             SELECT account_uid, 
             json_agg(speciality) AS specialities
-            FROM cuisine_speciality JOIN account USING (account_uid)
+            FROM cuisine_speciality
             GROUP BY account_uid
           )
           ${
@@ -118,7 +120,9 @@ export function accountQuery(includeDistanceFrom) {
               'create_time', account.create_time, 
               'update_time', account.update_time, 
               'bio', account.bio, 
-              'pfp_name', account.pfp_name, 
+              'pfp_link', 'https://storage.googleapis.com/${
+                process.env.GCS_BUCKET
+              }/' || account.pfp_name, 
               'avg_rating', account.avg_rating, 
               'num_ratings', account.num_ratings, 
               'circle', json_build_object(
