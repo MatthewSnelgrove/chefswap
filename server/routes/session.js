@@ -7,9 +7,15 @@ dotenv.config();
 
 export const router = express.Router();
 
+const sessionNotFound = {
+  status: 404,
+  message: "session not found",
+  detail: "no active session",
+};
+
 router.get("/", async (req, res) => {
   if (!req.session.accountUid) {
-    res.sendStatus(404);
+    next( sessionNotFound);
     return;
   }
   req.session.touch();

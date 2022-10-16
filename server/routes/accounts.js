@@ -456,7 +456,7 @@ router.get("/:accountUid/address", checkAuth, async (req, res, next) => {
             'address3', address.address3,
             'city', address.city,
             'province', address.province,
-            'postal_code', address.postal_code
+            'postal_code', address.postal_code,
             'latitude', address.latitude,
             'longitude', address.longitude
           )
@@ -482,7 +482,7 @@ router.put("/:accountUid/address", checkAuth, async (req, res, next) => {
   const accountUid = req.params.accountUid;
   const { address1, address2, address3, city, province, postalCode } =
     req.body.address;
-  const gmapsRes = await fetch(addressToGmapsUrl(address));
+  const gmapsRes = await fetch(addressToGmapsUrl(req.body.address));
   const location = (await gmapsRes.json()).results[0].geometry.location;
   const address = camelize(
     await pool.query(

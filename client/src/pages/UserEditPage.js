@@ -3,6 +3,7 @@ import "./styles/UserEditPage.css"
 import EditProfile from '../components/EditProfile'
 import EditPassword from '../components/EditPassword'
 import EditGallery from '../components/EditGallery'
+import EditPersonal from '../components/EditPersonal'
 
 function UserEditPage(props) {
   const type = props.type
@@ -12,7 +13,8 @@ function UserEditPage(props) {
   const renderInContainer = {
     edit_profile: <EditProfile />, 
     change_password: <EditPassword  />,
-    edit_gallery: <EditGallery />
+    edit_gallery: <EditGallery />,
+    edit_personal: <EditPersonal />
   }
   
   function linkTo(specificType, link) {
@@ -41,6 +43,12 @@ function UserEditPage(props) {
           <a className="full-a" onClick={(e) => linkTo("edit_gallery", "http://localhost:3000/accounts/gallery")}/>
           <div style={type == "edit_gallery" ? {fontWeight: "600"}: {}}>
             Edit Gallery
+          </div>
+        </li>
+        <li className="bottom-li" style={type == "edit_personal" ? StyleSelected: {}}>
+          <a className="full-a" onClick={(e) => linkTo("edit_personal", "http://localhost:3000/accounts/personal")}/>
+          <div style={type == "edit_personal" ? {fontWeight: "600"}: {}}>
+            Edit Personal Info
           </div>
         </li>
       </ul>
