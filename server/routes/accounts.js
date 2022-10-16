@@ -387,7 +387,6 @@ router.get("/:accountUid", async (req, res, next) => {
     res.status(200).json(account);
   } else {
     //return only profile data
-    console.log(accountProfileQuery(includeDistanceFrom));
     const account = camelize(
       await pool.query(
         `${accountProfileQuery(
@@ -774,7 +773,7 @@ router.post(
           `INSERT INTO cuisine_preference 
           (account_uid, preference, preference_num)
           SELECT $1, $2, 
-            COALESCE(MAX(preference_num), -1) + 1 
+            COALESCE(MAX(preference_num), 0) + 1 
           FROM cuisine_preference
           WHERE account_uid=$1
           RETURNING preference;`,
@@ -845,7 +844,6 @@ router.delete(
     );
     const prefNum = prefRes ? prefRes.rows[0].preferenceNum : null;
     if (!prefNum) {
-      console.log(prefRes);
       next({
         status: 404,
         message: "preference not found",
@@ -907,7 +905,7 @@ router.post(
           `INSERT INTO cuisine_speciality 
           (account_uid, speciality, speciality_num)
           SELECT $1, $2, 
-            COALESCE(MAX(speciality_num), -1) + 1 
+            COALESCE(MAX(speciality_num), 0) + 1 
           FROM cuisine_speciality
           WHERE account_uid=$1
           RETURNING speciality;`,
@@ -1040,7 +1038,6 @@ async function getSingleFieldFromAccount(req, res, next, field) {
 async function setSingleFieldInAccount(req, res, next, field) {
   const accountUid = req.params.accountUid;
   const value = req.body[field];
-  console.log(req.body, field, req.body[field]);
   const allQueryRes = await pool
     .query(
       `UPDATE account 
