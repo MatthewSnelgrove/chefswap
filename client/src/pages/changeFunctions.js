@@ -45,3 +45,20 @@ export async function changeBio(Uid, bio) {
         headers: { "Content-Type": "application/json" },
     }).catch((reason) => console.log(reason))
 }
+
+export async function addPrefrence(Uid, prefrence) {
+    await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/cuisinePreferences`, {
+        credentials: "include",
+        method: "POST",
+        body: JSON.stringify(prefrence),
+        headers: { "Content-Type": "application/json" },
+    }).catch((reason) => console.log(reason))
+}
+
+export async function deletePrefrence(Uid, prefrence) {
+    await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/cuisinePreferences/${prefrence}`, {
+        credentials: "include",
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" }
+    }).catch((reason) => console.log(reason))
+}

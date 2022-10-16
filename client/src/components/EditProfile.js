@@ -3,7 +3,7 @@ import { React, useEffect, useState } from "react";
 import "./styles/EditProfile.css"
 import TagEdit from "./TagEdit";
 import { getUser } from '../pages/fetchFunctions';
-import { changeBio } from "../pages/changeFunctions";
+import { changeBio, addPrefrence, deletePrefrence } from "../pages/changeFunctions";
 
 const FoodItems = [
   "Indian",
@@ -137,11 +137,29 @@ async function changeProfile() {
   return url
 }
 
+
+//Returns delete list and add list
+function getLists(curPrefrences, oldPrefrences) {
+  const newPrefrences = curPrefrences.filter((prefrence) => !oldPrefrences.some((element) => element == prefrence))
+  const deletePrefrences = oldPrefrences.filter((prefrence) => !curPrefrences.some((element) => element == prefrence))
+
+  return [newPrefrences, deletePrefrences]
+}
+
+
 //Remember to check empy imgFile
-function handleSubmit(ev, Uid, userPrefrences, userSpecialties, bio, imgFile) {
+function handleSubmit(ev, Uid, userPrefrences, userSpecialties, bio, imgFile, oldSpecialties, oldPrefrences) {
   // console.log(Uid, userPrefrences, userSpecialties, bio, imgFile.get("file"))
   //changeBio(Uid, {bio: bio})
-  const userPrefrenceJSON = {}
+  const [newPrefrences, deletePrefrences] = getLists(userPrefrences, oldPrefrences)
+
+  newPrefrences.map((prefrence) => {
+    addPrefrence(Uid, {cuisinePreference: prefrence})
+  })
+
+  deletePrefrences.map((prefrence) => {
+    deletePrefrence(Uid, prefrence)
+  })
   
 }
 
@@ -155,6 +173,9 @@ function EditProfile(props) {
     }, [])
 
     if (user == "N" || user == null) {return (<></>)}
+
+    const oldPrefrences = user.cuisinePreferences
+    const oldSpecialties = user.cuisineSpecialities
 
     return (
        <div className="form-info">
@@ -230,7 +251,7 @@ function EditProfile(props) {
               const bio = document.getElementById("bio").value
               const formData = new FormData
               formData.append("file", document.getElementById("file").files[0])
-              handleSubmit(e, user.accountUid, userPrefrences.prefrences, userSpecialties.prefrences, bio, formData)}}>
+              handleSubmit(e, user.accountUid, userPrefrences.prefrences, userSpecialties.prefrences, bio, formData, oldSpecialties, oldPrefrences)}}>
             Submit
             </button>
             {/* <div className="info-text" style={{fontWeight: "600", marginTop: "30px"}}>Personal Information</div> */}
