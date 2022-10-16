@@ -852,11 +852,15 @@ router.delete(
       return;
     }
     await pool.query(
-      `UPDATE cuisine_preference SET preference_num=$1
+      `WITH max_num AS (
+        SELECT max(preference_num)
+        FROM cuisine_preference
         WHERE account_uid=$2
-        AND preference_num = (SELECT max(preference_num) 
-                              FROM cuisine_preference
-                              WHERE account_uid=$2)`,
+        )
+        UPDATE cuisine_preference SET preference_num=LEAST(max_num.max, $1)
+        FROM max_num
+        WHERE account_uid=$2
+        AND preference_num = max_num.max`,
       [prefNum, accountUid]
     );
     await pool.query(`COMMIT`);
@@ -984,11 +988,15 @@ router.delete(
       return;
     }
     await pool.query(
-      `UPDATE cuisine_speciality SET speciality_num=$1
+      `WITH max_num AS (
+        SELECT max(speciality_num)
+        FROM cuisine_speciality
         WHERE account_uid=$2
-        AND speciality_num = (SELECT max(speciality_num) 
-                              FROM cuisine_speciality
-                              WHERE account_uid=$2)`,
+        )
+        UPDATE cuisine_speciality SET speciality_num=LEAST(max_num.max, $1)
+        FROM max_num
+        WHERE account_uid=$2
+        AND speciality_num = max_num.max`,
       [specNum, accountUid]
     );
     await pool.query(`COMMIT`);
