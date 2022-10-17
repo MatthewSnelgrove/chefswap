@@ -7,10 +7,10 @@ servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/MATTHEWS13542/chefswap/1
-  - url: http://localhost:3001/api/v1
+  - url: http://localhost:3001
     description: development
 paths:
-  /accounts:
+  /api/v1/accounts:
     get:
       summary: Read profile data from accounts
       parameters:
@@ -167,7 +167,7 @@ paths:
           $ref: "#/components/responses/BadRequest"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}:
+  /api/v1/accounts/{accountUid}:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
@@ -187,7 +187,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/username:
+  /api/v1/accounts/{accountUid}/username:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
@@ -237,7 +237,7 @@ paths:
           $ref: "#/components/responses/Conflict"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/email:
+  /api/v1/accounts/{accountUid}/email:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
@@ -287,7 +287,7 @@ paths:
           $ref: "#/components/responses/Conflict"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/password:
+  /api/v1/accounts/{accountUid}/password:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     put:
@@ -316,7 +316,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/address:
+  /api/v1/accounts/{accountUid}/address:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
@@ -368,7 +368,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/bio:
+  /api/v1/accounts/{accountUid}/bio:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
@@ -416,7 +416,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/circle:
+  /api/v1/accounts/{accountUid}/circle:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
@@ -464,7 +464,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/pfp:
+  /api/v1/accounts/{accountUid}/pfp:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
@@ -512,7 +512,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/images:
+  /api/v1/accounts/{accountUid}/images:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
@@ -562,7 +562,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/images/{imageUid}:
+  /api/v1/accounts/{accountUid}/images/{imageUid}:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
       - name: imageUid
@@ -587,7 +587,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/rating:
+  /api/v1/accounts/{accountUid}/rating:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
@@ -612,7 +612,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/cuisinePreferences:
+  /api/v1/accounts/{accountUid}/cuisinePreferences:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
@@ -666,7 +666,7 @@ paths:
           $ref: "#/components/responses/Conflict"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/cuisinePreferences/{preference}:
+  /api/v1/accounts/{accountUid}/cuisinePreferences/{preference}:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
       - in: path
@@ -689,7 +689,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/cuisineSpecialities:
+  /api/v1/accounts/{accountUid}/cuisineSpecialities:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
@@ -743,7 +743,7 @@ paths:
           $ref: "#/components/responses/Conflict"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /accounts/{accountUid}/cuisineSpecialities/{speciality}:
+  /api/v1/accounts/{accountUid}/cuisineSpecialities/{speciality}:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
       - in: path
@@ -766,7 +766,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /session:
+  /api/v1/session:
     get:
       summary: get the session of an account.
       responses:
@@ -789,6 +789,20 @@ paths:
           $ref: "#/components/responses/NotFound"
     post:
       summary: create session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  $ref: "#/components/schemas/Username"
+                password:
+                  $ref: "#/components/schemas/Password"
       responses:
         201:
           description: The current session.
@@ -850,6 +864,8 @@ components:
         - Pizza
         - Thai
         - BBQ
+        - Chinese
+        - Indi
     AccountProfile:
       type: object
       description: profile data available without authentication
