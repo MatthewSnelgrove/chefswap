@@ -978,7 +978,7 @@ router.delete(
         [accountUid, speciality]
       )
     );
-    const specNum = specRes ? specRes.rows[0].speciality : null;
+    const specNum = specRes ? specRes.rows[0].specialityNum : null;
     if (!specNum) {
       next({
         status: 404,
