@@ -15,7 +15,7 @@ function UserInfoPage() {
       }
       else {
         const json = await response.json()
-        setUser(json.public)
+        setUser(json[0].profile)
       }
     }
     fetchUser()

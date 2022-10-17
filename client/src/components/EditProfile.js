@@ -3,6 +3,7 @@ import { React, useEffect, useState } from "react";
 import "./styles/EditProfile.css"
 import TagEdit from "./TagEdit";
 import { getUser } from '../pages/fetchFunctions';
+import { changeBio, addPrefrence, deletePrefrence } from "../pages/changeFunctions";
 
 const FoodItems = [
   "Indian",
@@ -117,8 +118,55 @@ function removeDropdown(ev) {
   dropdown.remove()
 }
 
+async function changeProfile() {
+    const pickerOpts = {
+      types: [
+          {
+              description: "Images",
+              accept: {
+                  "image/*": [".png", ".jpeg", ".jpg"]
+              }
+          }
+      ],
+      multiple: false
+    }
+  
+  const [Handle] = await window.showOpenFilePicker(pickerOpts)
+  const file = await Handle.getFile()
+  const url = URL.createObjectURL(file)
+  return url
+}
+
+
+//Returns delete list and add list
+function getLists(curPrefrences, oldPrefrences) {
+  const newPrefrences = curPrefrences.filter((prefrence) => !oldPrefrences.some((element) => element == prefrence))
+  const deletePrefrences = oldPrefrences.filter((prefrence) => !curPrefrences.some((element) => element == prefrence))
+
+  return [newPrefrences, deletePrefrences]
+}
+
+
+//Remember to check empy imgFile
+function handleSubmit(ev, Uid, userPrefrences, userSpecialties, bio, imgFile, oldSpecialties, oldPrefrences) {
+  // console.log(Uid, userPrefrences, userSpecialties, bio, imgFile.get("file"))
+  //changeBio(Uid, {bio: bio})
+  const [newPrefrences, deletePrefrences] = getLists(userPrefrences, oldPrefrences)
+
+  newPrefrences.map((prefrence) => {
+    addPrefrence(Uid, {cuisinePreference: prefrence})
+  })
+
+  deletePrefrences.map((prefrence) => {
+    deletePrefrence(Uid, prefrence)
+  })
+  
+}
+
 function EditProfile(props) {
     const [user, setUser] = useState(null)
+    const [userPrefrences, setPrefrences] = useState({prefrences: []})
+    const [userSpecialties, setSpecialties] = useState({prefrences: []})
 
     useEffect(() => {
       getUser(setUser)
@@ -126,16 +174,39 @@ function EditProfile(props) {
 
     if (user == "N" || user == null) {return (<></>)}
 
+    const oldPrefrences = user.cuisinePreferences
+    const oldSpecialties = user.cuisineSpecialities
+
     return (
-       <form className="form-info" onSubmit={(e) => e.preventDefault()}>
+       <div className="form-info">
         <div className="form-item" style={{marginTop: "35px"}}>
           <div>
-            <img src="../corn.jpg" className="profile-pic"></img>
+            <img src={user.pfpName} id="profile-pic" className="profile-pic"></img>
           </div>
-          
           <div>
-            <h1 style={{fontSize: "22px", marginBottom: "0px"}}>Dick</h1>
-            <button className="profile-pic-button">Change profile photo</button>
+            <h1 style={{fontSize: "22px", marginBottom: "0px"}}>{user.username}</h1>
+            {/* <button className="profile-pic-button" onClick={(e) => {
+              const formData = new FormData
+              changeProfile()
+              .then((newProfile) => {
+                const profile_pic = document.getElementById("profile-pic")
+                profile_pic.src = newProfile
+                formData.append("file", newProfile)
+              })
+              .catch((reason) => console.log(reason))
+              
+              console.log(formData.get("file"))
+            }}>Change profile photo</button> */}
+            <form id="image-form">
+              <label className="profile-pic-button" onSubmit={(e) => {e.preventDefault()}}>
+                  Upload new Photo 
+                  <input type="file" id="file" accept="image/png, image/jpeg" onChange={(e) => {
+                      if (e.target.value == "") {return}
+                      const profile_pic = document.getElementById("profile-pic")
+                      profile_pic.src = window.URL.createObjectURL(e.target.files[0])
+                  }} style={{display: "none"}} />
+              </label>
+            </form>
             <div className="info-text" style={{fontWeight: "600", marginTop: "20px"}}>Public Information</div>
             <div className="info-text">This information will be part of your public profile</div>
           </div>
@@ -144,7 +215,7 @@ function EditProfile(props) {
           <div>
             <label>Bio</label>
           </div>
-          <textarea>{user.bio}</textarea>
+          <textarea id="bio" defaultValue={user.bio}></textarea>
         </div>
         <div className="form-item">
           <div>
@@ -165,7 +236,7 @@ function EditProfile(props) {
             }}
             >
             </textarea> */}
-            <TagEdit type={user.cuisinePreferences}  />
+            <TagEdit type={user.cuisinePreferences} prefrences={userPrefrences} setPrefrences={setPrefrences}  />
             <div className="info-text a-drop">Cuisine Prefrences tells other users what types of food you like</div>
           </div>
         </div>
@@ -174,9 +245,15 @@ function EditProfile(props) {
             <label>Cuisine Specialties</label>
           </div>
           <div style={{position: "relative"}}>
-            <TagEdit type={user.cuisineSpecialities} />
+            <TagEdit type={user.cuisineSpecialities} prefrences={userSpecialties} setPrefrences={setSpecialties} />
             <div className="info-text" style={{marginTop: "4px"}}>Cuisine Specialties tells other users what types of food you like to make!</div>
-            <button className="submitBtn" style={{marginTop: "20px"}}>Submit</button>
+            <button className="submitBtn" style={{marginTop: "20px"}} onClick={(e) => {
+              const bio = document.getElementById("bio").value
+              const formData = new FormData
+              formData.append("file", document.getElementById("file").files[0])
+              handleSubmit(e, user.accountUid, userPrefrences.prefrences, userSpecialties.prefrences, bio, formData, oldSpecialties, oldPrefrences)}}>
+            Submit
+            </button>
             {/* <div className="info-text" style={{fontWeight: "600", marginTop: "30px"}}>Personal Information</div> */}
             {/* <div className="info-text">This information will not be part of your public profile</div> */}
           </div>
@@ -197,7 +274,7 @@ function EditProfile(props) {
           </div>
           
         </div> */}
-      </form>
+      </div>
     )
 }
 

@@ -226,13 +226,16 @@ function Dropdown(props) {
 }
 
 function TagEdit(props) {
-    const [prefrences, updatePrefrences] = useState({prefrences: []})
+    // const [prefrences, updatePrefrences] = useState({prefrences: []})
     const [dropdownVisible, updateVisibility] = useState(false)
     const [query, updateQuery] = useState("")
 
     useEffect(() => {
-        updatePrefrences({prefrences: [...props.type]})
+        props.setPrefrences({prefrences: [...props.type]})
     }, [])
+
+    const prefrences = props.prefrences
+    const updatePrefrences = props.setPrefrences
 
     return (
         <>

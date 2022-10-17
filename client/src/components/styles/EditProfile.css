@@ -13,6 +13,7 @@
     padding: 0px;
     color: rgb(0, 149, 246);
     font-size: large;
+    cursor: pointer;
 }
 
 .form-info {
@@ -52,7 +53,6 @@
     font-weight: 600;
     font-size: 18px;
     text-align: right;
-    
 }
 
 

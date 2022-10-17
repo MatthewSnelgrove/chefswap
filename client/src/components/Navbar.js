@@ -8,19 +8,9 @@ function Navbar() {
     getUser(setUser)
   }, [])
 
-  if (user === null) {
-    return (
-      <>
-      </>
-    )
-  }
-  else {
-    return (
-      <>
-        {user != "N" ? <LoggedIn user={user} /> : <LoggedOut /> }
-      </>
-    )
-  }
+  if (user === null) {return (<></>)}
+
+  return (<>{user != "N" ? <LoggedIn user={user} /> : <LoggedOut /> }</>)
 }
 
 function LoggedIn(props) {

@@ -35,6 +35,7 @@ function App() {
         <Route path="/accounts/edit" element={<UserEditPage type={"edit_profile"} />} />
         <Route path="/accounts/password/change" element={<UserEditPage type={"change_password"} />} />
         <Route path="/accounts/gallery" element={<UserEditPage type={"edit_gallery"} />} />
+        <Route path="/accounts/personal" element={<UserEditPage type={"edit_personal"} />} />
       </Routes>
     </BrowserRouter>
   );

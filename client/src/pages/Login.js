@@ -7,6 +7,8 @@ function Login() {
 
 
   function isSuccess(userObj) {
+    console.log(userObj)
+    
     if (userObj == 401) {
       alert("Invalid Credentials")
       return;

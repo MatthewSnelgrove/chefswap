@@ -1,5 +1,3 @@
-import slugid from "slugid"
-
 const homepage = "http://localhost:3000/"
 
 export async function fetchLogin(password, username) {
@@ -15,6 +13,7 @@ export async function fetchLogin(password, username) {
     })
 
     if (!response.ok) {
+      console.log("Failed to get user")
       return response.status
     }
 
@@ -24,20 +23,21 @@ export async function fetchLogin(password, username) {
 }
 
 export async function fetchUserFromUid(Uid) {
-  const slug = slugid.encode(Uid)
 
-  const response = await fetch(`http://localhost:3001/api/v1/accounts/${slug}`)
+  const response = await fetch(`http://localhost:3001/api/v1/accounts/${Uid}`)
   const json = await response.json()
 
   return json
 }
 
 export async function fetchSpecific(Uid, specific) {
-  const slug = slugid.encode(Uid)
-
-  const response = await fetch(`http://localhost:3001/api/v1/accounts/${slug}/${specific}`)
+  const response = await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/${specific}`, {
+    method: "GET",
+    mode: "cors",
+    credentials: "include",
+    headers: {"Content-Type": "application/json"}
+  })
   const json = await response.json()
-
   return json
 }
 
@@ -49,12 +49,12 @@ export function getUser(userfunc) {
 
   userPromise.then((user) => {
 
-    if (user === 404) {
+    if (user === 404 || user == 405) {
       userfunc("N")
       return;
     }
 
-    userfunc(user.public)
+    userfunc(user.profile)
   })
 
 }
@@ -106,12 +106,12 @@ async function fetchUser() {
       credentials: "include",
     }
   )
-  
+
   if (!response.ok) {
     return response.status
   }
 
   const json = await response.json()
-
+  
   return fetchUserFromUid(json.accountUid)
 }
