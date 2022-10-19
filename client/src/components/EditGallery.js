@@ -68,47 +68,47 @@ function deleteImg(imgJSON, images, setImages) {
     setImages({images: [...filtered]})
 }
 
-async function getNewImages(images, setImages) {
+// async function getNewImages(images, setImages) {
     
-    const pickerOpts = {
-        types: [
-            {
-                description: "Images",
-                accept: {
-                    "image/*": [".png", ".jpeg", ".jpg"]
-                }
-            }
-        ],
-        multiple: true
-    }
+//     const pickerOpts = {
+//         types: [
+//             {
+//                 description: "Images",
+//                 accept: {
+//                     "image/*": [".png", ".jpeg", ".jpg"]
+//                 }
+//             }
+//         ],
+//         multiple: true
+//     }
 
-    var Handles = await window.showOpenFilePicker(pickerOpts)
-    var newImages = Handles.map(async (Handle) => {
-        const file = await Handle.getFile()
-        const url = URL.createObjectURL(file)
-        return url
-    })
+//     var Handles = await window.showOpenFilePicker(pickerOpts)
+//     var newImages = Handles.map(async (Handle) => {
+//         const file = await Handle.getFile()
+//         const url = URL.createObjectURL(file)
+//         return url
+//     })
 
-    Promise.all(newImages).then((values) => {
-        if (images == null) {
-            setImages({images: [...values]})
-            return
-        }
+//     Promise.all(newImages).then((values) => {
+//         if (images == null) {
+//             setImages({images: [...values]})
+//             return
+//         }
 
-        setImages({images: [...images.images, ...values]})
-    })
+//         setImages({images: [...images.images, ...values]})
+//     })
 
-    // if (images == null) {
-    //     return {images: [...newImages]}
-    // }
+//     // if (images == null) {
+//     //     return {images: [...newImages]}
+//     // }
     
-    // console.log(newImages)
+//     // console.log(newImages)
 
-    // return {images: [...images.images, ...newImages]}
+//     // return {images: [...images.images, ...newImages]}
 
-    //addPhotoToSession(file.name)
-    //updateImages(images, setImages, file.name)
-}
+//     //addPhotoToSession(file.name)
+//     //updateImages(images, setImages, file.name)
+// }
 
 // function connectDraggables() {
 //     const draggables = document.querySelectorAll(".draggable")

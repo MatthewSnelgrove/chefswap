@@ -3,165 +3,56 @@ import { React, useEffect, useState } from "react";
 import "./styles/EditProfile.css"
 import TagEdit from "./TagEdit";
 import { getUser } from '../pages/fetchFunctions';
-import { changeBio, addPrefrence, deletePrefrence } from "../pages/changeFunctions";
+import { changeBio,  deletePrefrence, addPrefrence, addSpecialty, deleteSpecialty, changeUserProfile } from "../pages/changeFunctions";
 
-const FoodItems = [
-  "Indian",
-  "Chinese",
-  "Thai",
-  "Mexican",
-  "Indi",
-  "Indonesian"
-]
 
-function addDropdown(target) {
-  const dropdown = document.createElement("div")
-  const parentElement = target.parentElement
-  const beforeElement = parentElement.querySelector(".a-drop")
-  dropdown.classList.add("dropdown-profile")
-  parentElement.insertBefore(dropdown, beforeElement)
-  return dropdown
-}
-
-function getQueryList(queryValue) {
-  const queryRegex = RegExp(queryValue, "g")
-  return FoodItems.filter((cuisineType) => queryRegex.test(cuisineType))
-}
-
-function removeAllChildNodes(parent) {
-  while (parent.firstChild) {
-    parent.removeChild(parent.firstChild)
-  }
-}
-
-function manageDropdown(dropdown, curText) {
-  removeAllChildNodes(dropdown)
-  const typesArr = curText.split(",")
-  const FoodItems = getQueryList(typesArr.pop())
+const curLocation =  "http://localhost:3000/accounts/edit"
+// async function changeProfile() {
+//     const pickerOpts = {
+//       types: [
+//           {
+//               description: "Images",
+//               accept: {
+//                   "image/*": [".png", ".jpeg", ".jpg"]
+//               }
+//           }
+//       ],
+//       multiple: false
+//     }
   
-  if (FoodItems.length == 0) {return}
-  
-  FoodItems.map((FoodItem) => {
-    const FoodElement = document.createElement("span")
-    FoodElement.textContent = FoodItem
-    dropdown.appendChild(FoodElement)
-  })
-
-  dropdown.firstChild.classList.add("dropdown-hl")
-}
-
-function shiftDropdownDown(dropdown) {
-  if (dropdown.childElementCount <= 1) {return}
-
-  const hlElement = dropdown.querySelector(".dropdown-hl")
-  const nextElement = hlElement.nextElementSibling
-
-  if (nextElement == null) {return}
-
-  hlElement.classList.remove("dropdown-hl")
-  nextElement.classList.add("dropdown-hl")
-}
-
-function shiftDropdownUp(dropdown) {
-  if (dropdown.childElementCount <= 1) {return}
-
-  const hlElement = dropdown.querySelector(".dropdown-hl")
-  const previousElement = hlElement.previousElementSibling
-
-  if (previousElement == null) {return}
-
-  hlElement.classList.remove("dropdown-hl")
-  previousElement.classList.add("dropdown-hl")
-}
-
-function onEnter(dropdown, textArea) {
-  if (dropdown.childElementCount == 0) {return}
-
-  const hlElement = dropdown.querySelector(".dropdown-hl")
-  const typesArr = textArea.value.split(",")
-  typesArr.pop()
-  typesArr.push(hlElement.textContent.concat(","))
-  textArea.value = typesArr.join(",")
-}
-
-function manageKeys(ev) {
-  //up and down keycodes
-  if (ev.keyCode == 40) {
-    shiftDropdownDown(ev.target.nextElementSibling)
-  }
-  else if (ev.keyCode == 38) {
-    shiftDropdownUp(ev.target.nextElementSibling)
-  }
-  else if (ev.keyCode == 13) {
-    console.log("in there")
-    onEnter(ev.target.nextElementSibling, ev.target)
-  }
-
-  const checkRegex = RegExp("[^a-zA-Z,]", "g")
-  if (checkRegex.test(ev.key)) {
-    ev.preventDefault()
-  }
-}
-
-function handleTags(ev) {
-  var dropdown = ev.target.parentElement.querySelector(".dropdown-profile") 
-
-  if (dropdown == null) {
-    dropdown = addDropdown(ev.target)
-  }
-
-  manageDropdown(dropdown, ev.target.value)
-}
-
-function removeDropdown(ev) {
-  const dropdown = ev.target.parentElement.querySelector(".dropdown-profile") 
-  dropdown.remove()
-}
-
-async function changeProfile() {
-    const pickerOpts = {
-      types: [
-          {
-              description: "Images",
-              accept: {
-                  "image/*": [".png", ".jpeg", ".jpg"]
-              }
-          }
-      ],
-      multiple: false
-    }
-  
-  const [Handle] = await window.showOpenFilePicker(pickerOpts)
-  const file = await Handle.getFile()
-  const url = URL.createObjectURL(file)
-  return url
-}
+//   const [Handle] = await window.showOpenFilePicker(pickerOpts)
+//   const file = await Handle.getFile()
+//   const url = URL.createObjectURL(file)
+//   return url
+// }
 
 
 //Returns delete list and add list
-function getLists(curPrefrences, oldPrefrences) {
-  const newPrefrences = curPrefrences.filter((prefrence) => !oldPrefrences.some((element) => element == prefrence))
-  const deletePrefrences = oldPrefrences.filter((prefrence) => !curPrefrences.some((element) => element == prefrence))
+// function getLists(curPrefrences, oldPrefrences) {
+//   const newPrefrences = curPrefrences.filter((prefrence) => !oldPrefrences.some((element) => element == prefrence))
+//   const deletePrefrences = oldPrefrences.filter((prefrence) => !curPrefrences.some((element) => element == prefrence))
 
-  return [newPrefrences, deletePrefrences]
-}
+//   return [newPrefrences, deletePrefrences]
+// }
 
 
-//Remember to check empy imgFile
-function handleSubmit(ev, Uid, userPrefrences, userSpecialties, bio, imgFile, oldSpecialties, oldPrefrences) {
-  // console.log(Uid, userPrefrences, userSpecialties, bio, imgFile.get("file"))
-  //changeBio(Uid, {bio: bio})
-  const [newPrefrences, deletePrefrences] = getLists(userPrefrences, oldPrefrences)
+// //Remember to check empy imgFile
+// function handleSubmit(ev, Uid, userPrefrences, userSpecialties, bio, imgFile, oldSpecialties, oldPrefrences) {
+//   // console.log(Uid, userPrefrences, userSpecialties, bio, imgFile.get("file"))
+//   //changeBio(Uid, {bio: bio})
+//   const [newPrefrences, deletePrefrences] = getLists(userPrefrences, oldPrefrences)
 
-  newPrefrences.map((prefrence) => {
-    addPrefrence(Uid, {cuisinePreference: prefrence})
-  })
+//   newPrefrences.map((prefrence) => {
+//     addPrefrence(Uid, {cuisinePreference: prefrence})
+//   })
 
-  deletePrefrences.map((prefrence) => {
-    deletePrefrence(Uid, prefrence)
-  })
+//   deletePrefrences.map((prefrence) => {
+//     deletePrefrence(Uid, prefrence)
+//   })
   
-}
+// }
+
+
 
 function EditProfile(props) {
     const [user, setUser] = useState(null)
@@ -174,29 +65,14 @@ function EditProfile(props) {
 
     if (user == "N" || user == null) {return (<></>)}
 
-    const oldPrefrences = user.cuisinePreferences
-    const oldSpecialties = user.cuisineSpecialities
-
     return (
        <div className="form-info">
         <div className="form-item" style={{marginTop: "35px"}}>
           <div>
-            <img src={user.pfpName} id="profile-pic" className="profile-pic"></img>
+            <img src={user.pfpLink} id="profile-pic" className="profile-pic"></img>
           </div>
           <div>
             <h1 style={{fontSize: "22px", marginBottom: "0px"}}>{user.username}</h1>
-            {/* <button className="profile-pic-button" onClick={(e) => {
-              const formData = new FormData
-              changeProfile()
-              .then((newProfile) => {
-                const profile_pic = document.getElementById("profile-pic")
-                profile_pic.src = newProfile
-                formData.append("file", newProfile)
-              })
-              .catch((reason) => console.log(reason))
-              
-              console.log(formData.get("file"))
-            }}>Change profile photo</button> */}
             <form id="image-form">
               <label className="profile-pic-button" onSubmit={(e) => {e.preventDefault()}}>
                   Upload new Photo 
@@ -204,6 +80,9 @@ function EditProfile(props) {
                       if (e.target.value == "") {return}
                       const profile_pic = document.getElementById("profile-pic")
                       profile_pic.src = window.URL.createObjectURL(e.target.files[0])
+                      const formData = new FormData
+                      formData.append("file", e.target.files[0])
+                      changeUserProfile(user.accountUid, formData)
                   }} style={{display: "none"}} />
               </label>
             </form>
@@ -215,28 +94,20 @@ function EditProfile(props) {
           <div>
             <label>Bio</label>
           </div>
-          <textarea id="bio" defaultValue={user.bio}></textarea>
+          <div style={{display: "flex", flexDirection: "column"}}>
+            <textarea id="bio" defaultValue={user.bio}></textarea>
+            <button className="submitBtn" style={{width: "min-content", whiteSpace: "nowrap", marginTop: "10px"}} onClick={(e) => {
+              changeBio(user.accountUid, document.getElementById("bio").value)
+              window.location = curLocation
+            }}>Change Bio</button>
+          </div>
         </div>
         <div className="form-item">
           <div>
             <label>Cuisine Prefrences</label>
           </div>
           <div style={{position: "relative"}}>
-            {/* <textarea 
-            style={{width: "100%", padding: "0px", verticalAlign: "top"}} 
-            placeholder="Enter tags in comma seperated list eg. Indian, Thai, Mongolian"
-            onChange={(e) => handleTags(e)}
-            onBlur={(e) => removeDropdown(e)}
-            onFocus={(e) => handleTags(e)}
-            onKeyDown={(e) => {
-              manageKeys(e)
-              if (e.keyCode == 13) {
-                e.preventDefault()
-              }
-            }}
-            >
-            </textarea> */}
-            <TagEdit type={user.cuisinePreferences} prefrences={userPrefrences} setPrefrences={setPrefrences}  />
+            <TagEdit type={user.cuisinePreferences} prefrences={userPrefrences} setPrefrences={setPrefrences} Uid={user.accountUid} addFunc={addPrefrence} deleteFunc={deletePrefrence}  />
             <div className="info-text a-drop">Cuisine Prefrences tells other users what types of food you like</div>
           </div>
         </div>
@@ -245,35 +116,10 @@ function EditProfile(props) {
             <label>Cuisine Specialties</label>
           </div>
           <div style={{position: "relative"}}>
-            <TagEdit type={user.cuisineSpecialities} prefrences={userSpecialties} setPrefrences={setSpecialties} />
+            <TagEdit type={user.cuisineSpecialities} prefrences={userSpecialties} setPrefrences={setSpecialties} Uid={user.accountUid} addFunc={addSpecialty} deleteFunc={deleteSpecialty} />
             <div className="info-text" style={{marginTop: "4px"}}>Cuisine Specialties tells other users what types of food you like to make!</div>
-            <button className="submitBtn" style={{marginTop: "20px"}} onClick={(e) => {
-              const bio = document.getElementById("bio").value
-              const formData = new FormData
-              formData.append("file", document.getElementById("file").files[0])
-              handleSubmit(e, user.accountUid, userPrefrences.prefrences, userSpecialties.prefrences, bio, formData, oldSpecialties, oldPrefrences)}}>
-            Submit
-            </button>
-            {/* <div className="info-text" style={{fontWeight: "600", marginTop: "30px"}}>Personal Information</div> */}
-            {/* <div className="info-text">This information will not be part of your public profile</div> */}
           </div>
         </div>
-        {/* <div className="form-item" style={{marginTop: "15px"}}>
-          <div>
-            <label>Address</label>
-          </div>
-          <input></input>
-        </div> */}
-        {/* <div className="form-item" style={{marginBottom: "20px"}}>
-          <div>
-            <label>Email</label>
-          </div>
-          <div>
-            <input style={{width: "100%"}}></input>
-            <button className="submitBtn" style={{marginTop: "20px"}}>Submit</button>
-          </div>
-          
-        </div> */}
       </div>
     )
 }

@@ -35,18 +35,6 @@ function managePostalCode(ev) {
     if (!testRegex.test(ev.key)) {
         ev.preventDefault()
     }
-
-    // const testRegex1 = RegExp("[a-z]")
-    // if (testRegex1.test(ev.key)) {
-    //     ev.preventDefault()
-    //     ev.target.value = ev.target.value.concat(ev.key.toUpperCase())
-    //     return
-    // }
-
-    // const testRegex2 = RegExp("[A-Z0-9]")
-    // if (!testRegex2.test(ev.key)) {
-    //     ev.preventDefault()
-    // }
 }
 
 function manageOnlyText(ev) {
@@ -57,7 +45,6 @@ function manageOnlyText(ev) {
 }
 
 function onSubmitAddress(e, Uid) {
-    //e.preventDefault()
 
     const addressInfo = {
         address: {
