@@ -4,7 +4,7 @@ import { pool } from "./configServices/dbConfig.js";
 import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import bodyParser from "body-parser";
-dotenv.config();
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 import pgSession from "connect-pg-simple";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
@@ -84,7 +84,6 @@ app.use(
 app.get("/api", (req, res) => {
   res.json({ message: "Hello from server!" });
 });
-
 import { router as sessionRouter } from "./routes/session.js";
 app.use("/api/v1/session", sessionRouter);
 import { router as accountsRouter } from "./routes/accounts.js";

@@ -1,6 +1,6 @@
 import multer from "multer";
 import * as dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 export const uploadHandler = multer({
   storage: multer.memoryStorage(),
 });

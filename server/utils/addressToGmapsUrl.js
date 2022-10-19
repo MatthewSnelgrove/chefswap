@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 export default function (address) {
   const { address1, city, province } = address;
   let addressString = `${address1} ${city} ${province}`;

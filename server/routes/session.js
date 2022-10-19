@@ -3,7 +3,7 @@ import { pool } from "../configServices/dbConfig.js";
 import bcrypt from "bcryptjs";
 import camelize from "camelize";
 import * as dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 export const router = express.Router();
 
