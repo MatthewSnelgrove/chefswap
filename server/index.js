@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import bodyParser from "body-parser";
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+console.log(process.env.NODE_ENV);
+console.log("aaa");
 import pgSession from "connect-pg-simple";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
