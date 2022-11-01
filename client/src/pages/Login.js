@@ -1,49 +1,81 @@
 import React, { useState } from 'react'
 import "./styles/_SignupLogin.scss";
 import Modal from "../components/Modal";
-import CredentialField from "../components/CredentialField";
-import { validateUsername, validatePassword } from "../pages/validationFunctions";
+import CredentialField from "../components/CredentialField2";
 
 function Login() {
-  const [hasError, setHasError] = useState({
-    username: true,
-    password: true,
+  // State holding all fields needed for specific form
+  const [fields, setFields] = useState({
+    username: "",
+    password: "",
   });
+
+  // State holding if field clicked
+  const [fieldsClicked, setFieldsClicked] = useState({
+    username: false,
+    password: false,
+  });
+
+  // Handles input change and updates state
+  function handleFieldChange(field) {
+    setFields({
+      ...fields,
+      ...field
+    });
+  }
+
+  // Handles onblur for inputs and updates clicked state
+  function handleFieldBlur(field) {
+    setFieldsClicked({
+      ...fieldsClicked,
+      [field]: true,
+    });
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    // Check for form errors
-    if (Object.values(hasError).includes(true)) {
-      // TODO: Replace with error message shown on screen
-      alert("Form error found");
-    }
+    let formContainsError = false;
 
-    else {
-      // TODO: Replace with form submission logic
-      alert("All inputs valid")
+    // Uncompleted fields
+    Object.values(fieldsClicked).forEach((clicked) => {
+      if (!clicked) {
+        formContainsError = true;
+      }
+    });
+
+    if (formContainsError) {
+      alert("Form contains errors or uncompleted fields");
+    } else {
+      alert("Form is good to submit!");
     }
   }
 
-  function handleErrorUpdate(name, bool) {
-    let newError = hasError;
-    newError[name] = bool;
-
-    setHasError(newError);
-  }
-
+  // No errors with inputs
   return (
-    <Modal backgroundUrl={"https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fimg1.cookinglight.timeinc.net%2Fsites%2Fdefault%2Ffiles%2Fstyles%2F4_3_horizontal_-_1200x900%2Fpublic%2F1525725671%2F1805w-mise-en-place.jpg%3Fitok%3DiokQjOQ9%261525727462"}>
+    <Modal title="Welcome Back!" backgroundUrl={"https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fimg1.cookinglight.timeinc.net%2Fsites%2Fdefault%2Ffiles%2Fstyles%2F4_3_horizontal_-_1200x900%2Fpublic%2F1525725671%2F1805w-mise-en-place.jpg%3Fitok%3DiokQjOQ9%261525727462"}>
       {/* <form action="/api/auth/login" method="post" className="signup-login-form"> */}
-      <form onSubmit={handleSubmit} className="signup-login-form">
+      <form onSubmit={handleSubmit} className="signup-login-form" autoComplete='off'>
         <fieldset>
-
-          {/* <input type="text" id="username" name="username" placeholder="*Username" required />
-          <input type="password" id="password" name="password" placeholder="*Password" minLength={3} required /> */}
-          <CredentialField label="Username" validateFcn={validateUsername}
-            onUpdate={handleErrorUpdate} size={80} />
-          <CredentialField type="password" label="Password" validateFcn={validatePassword}
-            onUpdate={handleErrorUpdate} size={80} />
+          <CredentialField
+            label="Username"
+            id="username"
+            size="90"
+            value={fields.username}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
+            clicked={fieldsClicked.username}
+            error={null} />
+          <CredentialField
+            type="password"
+            label="Password"
+            id="password"
+            size="90"
+            value={fields.password}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
+            clicked={fieldsClicked.password}
+            error={null} />
         </fieldset>
 
         <button type="submit" className="submit-btn">Log in</button>
