@@ -17,25 +17,9 @@
   }
 
   legend {
-    text-align: center;
+    font-size: 1.2em;
+    margin-bottom: 20px;
   }
-
-  // input {
-  //   display: block;
-  //   margin-bottom: 10px;
-  //   width: 80%;
-    
-  //   border-radius: 5px;
-  //   padding: 3px 8px;
-  // }
-
-  // input:valid {
-  //   border: 1px solid green;
-  // }
-
-  // input:invalid {
-  //   border: 1px solid red;
-  // }
 
   .submit-btn {
     margin-top: 30px;
@@ -51,4 +35,8 @@
   .submit-btn:active {
     opacity: 0.5;
   }
+}
+
+#password-input-container, #confirmPassword-input-container {
+  height: 70px;
 }
