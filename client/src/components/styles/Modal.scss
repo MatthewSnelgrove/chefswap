@@ -1,3 +1,5 @@
+@import "../../variables";
+
 .cred-modal-container {
   position: fixed;
   top: 0;
@@ -15,11 +17,6 @@
 }
 
 .popup {
-  // position: absolute;
-  // top: 10vh;
-  // left: 25vw;
-  // right: 25vw;
-
   width: 50%;
   height: fit-content;
   margin-top: 5%;
@@ -47,7 +44,7 @@
 .header-title {
   font-size: 1.5em;
   font-weight: 650;
-  color: rgb(149, 80, 1);
+  color: $cs-dark-orange;
 }
 
 .close-modal-btn {
@@ -65,5 +62,4 @@
 
   max-height: 80%;
   width: 100%;
-  // overflow-y: auto;
 }
