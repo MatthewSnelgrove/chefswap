@@ -5,7 +5,7 @@ import "./styles/_SignupLogin.scss";
 import {
   validateEmail, dummyValidatePassword, validateUsername,
   dummyValidation, validateMatching
-} from "../pages/validationFunctions";
+} from "../utils/validationFunctions";
 import PasswordRequirements from '../components/PasswordRequirements';
 
 function Signup() {
