@@ -1,0 +1,77 @@
+.addBtn {
+    border: 0;
+    background-color: rgb(0, 149, 246);
+    color: white;
+    font-weight: 600;
+    border-radius: 10px;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 3px;
+}
+
+.header {
+    padding-top: 25px;
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    justify-content: space-between;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.draggable {
+    cursor: move;
+}
+
+.image-container {
+    width: 100%;
+}
+
+.draggable.dragging {
+    opacity: 0.5;
+}
+
+.profile-img-container {
+    margin-top: 27px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, 130px);
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.drag-button {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    right: 0px;
+    opacity: 0.5;
+    border: 4px solid white
+}
+
+.drag-button:hover {
+    background-color: #CFD1D5;
+}
+
+.delete-button {
+    position: absolute;
+    top: -12px;
+    right: -13px;
+    border: 1.5px solid white;
+    background-color: #FF033E;
+    border-radius: 10px;
+}
+
+.delete-button > img {
+    height: 18px;
+    width: 15px;
+    margin-bottom: 3px;
+    margin-left: 2px;
+}
+
+.gallery-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}

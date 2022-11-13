@@ -8,6 +8,7 @@
     border-radius: 25px;
     height: fit-content;
     column-gap: 4px;
+    padding: 4px
 }
 
 .main-container-i * {
@@ -41,11 +42,15 @@
 }
 
 .bg-info-i {
-    border-radius: 20px;
-    border: 1px;
-    height: 70%;
-    margin-right: 7px;
-    background-color: aquamarine;
+    height: calc(100% + 4px);
+    width: calc(100% + 4px);
+    border-radius: 0px 25px 25px 0px;
+    border: 0px;
+}
+
+.bg-info-i:hover {
+    background-color: #0d6efd;
+    opacity: 0.6;
 }
 
 

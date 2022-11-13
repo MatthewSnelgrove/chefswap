@@ -1,0 +1,102 @@
+.form-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    margin-top: 24px;
+    width: 100%;
+}
+
+.profile-pic-button {
+    background-color: inherit;
+    text-align: left;
+    border: 0px;
+    padding: 0px;
+    color: rgb(0, 149, 246);
+    font-size: large;
+    cursor: pointer;
+}
+
+.form-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.profile-pic {
+    height: 50px;
+    width: 50px;
+    border-radius: 40px;
+}
+
+.submitBtn {
+    border: 0;
+    background-color: rgb(0, 149, 246);
+    color: white;
+    font-weight: 600;
+    border-radius: 10px;
+    font-size: 17px;
+}
+
+.form-item > :nth-child(1) {
+    width: 350px;
+    display: flex;
+    justify-content: flex-end;
+    height: 100%;
+}
+
+.form-item > :nth-child(2) {
+    width: 440px;
+}
+
+.form-item > div > label {
+    font-weight: 600;
+    font-size: 18px;
+    text-align: right;
+}
+
+
+
+.dropdown-profile > span:not(:first-child) {
+    border-top: 1px solid #EBEDF0;
+}
+
+.dropdown-hl {
+    background-color: aqua;
+}
+
+.a-drop {
+    margin-top: 5px;
+    z-index: 0;
+}
+
+.form-item input {
+    border: 1px solid #EBEDF0;
+    background-color: rgb(250,250,250);
+    border-radius: 10px;
+}
+
+.form-item textarea {
+    border: 1px solid #EBEDF0;
+}
+
+.info-text {
+    opacity: 0.7;
+    font-size: 17px;
+}
+
+@media (max-width: 950px) {
+    .form-info {
+        margin-left: 10px;
+        border-left: 0px;
+    }
+
+    .form-item > :nth-child(1) {
+        width: 30%;
+    }
+
+    .form-item > :nth-child(2) {
+        width: 60%;
+    }
+  }
+

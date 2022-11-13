@@ -5,27 +5,14 @@ import "./styles/CuisineListItem.scss";
 /**
  * Checkbox with cuisine name
  * @param tag Cuisine name
- * @param checked Boolean representing checked or unchecked cuisine item
- * @param fcns... to handle onchange
  */
 export default class CuisineListItem extends Component {
-  constructor(props) {
-    super(props);
-    this.handleTickedChange = this.handleTickedChange.bind(this);
-  }
-
-  handleTickedChange(e) {
-    this.props.onTickedChange(e.target.value, e.target.checked);
-  }
-
   render() {
     const tag = this.props.tag;
-    const checked = this.props.checked;
 
     return (
       <div>
-        <input type="checkbox" id={tag} name="cuisineName" value={tag} checked={checked}
-          onChange={this.handleTickedChange} />
+        <input type="checkbox" id={tag} name="cuisineName" value={tag} />
         <label htmlFor={tag} className="checkbox-label">{tag}</label>
       </div>
     )
@@ -34,10 +21,4 @@ export default class CuisineListItem extends Component {
 
 CuisineListItem.propTypes = {
   tag: PropTypes.string.isRequired,
-  checked: PropTypes.bool,
-  onTickedChange: PropTypes.func.isRequired,
-};
-
-CuisineListItem.defaultProps = {
-  checked: false,
 };
