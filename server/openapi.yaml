@@ -1102,6 +1102,7 @@ components:
         username:
           $ref: "#/components/schemas/Username"
         bio:
+          readOnly: true
           allOf:
             - $ref: "#/components/schemas/Bio"
         circle:
