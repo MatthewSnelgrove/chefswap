@@ -12,11 +12,11 @@ servers:
 paths:
   /api/v1/accounts:
     get:
-      summary: Read profile data from accounts
+      summary: Read the profile (public) data of all accounts.
       parameters:
         - in: query
           name: username
-          description: username of account
+          description: The username of an account.
           schema:
             type: string
             minLength: 3
@@ -24,7 +24,7 @@ paths:
             pattern: '[^!*''();:@&=+$,/?%#[\]]{3,80}' #can't conatain any url reserved characters
         - in: query
           name: includeDistanceFrom
-          description: distance from specified latitude/longitude to centre of account's circle will be added to response body
+          description: The distance from the specified latitude+longitude to centre of each account's circle will be added to response body. Both latitude and longitude must be specified.
           explode: true
           style: deepObject
           schema: #if includeDistance exists, it must have both latitude and longitude
@@ -44,7 +44,7 @@ paths:
                 additionalProperties: false
         - in: query
           name: minRating
-          description: min rating of accounts
+          description: All accounts in response will have a rating greater than or equal to minRating.
           schema:
             type: number
             format: float
@@ -52,7 +52,7 @@ paths:
             maximum: 5
         - in: query
           name: maxRating
-          description: max rating of accounts
+          description: All accounts in response will have a rating less than or equal to maxRating.
           schema:
             type: number
             format: float
@@ -60,21 +60,21 @@ paths:
             maximum: 5
         - in: query
           name: cuisinePreference
-          description: cuisine preferences of accounts
+          description: All accounts in response will have AT LEAST 1 of the specified cuisine preferences.
           schema:
             type: array
             items:
               $ref: "#/components/schemas/CuisineType"
         - in: query
           name: cuisineSpeciality
-          description: cuisineSpecialities of accounts
+          description: All accounts in response will have AT LEAST 1 of the specified cuisine specialities.
           schema:
             type: array
             items:
               $ref: "#/components/schemas/CuisineType"
         - in: query
           name: maxDistance
-          description: max distance to account
+          description: Only valid if includeDistanceFrom is specified. All accounts in response will be at most maxDistance from the position specified in includeDistanceFrom.
           schema:
             type: integer
             format: int32
@@ -82,7 +82,7 @@ paths:
             maximum: 2000000000
         - in: query
           name: orderBy
-          description: how to order results
+          description: Specifies the first field to be used for ordering results. Second field (or only if this param is not specified) is always accountUid. Ordering by distance is only valid if includeDistanceFrom is also specified.
           schema:
             type: string
             enum:
@@ -92,7 +92,7 @@ paths:
               - distanceDesc
         - in: query
           name: key
-          description: max item before first result of new query
+          description: All accounts in response will be occur after an account that has the specified properties according to the ordering set by orderBy. If ordering by distance, key must include field "distance". If ordering by rating, key must include field "rating". In all cases, field accountUid may optionally be provided.
           explode: true
           style: deepObject
           schema:
@@ -126,7 +126,7 @@ paths:
                     $ref: "#/components/schemas/AvgRating"
         - in: query
           name: limit
-          description: number of records to retrieve
+          description: Response will include up to limit accounts.
           schema:
             type: integer
             format: int32
@@ -135,7 +135,7 @@ paths:
             default: 20
       responses:
         200:
-          description: Profile data from matching accounts
+          description: Array containing profile data of accounts.
           content:
             application/json:
               schema:
@@ -147,9 +147,9 @@ paths:
                     profile:
                       $ref: "#/components/schemas/AccountProfile"
         500:
-          $ref: "#/components/schemas/Email"
+          $ref: "#/components/responses/InternalServerError"
     post:
-      summary: Create an account
+      summary: Create a new account
       requestBody:
         required: true
         content:
@@ -158,7 +158,7 @@ paths:
               $ref: "#/components/schemas/Account"
       responses:
         201:
-          description: The account was successfully created
+          description: The account was successfully created. Response contains the created account.
           content:
             application/json:
               schema:
@@ -169,15 +169,9 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
-      summary: Read an account. Returns all data in signed in as account and only profile data otherwise
+      summary: Read an account. If signed in, response contains all account data. Otherwise, response only contains profile data.
       responses:
         200:
           description: The account corresponding to the provided uid. Includes only profile information unless authenticated with target account.
@@ -186,7 +180,11 @@ paths:
               schema:
                 oneOf:
                   - $ref: "#/components/schemas/Account"
-                  - $ref: "#/components/schemas/AccountProfile"
+                  - required:
+                      - profile
+                    properties:
+                      profile:
+                        $ref: "#/components/schemas/AccountProfile"
         400:
           $ref: "#/components/responses/BadRequest"
         404:
@@ -195,22 +193,21 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/username:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
-      summary: Read username of an account.
+      summary: Read the username of an account.
       responses:
         200:
           description: The username of the account corresponding to the provided uid.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Username"
+                type: object
+                required:
+                  - username
+                properties:
+                  username:
+                    $ref: "#/components/schemas/Username"
         400:
           $ref: "#/components/responses/BadRequest"
         404:
@@ -218,7 +215,7 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
     put:
-      summary: Update the username of an account
+      summary: Update the username of an account.
       requestBody:
         required: true
         content:
@@ -236,7 +233,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Username"
+                type: object
+                required:
+                  - username
+                properties:
+                  username:
+                    $ref: "#/components/schemas/Username"
         400:
           $ref: "#/components/responses/BadRequest"
         401:
@@ -251,22 +253,21 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/email:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
-      summary: Read email of an account.
+      summary: Read the email of an account. Must be signed in with specified account.
       responses:
         200:
           description: The email of the account corresponding to the provided uid.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Email"
+                type: object
+                required:
+                  - email
+                properties:
+                  email:
+                    $ref: "#/components/schemas/Email"
         400:
           $ref: "#/components/responses/BadRequest"
         404:
@@ -274,7 +275,7 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
     put:
-      summary: Update the email of an account
+      summary: Update the email of an account. Must be signed in with specified account.
       requestBody:
         required: true
         content:
@@ -292,7 +293,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Email"
+                type: object
+                required:
+                  - email
+                properties:
+                  email:
+                    $ref: "#/components/schemas/Email"
         400:
           $ref: "#/components/responses/BadRequest"
         401:
@@ -307,15 +313,9 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/password:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     put:
-      summary: Update the password of an account
+      summary: Update the password of an account. Must be signed in with speficied account.
       requestBody:
         required: true
         content:
@@ -329,7 +329,7 @@ paths:
                   $ref: "#/components/schemas/Password"
       responses:
         204:
-          description: Password updated successfully
+          description: Password updated successfully.
         400:
           $ref: "#/components/responses/BadRequest"
         401:
@@ -342,15 +342,9 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/address:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
-      summary: Read address of an account.
+      summary: Read address of an account. Must be signed in with speficied account.
       responses:
         200:
           description: The address of the account corresponding to the provided uid.
@@ -369,18 +363,13 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
     put:
-      summary: Update the address of an account
+      summary: Update the address of an account. Must be signed in with speficied account.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - address
-              properties:
-                address:
-                  $ref: "#/components/schemas/Address"
+              $ref: "#/components/schemas/Address"
       responses:
         200:
           description: The updated address of the account corresponding to the provided uid.
@@ -400,13 +389,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/bio:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read bio of an account.
       responses:
@@ -415,7 +398,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Bio"
+                type: object
+                required:
+                  - bio
+                properties:
+                  bio:
+                    $ref: "#/components/schemas/Bio"
         400:
           $ref: "#/components/responses/BadRequest"
         404:
@@ -423,7 +411,7 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
     put:
-      summary: Update the bio of an account
+      summary: Update the bio of an account. Must be signed in with specified account.
       requestBody:
         required: true
         content:
@@ -441,7 +429,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Bio"
+                type: object
+                required:
+                  - bio
+                properties:
+                  bio:
+                    $ref: "#/components/schemas/Bio"
         400:
           $ref: "#/components/responses/BadRequest"
         401:
@@ -454,13 +447,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/circle:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read circle of an account.
       responses:
@@ -477,18 +464,13 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
     put:
-      summary: Update the circle of an account
+      summary: Update the circle of an account. Circle will be randomly generated based on address and specified radius. Must be signed in with specified account.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - circle
-              properties:
-                circle:
-                  $ref: "#/components/schemas/Circle"
+              $ref: "#/components/schemas/Circle"
       responses:
         200:
           description: The updated circle of the account corresponding to the provided uid.
@@ -508,22 +490,21 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/pfp:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
-      summary: Read pfp of an account.
+      summary: Read the pfp of an account.
       responses:
         200:
           description: The link to the pfp of the account corresponding to the provided uid.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ImageLink"
+                type: object
+                required:
+                  - pfpLink
+                properties:
+                  pfpLink:
+                    $ref: "#/components/schemas/ImageLink"
         400:
           $ref: "#/components/responses/BadRequest"
         404:
@@ -531,7 +512,7 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
     put:
-      summary: Update the pfp of an account
+      summary: Update the pfp of an account. Must be signed in with specified account.
       # not working for some reason
       # requestBody:
       #   required: true
@@ -549,7 +530,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ImageLink"
+                type: object
+                required:
+                  - pfpLink
+                properties:
+                  pfpLink:
+                    $ref: "#/components/schemas/ImageLink"
         400:
           $ref: "#/components/responses/BadRequest"
         401:
@@ -562,24 +548,23 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/images:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
-      summary: Read images of an account.
+      summary: Read the images of an account.
       responses:
         200:
-          description: the images of the account corresponding to the provided uid
+          description: The images of the account corresponding to the provided uid.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Image"
+                type: object
+                required:
+                  - images
+                properties:
+                  images:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Image"
         400:
           $ref: "#/components/responses/BadRequest"
         404:
@@ -587,7 +572,7 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
     post:
-      summary: add an image to account
+      summary: Add an image to an account. Sent in multipart/form-data in field named "image". Must be signed in with specified account.
       # not working for some reason
       # requestBody:
       #   required: true
@@ -601,7 +586,7 @@ paths:
       #             format: binary
       responses:
         201:
-          description: The newly created image
+          description: The newly created image.
           content:
             application/json:
               schema:
@@ -618,13 +603,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/images/{imageUid}:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
       - name: imageUid
         description: The uuid of the image
         in: path
@@ -632,11 +611,26 @@ paths:
         schema:
           type: string
           format: uuid
+    get:
+      summary: Read an image from an account
+      responses:
+        200:
+          description: The image with specified uid of the account corresponding to the provided accountUid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
     delete:
-      summary: delete an image to account
+      summary: Delete an image from account. Must be signed in with specified account.
       responses:
         204:
-          description: successfully deleted image
+          description: Image deleted successfully.
         400:
           $ref: "#/components/responses/BadRequest"
         401:
@@ -649,13 +643,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/rating:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read the rating of an account.
       responses:
@@ -666,7 +654,7 @@ paths:
               schema:
                 type: object
                 required:
-                  - numRating
+                  - numRatings
                 properties:
                   avgRating:
                     $ref: "#/components/schemas/AvgRating"
@@ -680,13 +668,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/cuisinePreferences:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read the cuisine preferences of an account.
       responses:
@@ -695,9 +677,14 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CuisineType"
+                type: object
+                required:
+                  - cuisinePreferences
+                properties:
+                  cuisinePreferences:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CuisineType"
         400:
           $ref: "#/components/responses/BadRequest"
         404:
@@ -705,7 +692,7 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
     post:
-      summary: Add a cuisine preference to an account.
+      summary: Add a cuisine preference to an account. Must be signed in with specified account.
       requestBody:
         required: true
         content:
@@ -718,14 +705,17 @@ paths:
                 cuisinePreference:
                   $ref: "#/components/schemas/CuisineType"
       responses:
-        200:
-          description: The updated cuisine preferences of the account corresponding to the provided uid.
+        201:
+          description: The added cuisine preference of the account corresponding to the provided uid.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CuisineType"
+                type: object
+                required:
+                  - cuisinePreference
+                properties:
+                  cuisinePreference:
+                    $ref: "#/components/schemas/CuisineType"
         400:
           $ref: "#/components/responses/BadRequest"
         401:
@@ -740,20 +730,15 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/cuisinePreferences/{preference}:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
       - in: path
         name: preference
-        description: A cuisine preference of an account
+        description: A cuisine preference of an account.
         required: true
         schema:
           $ref: "#/components/schemas/CuisineType"
     delete:
+      summary: Deletes the cuisine perferece for the specified account. Must be signed in with specified account.
       responses:
         204:
           description: Successfully deleted preference.
@@ -769,13 +754,7 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/cuisineSpecialities:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
     get:
       summary: Read the cuisine specialities of an account.
       responses:
@@ -784,9 +763,14 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CuisineType"
+                type: object
+                required:
+                  - cuisineSpecialities
+                properties:
+                  cuisineSpecialities:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CuisineType"
         400:
           $ref: "#/components/responses/BadRequest"
         404:
@@ -794,7 +778,7 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
     post:
-      summary: Add a cuisine speciality to an account.
+      summary: Add a cuisine speciality to an account. Must be signed in with specified account.
       requestBody:
         required: true
         content:
@@ -807,14 +791,17 @@ paths:
                 cuisineSpeciality:
                   $ref: "#/components/schemas/CuisineType"
       responses:
-        200:
-          description: The updated cuisine specialities of the account corresponding to the provided uid.
+        201:
+          description: The added cuisine speciality of the account corresponding to the provided uid.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CuisineType"
+                type: object
+                required:
+                  - cuisineSpeciality
+                properties:
+                  cuisineSpeciality:
+                    $ref: "#/components/schemas/CuisineType"
         400:
           $ref: "#/components/responses/BadRequest"
         401:
@@ -829,20 +816,15 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/cuisineSpecialities/{speciality}:
     parameters:
-      - name: accountUid
-        description: The uuid of an account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/AccountUid"
       - in: path
         name: speciality
-        description: A cuisine speciality of an account
+        description: A cuisine speciality of an account.
         required: true
         schema:
           $ref: "#/components/schemas/CuisineType"
     delete:
+      summary: Deletes the cuisine perferece for the specified account. Must be signed in with specified account.
       responses:
         204:
           description: Successfully deleted speciality.
@@ -856,29 +838,174 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
+  /api/swaps/{accountUid}:
+    parameters:
+      - $ref: "#/components/parameters/AccountUid"
+    get:
+      summary: Get all swaps an account is a part of.
+      parameters:
+        - in: query
+          name: status
+          description: The status of a swap (pending, ongoing, ended).
+          schema:
+            $ref: "#/components/schemas/SwapStatus"
+      responses:
+        200:
+          description: The swaps of the account corresponding to the provided uid matching status set in optional query param status.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Swap"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: Create new swap. Must be signed in with specified account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Swap"
+      responses:
+        201:
+          description: The newly created swap.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Swap"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /api/swaps/{accountUid}/{swapperUid}/{matchNum}:
+    parameters:
+      - $ref: "#/components/parameters/AccountUid"
+      - name: swapperUid
+        description: The uuid of an the swapper's account.
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: matchNum
+        description: Number that increments with the number of swaps between two specific accounts.
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 0
+    get:
+      summary: Get the specific swap between the specified accounts with specified matchNum.
+      responses:
+        200:
+          description: The matchNum'th swap betweeen specified accounts.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Swap"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      summary: Delete the specific swap between the specified accounts with specified matchNum. Must be signed in with specified account.
+      responses:
+        204:
+          description: Successfully deleted swap.
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+  /api/swaps/{accountUid}/{swapperUid}/{matchNum}/{status}:
+    parameters:
+      - $ref: "#/components/parameters/AccountUid"
+      - name: swapperUid
+        description: The uuid of an the swapper's account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: matchNum
+        description: Number that increments with the number of swaps between two specific accounts.
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 0
+      - name: status
+        description: The status of a swap (pending, ongoing, ended).
+        in: path
+        required: true
+        schema:
+          $ref: "#/components/schemas/SwapStatus"
+    put:
+      summary: Change the status of a swap. Must be signed in with one of the specified accounts and status must correspond with future status.
+      description: Can be set to ongoing if currently pending signed in as account that did no request. Can be set to ended currently ongoing and signed in with either account.
+      responses:
+        200:
+          description: The new status of the swap.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - swapStatus
+                properties:
+                  swapStatus:
+                    $ref: "#/components/schemas/SwapStatus"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
   /api/v1/session:
     get:
-      summary: get the session of an account.
+      summary: Get the current session details.
       responses:
         200:
           description: The current session.
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - cookie
-                  - accountUid
-                properties:
-                  cookie:
-                    $ref: "#/components/schemas/Cookie"
-                  accountUid:
-                    type: string
-                    format: uuid
+                $ref: "#/components/schemas/Session"
         404:
           $ref: "#/components/responses/NotFound"
     post:
-      summary: create session.
+      summary: Create a new session.
       requestBody:
         required: true
         content:
@@ -895,22 +1022,19 @@ paths:
                   $ref: "#/components/schemas/Password"
       responses:
         201:
-          description: The current session.
+          description: The newly created session.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Username"
+                $ref: "#/components/schemas/Session"
         401:
           description: Invalid username/password
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Errors"
+          $ref: "#/components/responses/Unauthorized"
     delete:
-      summary: End current session
+      summary: End the current session.
       responses:
         204:
-          description: Successfully deleted session.
+          description: Successfully ended session.
         404:
           $ref: "#/components/responses/NotFound"
 components:
@@ -983,13 +1107,9 @@ components:
         circle:
           $ref: "#/components/schemas/Circle"
         pfpLink:
-          readOnly: true
-          allOf:
-            - $ref: "#/components/schemas/ImageLink"
+          $ref: "#/components/schemas/ImageLink"
         avgRating:
-          readOnly: true
-          allOf:
-            - $ref: "#/components/schemas/AvgRating"
+          $ref: "#/components/schemas/AvgRating"
         numRatings:
           readOnly: true
           allOf:
@@ -1019,6 +1139,7 @@ components:
             $ref: "#/components/schemas/CuisineType"
     Account:
       type: object
+      description: All data associated with an account.
       required:
         - profile
         - email
@@ -1038,7 +1159,6 @@ components:
     Address:
       type: object
       required:
-        - addressUid
         - address1
         - city
         - province
@@ -1046,10 +1166,6 @@ components:
         - latitude
         - longitude
       properties:
-        addressUid:
-          readOnly: true
-          type: string
-          format: uuid
         address1:
           type: string
           maxLength: 80
@@ -1092,15 +1208,10 @@ components:
     Circle:
       type: object
       required:
-        - circleUid
         - radius
         - latitude
         - longitude
       properties:
-        circleUid:
-          readOnly: true
-          type: string
-          format: uuid
         radius:
           type: integer
           minimum: 50
@@ -1158,6 +1269,7 @@ components:
       properties:
         originalMaxAge:
           type: integer
+          format: int64
         expires:
           type: string
           format: date-time
@@ -1167,6 +1279,46 @@ components:
           type: boolean
         path:
           type: string
+    SwapStatus:
+      type: string
+      enum:
+        - pending
+        - ongoing
+        - ended
+    Swap:
+      type: object
+      required:
+        - requesterUid
+        - requesteeUid
+        - matchNum
+        - requestTimestamp
+        - status
+      properties:
+        requesterUid:
+          readOnly: true
+          type: string
+          format: uuid
+        requesteeUid:
+          type: string
+          format: uuid
+        matchNum:
+          readOnly: true
+          type: integer
+          minimum: 0
+        requestTimestamp:
+          readOnly: true
+          type: string
+          format: date-time
+        acceptTimestamp:
+          readOnly: true
+          type: string
+          format: date-time
+        endTimestamp:
+          readOnly: true
+          type: string
+          format: date-time
+        status:
+          $ref: "#/components/schemas/SwapStatus"
     Errors:
       type: array
       items:
@@ -1184,6 +1336,17 @@ components:
           type: string
         detail:
           type: string
+    Session:
+      type: object
+      required:
+        - cookie
+        - accountUid
+      properties:
+        cookie:
+          $ref: "#/components/schemas/Cookie"
+        accountUid:
+          type: string
+          format: uuid
   responses:
     BadRequest:
       description: request format is invalid
@@ -1220,4 +1383,13 @@ components:
       content:
         application/json:
           schema:
-            type: integer
+            $ref: "#/components/schemas/Errors"
+  parameters:
+    AccountUid:
+      name: accountUid
+      description: The uuid of an account
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid

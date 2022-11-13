@@ -4,9 +4,7 @@ import { pool } from "./configServices/dbConfig.js";
 import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import bodyParser from "body-parser";
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
-console.log(process.env.NODE_ENV);
-console.log("aaa");
+dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
 import pgSession from "connect-pg-simple";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
@@ -42,15 +40,15 @@ const store = new (pgSession(session))({
   pool: pool,
 });
 
-const uids = [
-  "36b83756-9a30-4779-a783-f40baad5782d",
-  "6611bbc5-2035-4304-b944-240dadb1f296",
-  "d935925e-5c70-4770-9c67-4d03557640fc",
-  "883bf1d3-6a25-49bd-bab9-ea365b400402",
-];
-for (const uid of uids) {
-  console.log(`${uid} : ${slugid.encode(uid)}`);
-}
+// const uids = [
+//   "36b83756-9a30-4779-a783-f40baad5782d",
+//   "6611bbc5-2035-4304-b944-240dadb1f296",
+//   "d935925e-5c70-4770-9c67-4d03557640fc",
+//   "883bf1d3-6a25-49bd-bab9-ea365b400402",
+// ];
+// for (const uid of uids) {
+//   console.log(`${uid} : ${slugid.encode(uid)}`);
+// }
 
 app.use(
   session({
@@ -108,12 +106,13 @@ app.use((err, req, res, next) => {
         {
           path: req.originalUrl,
           message: err.message || "unknown server error",
-          detail: err.detail || "unknown server error",
+          detail:
+            err.detail ||
+            err.message ||
+            "request caused an unknown error on the server",
         },
       ];
-  res.status(err.status || 500).json({
-    errors: errors,
-  });
+  res.status(err.status || 500).json(errors);
 });
 
 app.use((err, req, res, next) => {
