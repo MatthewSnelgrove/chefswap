@@ -45,7 +45,6 @@ export default function FindSwapPage() {
 
   return (
     <div className="find-swap-page">
-      <Navbar />
       <div className="find-swap-content">
         <FilterForm cuisineTyped={cuisineTyped} cuisineChecked={cuisineChecked}
           rating={rating} distance={distance}

@@ -3,15 +3,22 @@ import { pool } from "../configServices/dbConfig.js";
 import bcrypt from "bcryptjs";
 import camelize from "camelize";
 import * as dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
 
 export const router = express.Router();
 
-router.get("/", async (req, res) => {
+const sessionNotFound = {
+  status: 404,
+  message: "session not found",
+  detail: "no active session",
+};
+
+router.get("/", async (req, res, next) => {
   if (!req.session.accountUid) {
-    res.sendStatus(404);
+    next(sessionNotFound);
     return;
   }
+  req.session.touch();
   res.json(req.session);
 });
 
@@ -20,12 +27,8 @@ router.get("/", async (req, res) => {
  * checks credentials and creates session for user if valid
  * if invalid, sets invalidCredentials field to true
  */
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   const { username, password } = req.body;
-  //Missing username/password
-  if (!username || !password) {
-    res.status(400);
-  }
   const account = camelize(
     await pool.query(
       `SELECT account_uid, username, passhash 
@@ -35,18 +38,23 @@ router.post("/", async (req, res) => {
     )
   ).rows[0];
   //No user with username
+  const invalidCredentials = {
+    status: 401,
+    message: "invalid credentials",
+    detail: "the provided username/password is invalid",
+  };
   if (!account) {
-    res.status(401).json({ invalidCredentials: true });
+    next(invalidCredentials);
     return;
   }
   //valid username, password
   if (await bcrypt.compare(password, account.passhash)) {
     req.session.accountUid = account.accountUid;
-    res.status(201).send(req.session);
+    res.status(201).json(req.session);
   }
   //Wrong password
   else {
-    res.status(401).json({ invalidCredentials: true });
+    next(invalidCredentials);
     return;
   }
 });
@@ -56,11 +64,11 @@ router.post("/", async (req, res) => {
  * checks credentials and creates session for user if valid
  * if invalid, sets invalidCredentials field to true
  */
-router.delete("/", async (req, res) => {
+router.delete("/", async (req, res, next) => {
   const accountUid = req.session.accountUid;
   //not signed in
   if (!accountUid) {
-    res.sendStatus(401);
+    next(sessionNotFound);
     return;
   }
   req.session.destroy(() => {

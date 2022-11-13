@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import CredentialField from '../components/CredentialField2';
 import Modal from '../components/Modal';
 import "./styles/_SignupLogin.scss";
+import { signupUser } from "./fetchFunctions";
 import {
   validateEmail, dummyValidatePassword, validateUsername,
   dummyValidation, validateMatching
@@ -80,9 +81,25 @@ function Signup() {
     });
 
     if (formContainsError) {
+      // TODO: 
       alert("Form contains errors or uncompleted fields");
     } else {
-      alert("Form is good to submit!");
+      const userObj = {
+        email: fields.email,
+        username: fields.username,
+        password: fields.password,
+        address: {
+          address1: fields.address1,
+          address2: fields.address2,
+          address3: fields.address3,
+          city: fields.city,
+          province: fields.province,
+          postalCode: fields.postalCode
+        }
+      };
+
+      // TODO: Return api response for displaying error on frontend******************
+      signupUser(userObj);
     }
   }
 

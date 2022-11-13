@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import "./styles/_SignupLogin.scss";
+import { fetchLogin } from "./fetchFunctions";
 import Modal from "../components/Modal";
 import CredentialField from "../components/CredentialField2";
 
 function Login() {
+
   // State holding all fields needed for specific form
   const [fields, setFields] = useState({
     username: "",
@@ -32,12 +34,12 @@ function Login() {
     });
   }
 
+  // Handle login submit
   function handleSubmit(e) {
     e.preventDefault();
 
+    // HANDLE FORM ERRORS
     let formContainsError = false;
-
-    // Uncompleted fields
     Object.values(fieldsClicked).forEach((clicked) => {
       if (!clicked) {
         formContainsError = true;
@@ -45,10 +47,25 @@ function Login() {
     });
 
     if (formContainsError) {
+      // TODO: Add error message on frontend *******************************************
       alert("Form contains errors or uncompleted fields");
     } else {
-      alert("Form is good to submit!");
+      // TODO: Return api response for displaying error on frontend******************
+      fetchLogin(fields.password, fields.username).then((data) => isSuccess(data));
     }
+
+  }
+
+  // Callback function on login success
+  function isSuccess(userObj) {
+    console.log(userObj);
+
+    if (userObj === 401) {
+      alert("Invalid Credentials");
+      return;
+    }
+
+    window.location = "http://localhost:3000/";
   }
 
   // No errors with inputs
@@ -84,4 +101,4 @@ function Login() {
   )
 }
 
-export default Login
+export default Login;
