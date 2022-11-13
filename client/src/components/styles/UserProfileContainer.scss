@@ -12,7 +12,6 @@
     background-image: linear-gradient(to right top, #f0f0f0, #e7e6e7, #deddde, #d5d3d4, #cdcaca);
     box-sizing: border-box;
     position: relative;
-    min-width: 330px;
 }
 
 .user-container * {
@@ -51,15 +50,13 @@
     position: absolute;
     right: 30px;
     top: 25px;
-    background-color: #deddde;
-    box-shadow: 1.2px 1.2px;
 }
 
 .gallery {
     margin-top: 5px;
     display: grid;
     gap: 5px;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns:  repeat(auto-fill, minmax(300px, 1fr));
 }
 
 .profile-img {

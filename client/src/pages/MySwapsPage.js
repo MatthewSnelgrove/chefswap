@@ -1,15 +1,15 @@
 import React from 'react';
+import Navbar from "../components/Navbar";
 import SwapList from "../components/SwapList";
 import MySwapSwitch from '../components/MySwapSwitch';
 import "./styles/MySwapsPage.css"
-import MessageSwapSwitch from '../components/MessageSwapSwitch';
 
 function MySwapsPage() {
   const people = [
   ]
 
   people[0] = {
-    img: "corn.jpg",
+    img: "../covid-victor.jpg",
     username: "XD Man",
     cuisinePrefrences: {
       "indian": true,
@@ -32,7 +32,7 @@ function MySwapsPage() {
 
 
   people[1] = {
-    img: "corn.jpg",
+    img: "../covid-victor.jpg",
     username: "XD Man312389012390120983812903019283812890319038109823",
     cuisinePrefrences: {
       "indian": true,
@@ -58,15 +58,15 @@ function MySwapsPage() {
 
   return (
     <div>
+      <Navbar />
       <div className="swap-container">
         <h1 className="px-5 swap-text">Swaps</h1>
-        {/* <div >
+        <div >
           <MySwapSwitch hl={"swaps"} />
-        </div> */}
+        </div>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "20px", justifyContent: "center", marginTop: "33px" }}>
-        <MessageSwapSwitch current = {0} />
         <div>
           <SwapList data={people} type={"Pending"} />
         </div>

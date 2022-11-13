@@ -1,42 +1,86 @@
-import React from 'react'
+import React, { useState } from 'react'
 import "./styles/_SignupLogin.scss";
-import { fetchLogin } from "./fetchFunctions"
-
+import Modal from "../components/Modal";
+import CredentialField from "../components/CredentialField2";
 
 function Login() {
+  // State holding all fields needed for specific form
+  const [fields, setFields] = useState({
+    username: "",
+    password: "",
+  });
 
+  // State holding if field clicked
+  const [fieldsClicked, setFieldsClicked] = useState({
+    username: false,
+    password: false,
+  });
 
-  function isSuccess(userObj) {
-    console.log(userObj)
-    
-    if (userObj == 401) {
-      alert("Invalid Credentials")
-      return;
-    }
+  // Handles input change and updates state
+  function handleFieldChange(field) {
+    setFields({
+      ...fields,
+      ...field
+    });
+  }
 
-    window.location = "http://localhost:3000/"
+  // Handles onblur for inputs and updates clicked state
+  function handleFieldBlur(field) {
+    setFieldsClicked({
+      ...fieldsClicked,
+      [field]: true,
+    });
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    const username = document.getElementById("username").value
-    const password = document.getElementById("password").value
 
-    fetchLogin(password, username).then((data) => isSuccess(data))
+    let formContainsError = false;
+
+    // Uncompleted fields
+    Object.values(fieldsClicked).forEach((clicked) => {
+      if (!clicked) {
+        formContainsError = true;
+      }
+    });
+
+    if (formContainsError) {
+      alert("Form contains errors or uncompleted fields");
+    } else {
+      alert("Form is good to submit!");
+    }
   }
 
+  // No errors with inputs
   return (
-    // <form action="/api/auth/login" method="post" className="signup-login-form">
-    <form onSubmit={handleSubmit} className="signup-login-form" style ={{marginTop: "100px"}}>
-      <fieldset>
-        <legend>Login</legend>
+    <Modal title="Welcome Back!" backgroundUrl={"https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fimg1.cookinglight.timeinc.net%2Fsites%2Fdefault%2Ffiles%2Fstyles%2F4_3_horizontal_-_1200x900%2Fpublic%2F1525725671%2F1805w-mise-en-place.jpg%3Fitok%3DiokQjOQ9%261525727462"}>
+      {/* <form action="/api/auth/login" method="post" className="signup-login-form"> */}
+      <form onSubmit={handleSubmit} className="signup-login-form" autoComplete='off'>
+        <fieldset>
+          <CredentialField
+            label="Username"
+            id="username"
+            size="90"
+            value={fields.username}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
+            clicked={fieldsClicked.username}
+            error={null} />
+          <CredentialField
+            type="password"
+            label="Password"
+            id="password"
+            size="90"
+            value={fields.password}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
+            clicked={fieldsClicked.password}
+            error={null} />
+        </fieldset>
 
-        <input type="text" id="username" name="username" placeholder="*Username" required />
-        <input type="password" id="password" name="password" placeholder="*Password" minLength={3} required />
-      </fieldset>
-
-      <button type="submit" className="submit-btn">Submit</button>
-    </form>
+        <button type="submit" className="submit-btn">Log in</button>
+      </form>
+    </Modal>
   )
 }
 

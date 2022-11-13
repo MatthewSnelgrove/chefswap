@@ -1,46 +1,42 @@
 .signup-login-form {
-  width: 100vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
+  // border: 1px solid rgb(205, 205, 205);
+  // border-radius: 20px;
+  // box-shadow: rgba(0, 0, 0, 0.35) 0px 3px 10px;
+
   fieldset {
-    width: 75%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
   legend {
-    text-align: center;
-  }
-
-  input {
-    display: block;
-    margin-bottom: 10px;
-    width: 50%;
-    
-    border-radius: 5px;
-    padding: 3px 8px;
-  }
-
-  input:valid {
-    border: 1px solid green;
-  }
-
-  input:invalid {
-    border: 1px solid red;
+    font-size: 1.2em;
+    margin-bottom: 20px;
   }
 
   .submit-btn {
-    margin-top: 20px;
-    padding: 5px 15px;
+    margin-top: 30px;
+    width: 80%;
+    padding: 10px 15px;
     border: none;
     border-radius: 100px;
+    background-color: rgb(255, 155, 73);
+    color: white;
+    font-weight: 700;
   }
 
   .submit-btn:active {
-    opacity: 0.7;
+    opacity: 0.5;
   }
+}
+
+#password-input-container, #confirmPassword-input-container {
+  height: 70px;
 }

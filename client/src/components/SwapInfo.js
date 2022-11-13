@@ -21,7 +21,7 @@ function SwapInfo(props) {
         <div className="date-tag-i">{props.date}</div>
         <div className="distance-tag-i">{props.distance} from you</div>
 
-        <button className="bg-info-i"><img src="chat_bubble.svg" style={{width: "50px", height: "50px"}} ></img></button>
+        <button className="bg-info-i">Message</button>
       </div>
     </div>
   )
