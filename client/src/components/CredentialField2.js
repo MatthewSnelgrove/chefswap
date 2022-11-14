@@ -42,6 +42,9 @@ function CredentialField2({ type = "text", label, id, size, value, onChange, onB
   // Animate label up when focused
   function handleFocus() {
     animateLabelUp();
+
+    // Set clicked state in login/signup page
+    handleClick();
   }
 
   // Passing typed value back to FormContainer
@@ -64,15 +67,33 @@ function CredentialField2({ type = "text", label, id, size, value, onChange, onB
     onBlur(id);
   }
 
+  // Handle click
+  function handleClick() {
+    onBlur(id);
+  }
+
   // Remove * from beginning if focused
   let labelText = (clicked) ? label.replace("*", "") : label;
 
   return (
     <div className="form-input-container" id={id + "-input-container"} style={{ width: `${size}%` }}>
-      <input autoComplete='off' type={type} id={id} name={id}
-        value={value} onChange={handleChange} onFocus={handleFocus} onBlur={handleBlur}
+      <input
+        autoComplete='off'
+        type={type}
+        id={id}
+        name={id}
+        value={value}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onClick={handleClick}
         style={{ borderBottom: fieldBorder }} />
-      <label htmlFor={id} className="input-label" id={id + "-label"}>{labelText}</label>
+      <label
+        htmlFor={id}
+        className="input-label"
+        id={id + "-label"}>
+        {labelText}
+      </label>
 
       <div className="input-error-msg" id={id + "-error-msg"}
         style={{ visibility: errorVisibility }}>{error?.msg || ""}</div>
