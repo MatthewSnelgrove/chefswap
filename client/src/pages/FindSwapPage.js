@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import FilterForm from '../components/FilterForm';
+import React, { useState } from "react";
+import FilterForm from "../components/FilterForm";
 import Navbar from "../components/Navbar";
 import SwapResultsContainer from "../components/SwapResultsContainer";
 import "./styles/FindSwapPage.scss";
@@ -24,12 +24,14 @@ export default function FindSwapPage() {
     // If cuisine was just checked
     if (cuisineCheckedBool) {
       newCuisineCheckedList = cuisineChecked.slice();
-      newCuisineCheckedList.push(cuisineName)
+      newCuisineCheckedList.push(cuisineName);
     }
 
     // If cuisine was just unchecked
     else {
-      newCuisineCheckedList = cuisineChecked.filter(cuisine => cuisine !== cuisineName);
+      newCuisineCheckedList = cuisineChecked.filter(
+        (cuisine) => cuisine !== cuisineName
+      );
     }
 
     setCuisineChecked(newCuisineCheckedList);
@@ -46,13 +48,22 @@ export default function FindSwapPage() {
   return (
     <div className="find-swap-page">
       <div className="find-swap-content">
-        <FilterForm cuisineTyped={cuisineTyped} cuisineChecked={cuisineChecked}
-          rating={rating} distance={distance}
-          onTypedChange={handleTypedChange} onTickedChange={handleTickedChange}
-          onRatingChange={handleRatingChange} onDistanceChange={handleDistanceChange} />
-        <SwapResultsContainer cuisineChecked={cuisineChecked} rating={rating}
-          distance={distance} />
+        <FilterForm
+          cuisineTyped={cuisineTyped}
+          cuisineChecked={cuisineChecked}
+          rating={rating}
+          distance={distance}
+          onTypedChange={handleTypedChange}
+          onTickedChange={handleTickedChange}
+          onRatingChange={handleRatingChange}
+          onDistanceChange={handleDistanceChange}
+        />
+        <SwapResultsContainer
+          cuisineChecked={cuisineChecked}
+          rating={rating}
+          distance={distance}
+        />
       </div>
     </div>
-  )
+  );
 }

@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import CredentialField from '../components/CredentialField2';
-import Modal from '../components/Modal';
+import React, { useState } from "react";
+import CredentialField from "../components/CredentialField2";
+import Modal from "../components/Modal";
 import "./styles/_SignupLogin.scss";
 import { signupUser } from "./fetchFunctions";
 import {
-  validateEmail, dummyValidatePassword, validateUsername,
-  dummyValidation, validateMatching
+  validateEmail,
+  dummyValidatePassword,
+  validateUsername,
+  dummyValidation,
+  validateMatching,
 } from "../utils/validationFunctions";
-import PasswordRequirements from '../components/PasswordRequirements';
+import PasswordRequirements from "../components/PasswordRequirements";
 
 function Signup() {
   // State holding all fields needed for specific form
@@ -42,7 +45,7 @@ function Signup() {
   function handleFieldChange(field) {
     setFields({
       ...fields,
-      ...field
+      ...field,
     });
   }
 
@@ -56,15 +59,22 @@ function Signup() {
 
   // Errors for all inputs
   let errors = {};
-  errors.emailError = (fieldsClicked.email) ? validateEmail(fields.email) : null;
-  errors.usernameError = (fieldsClicked.username) ? validateUsername(fields.username) : null;
-  errors.passwordError = (fieldsClicked.password) ? dummyValidatePassword(fields.password) : null;
-  errors.confirmPasswordError = (fieldsClicked.confirmPassword) ?
-    validateMatching(fields.password, fields.confirmPassword) : null;
-  errors.address1Error = (fieldsClicked.address1) ? dummyValidation("") : null;
-  errors.cityError = (fieldsClicked.city) ? dummyValidation("") : null;
-  errors.provinceError = (fieldsClicked.province) ? dummyValidation("") : null;
-  errors.postalCodeError = (fieldsClicked.postalCode) ? dummyValidation("") : null;
+  errors.emailError = fieldsClicked.email ? validateEmail(fields.email) : null;
+  errors.usernameError = fieldsClicked.username
+    ? validateUsername(fields.username)
+    : null;
+  errors.passwordError = fieldsClicked.password
+    ? dummyValidatePassword(fields.password)
+    : null;
+  errors.confirmPasswordError = fieldsClicked.confirmPassword
+    ? validateMatching(fields.password, fields.confirmPassword)
+    : null;
+  errors.address1Error = fieldsClicked.address1 ? dummyValidation("") : null;
+  errors.cityError = fieldsClicked.city ? dummyValidation("") : null;
+  errors.provinceError = fieldsClicked.province ? dummyValidation("") : null;
+  errors.postalCodeError = fieldsClicked.postalCode
+    ? dummyValidation("")
+    : null;
   errors.address2Error = dummyValidation("");
   errors.address3Error = dummyValidation("");
 
@@ -81,7 +91,7 @@ function Signup() {
     });
 
     if (formContainsError) {
-      // TODO: 
+      // TODO:
       alert("Form contains errors or uncompleted fields");
     } else {
       const userObj = {
@@ -94,8 +104,8 @@ function Signup() {
           address3: fields.address3,
           city: fields.city,
           province: fields.province,
-          postalCode: fields.postalCode
-        }
+          postalCode: fields.postalCode,
+        },
       };
 
       // TODO: Return api response for displaying error on frontend******************
@@ -104,10 +114,17 @@ function Signup() {
   }
 
   return (
-    <Modal title="Welcome to Chefswap!" backgroundUrl="https://cdn.pixabay.com/photo/2021/01/31/13/18/food-5966920_1280.jpg">
+    <Modal
+      title="Welcome to Chefswap!"
+      backgroundUrl="https://cdn.pixabay.com/photo/2021/01/31/13/18/food-5966920_1280.jpg"
+    >
       {/* <form action="/api/auth/register" method="post" className="signup-login-form"> */}
-      <form onSubmit={handleSubmit} className="signup-login-form" autoComplete="off">
-        <fieldset className='account-details'>
+      <form
+        onSubmit={handleSubmit}
+        className="signup-login-form"
+        autoComplete="off"
+      >
+        <fieldset className="account-details">
           <legend>Account Details</legend>
           <CredentialField
             type="email"
@@ -118,7 +135,8 @@ function Signup() {
             onChange={handleFieldChange}
             onBlur={handleFieldBlur}
             clicked={fieldsClicked.email}
-            error={errors.emailError} />
+            error={errors.emailError}
+          />
           <CredentialField
             label="*Username"
             id="username"
@@ -127,9 +145,13 @@ function Signup() {
             onChange={handleFieldChange}
             onBlur={handleFieldBlur}
             clicked={fieldsClicked.username}
-            error={errors.usernameError} />
+            error={errors.usernameError}
+          />
 
-          <div className="password-fields" style={{ width: "90%", display: "flex" }}>
+          <div
+            className="password-fields"
+            style={{ width: "90%", display: "flex" }}
+          >
             <CredentialField
               type="password"
               label="*Password"
@@ -139,7 +161,8 @@ function Signup() {
               onChange={handleFieldChange}
               onBlur={handleFieldBlur}
               clicked={fieldsClicked.password}
-              error={errors.passwordError} />
+              error={errors.passwordError}
+            />
             <CredentialField
               type="password"
               label="*Confirm Password"
@@ -149,21 +172,25 @@ function Signup() {
               onChange={handleFieldChange}
               onBlur={handleFieldBlur}
               clicked={fieldsClicked.confirmPassword}
-              error={errors.confirmPasswordError} />
+              error={errors.confirmPasswordError}
+            />
           </div>
 
           <PasswordRequirements
             password={fields.password}
             confirmError={errors.confirmPasswordError}
-            size="85" />
-
+            size="85"
+          />
         </fieldset>
 
         {/* Add validation HERE */}
-        <fieldset className='address-details'>
+        <fieldset className="address-details">
           <legend>Address</legend>
 
-          <div className="address-city-fields" style={{ width: "90%", display: "flex" }}>
+          <div
+            className="address-city-fields"
+            style={{ width: "90%", display: "flex" }}
+          >
             <CredentialField
               label="*Address line 1"
               id="address1"
@@ -172,7 +199,8 @@ function Signup() {
               onChange={handleFieldChange}
               onBlur={handleFieldBlur}
               clicked={fieldsClicked.address1}
-              error={errors.address1Error} />
+              error={errors.address1Error}
+            />
             <CredentialField
               label="*City"
               id="city"
@@ -181,10 +209,14 @@ function Signup() {
               onChange={handleFieldChange}
               onBlur={handleFieldBlur}
               clicked={fieldsClicked.city}
-              error={errors.cityError} />
+              error={errors.cityError}
+            />
           </div>
 
-          <div className="province-postalcode-fields" style={{ width: "90%", display: "flex" }}>
+          <div
+            className="province-postalcode-fields"
+            style={{ width: "90%", display: "flex" }}
+          >
             <CredentialField
               label="*Province"
               id="province"
@@ -193,7 +225,8 @@ function Signup() {
               onChange={handleFieldChange}
               onBlur={handleFieldBlur}
               clicked={fieldsClicked.province}
-              error={errors.provinceError} />
+              error={errors.provinceError}
+            />
             <CredentialField
               label="*Postal Code"
               id="postalCode"
@@ -202,10 +235,14 @@ function Signup() {
               onChange={handleFieldChange}
               onBlur={handleFieldBlur}
               clicked={fieldsClicked.postalCode}
-              error={errors.postalCodeError} />
+              error={errors.postalCodeError}
+            />
           </div>
 
-          <div className="optional-address-lines" style={{ width: "90%", display: "flex" }}>
+          <div
+            className="optional-address-lines"
+            style={{ width: "90%", display: "flex" }}
+          >
             <CredentialField
               label="Address line 2"
               id="address2"
@@ -214,7 +251,8 @@ function Signup() {
               onChange={handleFieldChange}
               onBlur={handleFieldBlur}
               clicked={fieldsClicked.address2}
-              error={errors.address2Error} />
+              error={errors.address2Error}
+            />
             <CredentialField
               label="Address line 3"
               id="address3"
@@ -223,14 +261,17 @@ function Signup() {
               onChange={handleFieldChange}
               onBlur={handleFieldBlur}
               clicked={fieldsClicked.address3}
-              error={errors.address3Error} />
+              error={errors.address3Error}
+            />
           </div>
         </fieldset>
 
-        <button type="submit" className="submit-btn">Start Swapping!</button>
+        <button type="submit" className="submit-btn">
+          Start Swapping!
+        </button>
       </form>
-    </Modal >
-  )
+    </Modal>
+  );
 }
 
-export default Signup
+export default Signup;

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "./styles/FilterByDistance.scss";
 import "../general.scss";
@@ -28,13 +28,22 @@ export default class FilterByDistance extends Component {
         <legend>Filter by Distance</legend>
 
         <div className="filter-distance-container filter-container">
-          <label htmlFor="distance-slider" className="label-gray">Max Distance</label>
-          <input type="range" name="maxDistance" className="distance-slider" min="5" max="100" value={distance}
-            onChange={this.handleDistanceChange} />
+          <label htmlFor="distance-slider" className="label-gray">
+            Max Distance
+          </label>
+          <input
+            type="range"
+            name="maxDistance"
+            className="distance-slider"
+            min="5"
+            max="100"
+            value={distance}
+            onChange={this.handleDistanceChange}
+          />
           <output className="slider-output">100 km</output>
         </div>
       </fieldset>
-    )
+    );
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "./styles/CuisineListItem.scss";
 
@@ -24,11 +24,19 @@ export default class CuisineListItem extends Component {
 
     return (
       <div>
-        <input type="checkbox" id={tag} name="cuisineName" value={tag} checked={checked}
-          onChange={this.handleTickedChange} />
-        <label htmlFor={tag} className="checkbox-label">{tag}</label>
+        <input
+          type="checkbox"
+          id={tag}
+          name="cuisineName"
+          value={tag}
+          checked={checked}
+          onChange={this.handleTickedChange}
+        />
+        <label htmlFor={tag} className="checkbox-label">
+          {tag}
+        </label>
       </div>
-    )
+    );
   }
 }
 

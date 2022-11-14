@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import InteractButton from './InteractButton';
+import React, { Component } from "react";
+import InteractButton from "./InteractButton";
 import PropTypes from "prop-types";
 
 /**
@@ -10,10 +10,10 @@ import PropTypes from "prop-types";
 export default class ChatInteract extends Component {
   render() {
     const status = this.props.status;
-    let btn = (<InteractButton />);
+    let btn = <InteractButton />;
 
     if (status === 0) {
-      btn = (<InteractButton text="Swap!" />);
+      btn = <InteractButton text="Swap!" />;
     }
     if (status === 1) {
       btn = (
@@ -22,10 +22,9 @@ export default class ChatInteract extends Component {
           <InteractButton text="Not now" color="lightcoral" />
         </div>
       );
-
     }
     if (status === 2) {
-      btn = (<InteractButton text="Finish!" color="#dffff4" />);
+      btn = <InteractButton text="Finish!" color="#dffff4" />;
     }
 
     return btn;

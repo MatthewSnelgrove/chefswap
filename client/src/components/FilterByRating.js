@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "../general.scss";
 import "./styles/FilterByRating.scss";
@@ -26,10 +26,18 @@ export default class FilterByRating extends Component {
     let starButtons = [];
 
     for (let i = 0; i < 5; i++) {
-      let starClassString = (i < rating) ? "material-symbols-rounded symbol-fill" : "material-symbols-rounded";
+      let starClassString =
+        i < rating
+          ? "material-symbols-rounded symbol-fill"
+          : "material-symbols-rounded";
 
       starButtons.push(
-        <button type="button" className="star-rating-buttons" key={i} onClick={() => this.handleRatingChange(i + 1)} >
+        <button
+          type="button"
+          className="star-rating-buttons"
+          key={i}
+          onClick={() => this.handleRatingChange(i + 1)}
+        >
           <span className={starClassString}>star</span>
         </button>
       );
@@ -43,7 +51,7 @@ export default class FilterByRating extends Component {
           {starButtons}
         </div>
       </fieldset>
-    )
+    );
   }
 }
 

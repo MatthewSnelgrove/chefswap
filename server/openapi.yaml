@@ -1071,15 +1071,20 @@ components:
     CuisineType:
       type: string
       enum:
+        - BBQ
+        - Cajun
+        - Chinese
+        - Greek
+        - Indi
         - Indian
         - Italian
-        - Greek
+        - Japanese
+        - Korean
+        - Mediterranean
         - Mexican
         - Pizza
         - Thai
-        - BBQ
-        - Chinese
-        - Indi
+        - Vietnamese
     AccountProfile:
       type: object
       description: profile data available without authentication

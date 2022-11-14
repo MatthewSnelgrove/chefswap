@@ -1,75 +1,104 @@
-import {React, useEffect, useState} from "react";
-import "./styles/EditGallery.css"
+import { React, useEffect, useState } from "react";
+import "./styles/EditGallery.css";
 import { getUser } from "../pages/fetchFunctions";
-import { addNewPhoto, deletePhoto } from "../pages/changeFunctions"
+import { addNewPhoto, deletePhoto } from "../pages/changeFunctions";
 
 function EditGallery() {
-    const [images, setImages] = useState(null)
-    const [uid, setUid] = useState(null)
+  const [images, setImages] = useState(null);
+  const [uid, setUid] = useState(null);
 
-    useEffect(() => {
-        function setProperties(user) {
-            // const imgLinks = user.images.map((img) => {
-            //     return img.imageLink
-            // })
-            setUid(user.accountUid)
-            setImages({images: [...user.images]})
-        }
+  useEffect(() => {
+    function setProperties(user) {
+      // const imgLinks = user.images.map((img) => {
+      //     return img.imageLink
+      // })
+      setUid(user.accountUid);
+      setImages({ images: [...user.images] });
+    }
 
-        getUser(setProperties)
-    }, [])
+    getUser(setProperties);
+  }, []);
 
-    if (images == null || uid == null) return (<></>)
+  if (images == null || uid == null) return <></>;
 
-    return (
-        <div className="gallery-container">
-            <div className="header">
-                <span style={{fontWeight: 600, fontSize: "22px"}}>Gallery</span>
-                <form id="image-form">
-                    <label className="addBtn" onSubmit={(e) => {e.preventDefault()}}>
-                        Upload new Photo 
-                        <input type="file" id="file" accept="image/png, image/jpeg" onChange={(e) => {
-                            if (e.target.value == "") {return}
-                            const formData = new FormData
-                            formData.append("file", e.target.files[0])
-                            addNewPhoto(uid, formData, "http://localhost:3000/accounts/gallery")
-                        }} style={{display: "none"}} />
-                    </label>
-                </form>
-            </div>
-            <div className="profile-img-container"> {images.images.map((imgJSON, index) => 
-                <GalleryImg key={index} imgJSON={imgJSON} images={images} setImages={setImages} />
-            )}
-            </div>
-        </div>
-        
-    )
+  return (
+    <div className="gallery-container">
+      <div className="header">
+        <span style={{ fontWeight: 600, fontSize: "22px" }}>Gallery</span>
+        <form id="image-form">
+          <label
+            className="addBtn"
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+          >
+            Upload new Photo
+            <input
+              type="file"
+              id="file"
+              accept="image/png, image/jpeg"
+              onChange={(e) => {
+                if (e.target.value == "") {
+                  return;
+                }
+                const formData = new FormData();
+                formData.append("file", e.target.files[0]);
+                addNewPhoto(
+                  uid,
+                  formData,
+                  "http://localhost:3000/accounts/gallery"
+                );
+              }}
+              style={{ display: "none" }}
+            />
+          </label>
+        </form>
+      </div>
+      <div className="profile-img-container">
+        {" "}
+        {images.images.map((imgJSON, index) => (
+          <GalleryImg
+            key={index}
+            imgJSON={imgJSON}
+            images={images}
+            setImages={setImages}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function GalleryImg(props) {
-    return (
-        <div style={{width: "130px", height: "130px", position: "relative"}}>
-            <img src={props.imgJSON.imageLink} style={{width: "130px", height: "130px"}}></img>
-            <a className="drag-button"></a>
-            <button onClick={(e) => deleteImg(props.imgJSON, props.images, props.setImages)} className="delete-button">
-                <img src="../remove.PNG"></img>
-            </button>
-        </div>
-    )
+  return (
+    <div style={{ width: "130px", height: "130px", position: "relative" }}>
+      <img
+        src={props.imgJSON.imageLink}
+        style={{ width: "130px", height: "130px" }}
+      ></img>
+      <a className="drag-button"></a>
+      <button
+        onClick={(e) => deleteImg(props.imgJSON, props.images, props.setImages)}
+        className="delete-button"
+      >
+        <img src="../remove.PNG"></img>
+      </button>
+    </div>
+  );
 }
 
 function deleteImg(imgJSON, images, setImages) {
-    deletePhoto(imgJSON.accountUid, imgJSON.imageUid)
+  deletePhoto(imgJSON.accountUid, imgJSON.imageUid);
 
-    var filtered = images.images.filter(function(curImage){
-        return curImage.imageUid != imgJSON.imageUid
-    })
+  var filtered = images.images.filter(function (curImage) {
+    return curImage.imageUid != imgJSON.imageUid;
+  });
 
-    setImages({images: [...filtered]})
+  setImages({ images: [...filtered] });
 }
 
 // async function getNewImages(images, setImages) {
-    
+
 //     const pickerOpts = {
 //         types: [
 //             {
@@ -101,7 +130,7 @@ function deleteImg(imgJSON, images, setImages) {
 //     // if (images == null) {
 //     //     return {images: [...newImages]}
 //     // }
-    
+
 //     // console.log(newImages)
 
 //     // return {images: [...images.images, ...newImages]}
@@ -127,9 +156,9 @@ function deleteImg(imgJSON, images, setImages) {
 //     container.addEventListener('dragover', (e) => {
 //         e.preventDefault()
 //         const afterElement = getDragAfterElement(container, e.clientY, e.clientX)
-        
+
 //         const draggable = document.querySelector(".dragging")
-        
+
 //         if (afterElement == null) {
 //             container.appendChild(draggable)
 //         } else {
@@ -157,6 +186,5 @@ function deleteImg(imgJSON, images, setImages) {
 //     }
 
 // }
-
 
 export default EditGallery;

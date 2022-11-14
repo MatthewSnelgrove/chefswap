@@ -23,18 +23,18 @@ export function validateUsername(text) {
     return {
       error: true,
       msg: "Username too long",
-    }
+    };
   }
   if (text.match(/[!*'();:@&=+$,/?%#[\]]/)) {
     return {
       error: true,
       msg: "Username contains illegal characters",
-    }
-  }
-  else return {
-    error: false,
-    msg: "success",
-  };
+    };
+  } else
+    return {
+      error: false,
+      msg: "success",
+    };
 }
 
 /**
@@ -65,11 +65,11 @@ export function validatePassword(text) {
       error: true,
       msg: "Password must contain one lowercase letter, one uppercase letter, and one number",
     };
-  }
-  else return {
-    error: false,
-    msg: "success",
-  };
+  } else
+    return {
+      error: false,
+      msg: "success",
+    };
 }
 
 /**
@@ -80,13 +80,13 @@ export function validateMatching(text1, text2) {
   if (text1 === text2) {
     return {
       error: false,
-      msg: "success"
+      msg: "success",
     };
-  }
-  else return {
-    error: true,
-    msg: "",
-  };
+  } else
+    return {
+      error: true,
+      msg: "",
+    };
 }
 
 /**
@@ -105,16 +105,16 @@ export function validateEmail(text) {
       error: true,
       msg: "Invalid email format",
     };
-  }
-  else return {
-    error: false,
-    msg: "success",
-  };
+  } else
+    return {
+      error: false,
+      msg: "success",
+    };
 }
 
 /**
  * Returns a false error object regardless of text
- * @param {String} text 
+ * @param {String} text
  */
 export function dummyValidation(text) {
   return {
@@ -128,15 +128,21 @@ export function dummyValidation(text) {
  * @param {String} text Same requirements as validatePassword()
  */
 export function dummyValidatePassword(text) {
-  if (text.length === 0 || text.length < 6 || text.length > 50 ||
-    !text.match(/[A-Z]/) || !text.match(/[a-z]/) || !text.match(/\d/)) {
+  if (
+    text.length === 0 ||
+    text.length < 6 ||
+    text.length > 50 ||
+    !text.match(/[A-Z]/) ||
+    !text.match(/[a-z]/) ||
+    !text.match(/\d/)
+  ) {
     return {
       error: true,
       msg: "",
     };
-  }
-  else return {
-    error: false,
-    msg: "success",
-  }
+  } else
+    return {
+      error: false,
+      msg: "success",
+    };
 }
