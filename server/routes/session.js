@@ -3,15 +3,10 @@ import { pool } from "../configServices/dbConfig.js";
 import bcrypt from "bcryptjs";
 import camelize from "camelize";
 import * as dotenv from "dotenv";
+import { sessionNotFound } from "../utils/errors.js";
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
 
 export const router = express.Router();
-
-const sessionNotFound = {
-  status: 404,
-  message: "session not found",
-  detail: "no active session",
-};
 
 router.get("/", async (req, res, next) => {
   if (!req.session.accountUid) {

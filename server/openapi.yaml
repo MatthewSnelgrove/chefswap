@@ -82,7 +82,7 @@ paths:
             maximum: 2000000000
         - in: query
           name: orderBy
-          description: Specifies the first field to be used for ordering results. Second field (or only if this param is not specified) is always accountUid. Ordering by distance is only valid if includeDistanceFrom is also specified.
+          description: Specifies the first field to be used for ordering results. Second field (or only field if this param is not specified) is always accountUid. Ordering by distance is only valid if includeDistanceFrom is also specified.
           schema:
             type: string
             enum:
@@ -838,7 +838,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /api/swaps/{accountUid}:
+  /api/v1/swaps/{accountUid}:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
@@ -849,15 +849,52 @@ paths:
           description: The status of a swap (pending, ongoing, ended).
           schema:
             $ref: "#/components/schemas/SwapStatus"
+        - in: query
+          name: orderBy
+          description: Specifies the first field to be used for ordering results. Second field (or only field if this param is not specified) is always accountUid.
+          schema:
+            type: string
+            enum:
+              - timeAsc
+              - timeDesc
+        - in: query
+          name: key
+          description: All swaps in response will be occur after a swap that has the specified properties according to the ordering set by orderBy. If ordering by time, key must include field "time". In all cases, field accountUid may optionally be provided.
+          explode: true
+          style: deepObject
+          schema:
+            oneOf:
+              - type: object #no ordering (just order by uuidAsc)
+                additionalProperties: false
+                properties:
+                  accountUid:
+                    type: string
+                    format: uuid
+                    default: 00000000-0000-0000-0000-000000000000
+              - type: object #ordering by time
+                additionalProperties: false
+                properties:
+                  accountUid:
+                    type: string
+                    format: uuid
+                    default: 00000000-0000-0000-0000-000000000000
+                  time:
+                    type: integer
+                    format: int64
       responses:
         200:
           description: The swaps of the account corresponding to the provided uid matching status set in optional query param status.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Swap"
+                type: object
+                required:
+                  - swaps
+                properties:
+                  swaps:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Swap"
         400:
           $ref: "#/components/responses/BadRequest"
         401:
@@ -893,7 +930,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /api/swaps/{accountUid}/{swapperUid}/{matchNum}:
+  /api/v1/swaps/{accountUid}/{swapperUid}/{matchNum}:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
       - name: swapperUid
@@ -944,7 +981,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /api/swaps/{accountUid}/{swapperUid}/{matchNum}/{status}:
+  /api/v1/swaps/{accountUid}/{swapperUid}/{matchNum}/{status}:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
       - name: swapperUid
@@ -1028,7 +1065,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Session"
         401:
-          description: Invalid username/password
           $ref: "#/components/responses/Unauthorized"
     delete:
       summary: End the current session.

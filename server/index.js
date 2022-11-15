@@ -89,7 +89,6 @@ app.use("/api/v1/session", sessionRouter);
 import { router as accountsRouter } from "./routes/accounts.js";
 app.use("/api/v1/accounts", accountsRouter);
 import { router as swapsRouter } from "./routes/swaps.js";
-
 app.use("/api/v1/swaps", swapsRouter);
 
 app.use((err, req, res, next) => {
