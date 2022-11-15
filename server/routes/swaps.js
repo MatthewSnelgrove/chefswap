@@ -4,32 +4,35 @@ import camelize from "camelize";
 import slugToUuid from "../utils/slugToUuid.js";
 import { validateRating } from "../utils/dataValidation.js";
 import uuid4 from "uuid4";
+import checkAuth from "../middlewares/checkAuth.js";
+import { accountNotFound } from "../utils/errors.js";
+import stripNulls from "../utils/stripNulls.js";
 
 export const router = express.Router();
 
-function generateRequesterString(requesterSlugs) {
-  var string = "";
-  if (Array.isArray(requesterSlugs)) {
-    for (const requesterSlug of requesterSlugs) {
-      const requesterUid = slugToUuid(requesterSlug);
-      string +=
-        string === ""
-          ? `(requester_uid='${requesterUid ? requesterUid : uuid4()}'`
-          : ` OR requester_uid='${requesterUid ? requesterUid : uuid4()}'`;
-    }
-    string += ")";
-  } else if (requesterSlugs) {
-    const requesterUid = slugToUuid(requesterSlugs);
-    string += `requester_uid='${requesterUid ? requesterUid : uuid4()}'`;
-  }
-  return `${string}`;
-}
-
 //get info about swap
-router.get("/", async (req, res) => {
-  const requesterSlugs = req.query.requester;
-  const requestString = generateRequesterString(requesterSlugs);
-  const accountUid = req.session.accountUid;
+router.get("/:accountUid", checkAuth, async (req, res, next) => {
+  const accountUid = req.params.accountUid;
+  const {
+    status,
+    orderBy,
+    limit = 20,
+    key = {
+      accountUid: "00000000-0000-0000-0000-000000000000",
+    },
+  } = req.query;
+  if (
+    key.time &&
+    (!orderBy || (orderBy != "timeAsc" && orderBy != "timeDesc"))
+  ) {
+    //cannot paginate by time if not ordered by time
+    next({
+      status: 400,
+      message: "invalid query params",
+      detail: `query param orderBy must equal 'timeAsc' or 'timeDesc' to paginate by time`,
+    });
+    return;
+  }
   const swaps = camelize(
     await pool.query(
       `SELECT 
@@ -41,12 +44,98 @@ router.get("/", async (req, res) => {
       requester_rating, 
       requestee_rating
       FROM swap
-      WHERE (swap.requester_uid=$1 OR swap.requestee_uid=$1) 
-      ${requestString ? " AND " + requestString : ""}`,
-      [accountUid]
+      WHERE (swap.requester_uid=$1 OR swap.requestee_uid=$1)
+      ${(() => {
+        //parse status from existance of timestamps
+        switch (status) {
+          case "pending":
+            return " AND accept_timestamp IS NULL ";
+          case "ongoing":
+            return " AND accept_timestamp IS NOT NULL AND end_timestamp IS NULL ";
+          case "ended":
+            return " AND end_timestamp IS NULL ";
+          default:
+            return "";
+        }
+      })()}
+      ${(() => {
+        if (key.time) {
+          switch (orderBy) {
+            case "timeAsc":
+              return ` AND (    EXTRACT(epoch FROM COALESCE(end_timestamp, accept_timestamp, request_timestamp)) > $4
+                              OR (
+                                  EXTRACT(epoch FROM COALESCE(end_timestamp, accept_timestamp, request_timestamp)) = $4
+                                  AND REPLACE(CONCAT(requester_uid, requestee_uid), $1::text, '') > $3
+                                  )
+                              ) `;
+            case "timeDesc":
+              return ` AND (    EXTRACT(epoch FROM COALESCE(end_timestamp, accept_timestamp, request_timestamp)) < $4
+                              OR (
+                                  EXTRACT(epoch FROM COALESCE(end_timestamp, accept_timestamp, request_timestamp)) = $4
+                                  AND REPLACE(CONCAT(requester_uid, requestee_uid), $1::text, '') > $3
+                                  )
+                              ) `;
+            default:
+            //should not happen
+          }
+        }
+        //key only has account_uid (will always exists defaults to min uuid if not specified)
+        else {
+          return ` AND REPLACE(CONCAT(requester_uid, requestee_uid), $1::text, '') > $3 `;
+        }
+      })()}
+      ${(() => {
+        //order results
+        switch (orderBy) {
+          case "timeAsc":
+            //end>accept>request => coalesce() gives greatest time (ie. most recently changed swap)
+            //concat both reqer and reqee uids then remove signed in accounts to get swappers uid
+            return " ORDER BY COALESCE (end_timestamp, accept_timestamp, request_timestamp), REPLACE(CONCAT(requester_uid, requestee_uid), $1::text, '') ";
+          case "timeDesc":
+            return " ORDER BY COALESCE (end_timestamp, accept_timestamp, request_timestamp) DESC, REPLACE(CONCAT(requester_uid, requestee_uid), $1::text, '') ";
+          default:
+            return " ORDER BY REPLACE(CONCAT(requester_uid, requestee_uid), $1::text, '') ";
+        }
+      })()}
+       LIMIT $2 `,
+      //include time param only if it exists
+      key.time
+        ? [accountUid, limit, key.accountUid, key.time]
+        : [accountUid, limit, key.accountUid]
     )
   ).rows;
+  //no results can mean no swaps for account, or account does not exist
+  if (!swaps[0]) {
+    const exists = camelize(
+      await pool.query(`SELECT account_uid FROM account WHERE account_uid=$1`, [
+        accountUid,
+      ])
+    ).rows[0];
+    if (!exists) {
+      res.next(accountNotFound);
+      return;
+    }
+  }
+
+  for (const swap of swaps) {
+    //remove these null fields
+    stripNulls(swap, [
+      "acceptTimestamp",
+      "endTimestamp",
+      "requesterRating",
+      "requesteeRating",
+    ]);
+    //add status field
+    if (swap.endTimestamp) {
+      swap.status = "pending";
+    } else if (swap.acceptTimestamp) {
+      swap.status = "ongoing";
+    } else {
+      swap.status = "pending";
+    }
+  }
   res.status(200).json(swaps);
+  return;
 });
 
 router.post("/:requesterSlug/:requesteeSlug", async (req, res) => {

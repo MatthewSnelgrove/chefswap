@@ -32,12 +32,8 @@ import { validateUsername2 } from "../middlewares/dataValidation.js";
 import { NotFound } from "express-openapi-validator/dist/openapi.validator.js";
 import { accountProfileQuery, accountQuery } from "../utils/queryHelpers.js";
 import snakeize from "snakeize";
-
-const accountNotFound = {
-  status: 404,
-  message: "account not found",
-  detail: "account with specified accountUid not found",
-};
+import { accountNotFound } from "../utils/errors.js";
+import stripNulls from "../utils/stripNulls.js";
 /**
  * get profile data for all accounts
  */
@@ -51,8 +47,10 @@ router.get("/", async (req, res, next) => {
     cuisinePreference,
     cuisineSpeciality,
     orderBy,
-    key,
-    limit,
+    key = {
+      accountUid: "00000000-0000-0000-0000-000000000000",
+    },
+    limit = 20,
   } = req.query;
   const queryString = accountProfileQuery(includeDistanceFrom);
   let filterString = ``;
@@ -105,16 +103,29 @@ router.get("/", async (req, res, next) => {
     paramArray.push(maxRating);
   }
   if (cuisinePreference) {
-    //Create array of 1 or many preferences
-    const prefArr = [].concat(cuisinePreference);
     filterString += filterString ? " AND (" : " WHERE (";
+    //flag to add "OR" if more than one preference
     let flag = false;
-    for (const preference of prefArr) {
+    for (const preference of cuisinePreference) {
       numParams++;
       filterString += flag
-        ? ` OR (account_cuisine_preference.preferences)::jsonb ? $${numParams} `
-        : ` (account_cuisine_preference.preferences)::jsonb ? $${numParams} `;
+        ? ` OR (temp_preference_table.preferences)::jsonb ? $${numParams} `
+        : ` (temp_preference_table.preferences)::jsonb ? $${numParams} `;
       paramArray.push(preference);
+      flag = true;
+    }
+    filterString += ")";
+  }
+  if (cuisineSpeciality) {
+    filterString += filterString ? " AND (" : " WHERE (";
+    //flag to add "OR" if more than one speciality
+    let flag = false;
+    for (const speciality of cuisineSpeciality) {
+      numParams++;
+      filterString += flag
+        ? ` OR (temp_speciality_table.specialities)::jsonb ? $${numParams} `
+        : ` (temp_speciality_table.specialities)::jsonb ? $${numParams} `;
+      paramArray.push(speciality);
       flag = true;
     }
     filterString += ")";
@@ -146,12 +157,11 @@ router.get("/", async (req, res, next) => {
           next({
             status: 400,
             message: "invalid query params",
-            detail: `query param orderBy must equal 'distance' to paginate by distance`,
+            detail: `query param orderBy must equal 'distanceAsc' or 'distanceDesc to paginate by distance`,
           });
           return;
       }
-    }
-    if (key.avgRating) {
+    } else if (key.avgRating) {
       switch (orderBy) {
         case "avgRatingAsc":
           numParams += 2;
@@ -177,26 +187,19 @@ router.get("/", async (req, res, next) => {
           next({
             status: 400,
             message: "invalid query params",
-            detail: `query param orderBy must equal 'avgRating' to paginate by avgRating`,
+            detail: `query param orderBy must equal 'avgRatingAsc' or 'avgRatingDesc' to paginate by avgRating`,
           });
           return;
       }
     }
-  }
-  if (cuisineSpeciality) {
-    //Create array of 1 or many specialities
-    const specArr = [].concat(cuisineSpeciality);
-    filterString += filterString ? " AND (" : " WHERE (";
-    let flag = false;
-    for (const speciality of prefArr) {
+    //key only has account_uid (will always exists defaults to min uuid if not specified)
+    else {
       numParams++;
-      filterString += flag
-        ? ` OR (account_cuisine_speciality.specialities)::jsonb ? $${numParams} `
-        : ` (account_cuisine_speciality.specialities)::jsonb ? $${numParams} `;
-      paramArray.push(speciality);
-      flag = true;
+      paramArray.push(key.accountUid);
+      filterString += filterString
+        ? ` AND account_uid > $${numParams}`
+        : `WHERE account_uid > $${numParams}`;
     }
-    filterString += ")";
   }
   // console.log(queryString, filterString, paramArray);
   let orderString = "";
@@ -341,8 +344,7 @@ router.post("/", async (req, res, next) => {
   //Don't want to include addressUid, circleUid, or null address fields in response
   delete addressRes.addressUid;
   delete circleRes.circleUid;
-  if (!addressRes.address2) delete addressRes.address2;
-  if (!addressRes.address3) delete addressRes.address3;
+  stripNulls(addressRes, ["address2", "address3"]);
   const accountRes = allAccountsRes ? allAccountsRes.rows[0] : null;
   if (accountRes) {
     await pool.query("COMMIT");
@@ -538,8 +540,7 @@ router.put("/:accountUid/address", checkAuth, async (req, res, next) => {
   }
   //Don't want to include addressUid or null addressLines in response
   delete address.addressUid;
-  if (!address.address2) delete address.address2;
-  if (!address.address3) delete address.address3;
+  stripNulls(address, ["address2", "address3"]);
   res.status(200).json(address);
 });
 
