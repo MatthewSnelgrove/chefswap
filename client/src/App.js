@@ -2,7 +2,7 @@ import React from "react";
 // import ReactDOM from 'react-dom';
 import "./App.css";
 import AboutPage from "./pages/AboutPage";
-import AboutUsPage from "./pages/AboutUsPage";
+import AboutMorePage from "./pages/AboutMorePage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
@@ -22,7 +22,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<AboutPage />} />
-        <Route path="/about-us" element={<AboutUsPage />} />
+        <Route path="/about" element={<AboutMorePage />} />
 
         {/* May not need */}
         <Route path="/login" element={<Login />} />

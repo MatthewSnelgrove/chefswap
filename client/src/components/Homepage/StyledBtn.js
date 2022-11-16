@@ -11,7 +11,7 @@ import "./styles/StyledBtn.scss";
  */
 function StyledBtn({ arrowed = false, light = false, text, color = "#FB8C00" }) {
   const [hover, setHover] = useState(false);
-  console.log(hover);   // test
+  // console.log(hover);   // test
 
   let arrow = "";
   if (arrowed) {
