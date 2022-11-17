@@ -1,4 +1,5 @@
 import { AstPath } from "prettier"
+import { toast } from "react-toastify"
 
 export async function addNewPhoto(Uid, formData, linkToGo) {
     await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/images`, {
@@ -6,11 +7,10 @@ export async function addNewPhoto(Uid, formData, linkToGo) {
         body: formData,
         credentials: "include"
     })
-
+    
     if (linkToGo) {
         window.location = linkToGo
     }
-    
 }
 
 export async function deletePhoto(Uid, imgUid) {
@@ -18,6 +18,12 @@ export async function deletePhoto(Uid, imgUid) {
         method: "DELETE",
         credentials: "include"
     })
+    .then((response) => {
+        toast.success(`Successfully removed photo`, {
+            position: toast.POSITION.TOP_RIGHT
+        });
+    })
+    .catch((reason) => console.log(reason))
 }
 
 export async function changeAddress(Uid, addressInfo) {
@@ -26,7 +32,8 @@ export async function changeAddress(Uid, addressInfo) {
         method: "PUT",
         body: JSON.stringify(addressInfo),
         headers: { "Content-Type": "application/json" },
-    }).catch((reason) => console.log(reason))
+    })
+    .catch((reason) => console.log(reason))
 }
 
 export async function changeEmail(Uid, emailInfo) {
@@ -53,7 +60,13 @@ export async function addPrefrence(Uid, prefrence) {
         method: "POST",
         body: JSON.stringify({cuisinePreference: prefrence}),
         headers: { "Content-Type": "application/json" },
-    }).catch((reason) => console.log(reason))
+    })
+    .then((response) => {
+        toast.success(`Successfully added ${prefrence} from your preferences`, {
+            position: toast.POSITION.TOP_RIGHT
+        });
+    })
+    .catch((reason) => console.log(reason))
 }
 
 export async function deletePrefrence(Uid, prefrence) {
@@ -61,7 +74,12 @@ export async function deletePrefrence(Uid, prefrence) {
         credentials: "include",
         method: "DELETE",
         headers: { "Content-Type": "application/json" }
-    }).catch((reason) => console.log(reason))
+    })
+    .catch((reason) => console.log(reason))
+
+    toast.success(`Successfully removed ${prefrence} from your preferences`, {
+        position: toast.POSITION.TOP_RIGHT
+    });
 }
 
 export async function addSpecialty(Uid, specialty) {
@@ -71,7 +89,13 @@ export async function addSpecialty(Uid, specialty) {
         method: "POST",
         body: JSON.stringify({cuisineSpeciality: specialty}),
         headers: { "Content-Type": "application/json" },
-    }).catch((reason) => console.log(reason))
+    })
+    .then((response) => {
+        toast.success(`Successfully added ${specialty} from your specialties`, {
+            position: toast.POSITION.TOP_RIGHT
+        });
+    })
+    .catch((reason) => console.log(reason))
 }
 
 export async function deleteSpecialty(Uid, specialty) {
@@ -79,7 +103,13 @@ export async function deleteSpecialty(Uid, specialty) {
         credentials: "include",
         method: "DELETE",
         headers: { "Content-Type": "application/json" }
-    }).catch((reason) => console.log(reason))
+    })
+    .then((response) => {
+        toast.success(`Successfully removed ${specialty} from your specialties`, {
+            position: toast.POSITION.TOP_RIGHT
+        });
+    })
+    .catch((reason) => console.log(reason))
 }
 
 export async function changeUserProfile(Uid, profileForm) {
@@ -87,7 +117,12 @@ export async function changeUserProfile(Uid, profileForm) {
         method: "PUT",
         body: profileForm,
         credentials: "include"
-    }).catch((reason) => console.log(reason))
+    })
+    .catch((reason) => console.log(reason))
+
+    toast.success(`Successfully changed profile`, {
+        position: toast.POSITION.TOP_RIGHT
+    });
 }
 
 export async function changePassword(Uid, password) {

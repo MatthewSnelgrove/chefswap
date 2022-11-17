@@ -5,11 +5,11 @@ export async function fetchLogin(password, username) {
       method: "POST",
       mode: "cors",
       body: JSON.stringify({
-        password: password,
-        username: username
+        username: username,
+        password: password
       }),
-      credentials: "include",
-      headers: {"Content-Type": "application/json"}
+      headers: {"Content-Type": "application/json"},
+      credentials: "include"
     })
 
     if (!response.ok) {
@@ -49,7 +49,8 @@ export function getUser(userfunc) {
 
   userPromise.then((user) => {
 
-    if (user === 404 || user == 405) {
+    if (user === 404) {
+      console.log("Returning N for user")
       userfunc("N")
       return;
     }
@@ -74,12 +75,9 @@ export async function signupUser(userObj) {
     return response.status;
   }
 
-
-  fetchLogin(userObj.password, userObj.username).then((user) => {
-    if (user == 401) {
-      return;
-    }
-
+  console.log("created user")
+  fetchLogin(userObj.password, userObj.profile.username).then((user) => {
+    console.log(user)
     window.location = homepage
   })
 }
@@ -98,7 +96,7 @@ export async function signoutUser() {
   
 }
 
-async function fetchUser() {
+export async function fetchUser() {
   
   const response = await fetch(`http://localhost:3001/api/v1/session`, {
       method: "GET",

@@ -35,7 +35,7 @@
     margin-top: 27px;
     display: grid;
     gap: 20px;
-    grid-template-columns: repeat(auto-fit, 130px);
+    grid-template-columns: repeat(auto-fit, 200px);
     margin-left: 20px;
     margin-right: 20px;
 }
@@ -48,10 +48,6 @@
     right: 0px;
     opacity: 0.5;
     border: 4px solid white
-}
-
-.drag-button:hover {
-    background-color: #CFD1D5;
 }
 
 .delete-button {

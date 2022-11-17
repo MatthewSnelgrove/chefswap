@@ -3,7 +3,7 @@ import "./styles/Tag.css"
 
 function Tag(props) {
   return (
-    <div className="tag">
+    <div style={{display: "inline-block", marginRight: "4px"}} className="tag">
       {props.cuisine}
     </div>
   )

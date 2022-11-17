@@ -1,16 +1,14 @@
 import { React, useState, useEffect} from 'react';
 import "./styles/Navbar.scss";
-import { getUser, signoutUser } from "../pages/fetchFunctions"
+import { signoutUser } from "../pages/fetchFunctions"
+import { useUser } from "./useUser"
+import ProfilePicture from './ProfilePicture';
 
 function Navbar() {
-  const [user, setUser] = useState(null);
-  useEffect(() => {
-    getUser(setUser)
-  }, [])
+  const user = useUser()
+  if (user === "loading") {return (<></>)}
 
-  if (user === null) {return (<></>)}
-
-  return (<>{user != "N" ? <LoggedIn user={user} /> : <LoggedOut /> }</>)
+  return (<>{user != null ? <LoggedIn user={user} /> : <LoggedOut /> }</>)
 }
 
 function LoggedIn(props) {
@@ -46,7 +44,8 @@ function LoggedIn(props) {
             </li>
             <li className="nav-item dropdown pe-3">
               <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src={user.pfpName} alt="Profile" style={{ height: 25, width: 25, borderRadius: 30 }} />
+                <ProfilePicture pfpLink={user.pfpLink} class="profile-picture-nav" />
+                {/* <img src={user.pfpLink} style={{ height: 25, width: 25, borderRadius: 30 }} /> */}
               </a>
               <ul className="dropdown-menu">
                 <li><a className="dropdown-item" href={"/".concat(user.username)}>My Profile</a></li>

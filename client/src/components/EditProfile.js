@@ -1,10 +1,9 @@
-import { check } from "prettier";
 import { React, useEffect, useState } from "react";
 import "./styles/EditProfile.css"
 import TagEdit from "./TagEdit";
-import { getUser } from '../pages/fetchFunctions';
 import { changeBio,  deletePrefrence, addPrefrence, addSpecialty, deleteSpecialty, changeUserProfile } from "../pages/changeFunctions";
-
+import { useUser } from "./useUser";
+import ProfilePicture from "./ProfilePicture";
 
 const curLocation =  "http://localhost:3000/accounts/edit"
 // async function changeProfile() {
@@ -55,21 +54,15 @@ const curLocation =  "http://localhost:3000/accounts/edit"
 
 
 function EditProfile(props) {
-    const [user, setUser] = useState(null)
-    const [userPrefrences, setPrefrences] = useState({prefrences: []})
-    const [userSpecialties, setSpecialties] = useState({prefrences: []})
-
-    useEffect(() => {
-      getUser(setUser)
-    }, [])
-
-    if (user == "N" || user == null) {return (<></>)}
+    const user = useUser()
+    if (user == "loading") {return (<></>)}
 
     return (
        <div className="form-info">
         <div className="form-item" style={{marginTop: "35px"}}>
           <div>
-            <img src={user.pfpLink} id="profile-pic" className="profile-pic"></img>
+            <ProfilePicture pfpLink={user.pfpLink} />
+            {/* <img src={user.pfpLink} id="profile-pic" className="profile-pic"></img> */}
           </div>
           <div>
             <h1 style={{fontSize: "22px", marginBottom: "0px"}}>{user.username}</h1>
@@ -107,7 +100,7 @@ function EditProfile(props) {
             <label>Cuisine Prefrences</label>
           </div>
           <div style={{position: "relative"}}>
-            <TagEdit type={user.cuisinePreferences} prefrences={userPrefrences} setPrefrences={setPrefrences} Uid={user.accountUid} addFunc={addPrefrence} deleteFunc={deletePrefrence}  />
+            <TagEdit fillInList={user.cuisinePreferences} Uid={user.accountUid} addFunc={addPrefrence} deleteFunc={deletePrefrence}  />
             <div className="info-text a-drop">Cuisine Prefrences tells other users what types of food you like</div>
           </div>
         </div>
@@ -116,7 +109,7 @@ function EditProfile(props) {
             <label>Cuisine Specialties</label>
           </div>
           <div style={{position: "relative"}}>
-            <TagEdit type={user.cuisineSpecialities} prefrences={userSpecialties} setPrefrences={setSpecialties} Uid={user.accountUid} addFunc={addSpecialty} deleteFunc={deleteSpecialty} />
+            <TagEdit fillInList={user.cuisineSpecialities} Uid={user.accountUid} addFunc={addSpecialty} deleteFunc={deleteSpecialty} />
             <div className="info-text" style={{marginTop: "4px"}}>Cuisine Specialties tells other users what types of food you like to make!</div>
           </div>
         </div>

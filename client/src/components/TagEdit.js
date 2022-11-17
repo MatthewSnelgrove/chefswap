@@ -1,10 +1,10 @@
 import {useState, useEffect} from 'react';
 import React from 'react';
 import "./styles/TagEdit.css"
+import 'react-toastify/dist/ReactToastify.css';
+import "./styles/Tag.css"
 
-
-const maxQueryLength = 5
-
+const maxQueryLength = 6
 const FoodItems = [
     "Indian",
     "Italian",
@@ -13,22 +13,16 @@ const FoodItems = [
     "Thai"
 ]
 
-function getQueryList(queryValue, curPrefrences) {
-    if (curPrefrences.length == maxQueryLength) return ([])
+function getQueryList(queryValue, typeList) {
+    if (typeList.length == maxQueryLength) return ([])
 
     const queryRegex = RegExp(queryValue, "g")
-    const filterList = FoodItems.filter((cuisineType) => queryRegex.test(cuisineType) && !(curPrefrences.includes(cuisineType)))
+    const filterList = FoodItems.filter((singleType) => queryRegex.test(singleType) && !(typeList.includes(singleType)))
     
     return filterList
 } 
 
-
-// function createDropdown(sibling) 
-// creates a dropdown menu right under sibling
-// Highlights the first element when created
-
-// function deleteDropdown(dropdown)
-// deletes the current dropdown
+  
 
 // shiftDropdownDown()
 // shifts the dropdown one down from what the user is selecting
@@ -36,7 +30,7 @@ function getQueryList(queryValue, curPrefrences) {
 // shiftDropdownUp()
 // shifts the dropdown one up from what the user is selecting
 
-// onEnter(prefrences, updatePrefrences)
+// onEnter(prefrences, updateTypeList)
 // updates prefrences with the old prefrences + the new one from the hl tag which is a class
 
 function shiftDropdownDown(dropdown) {
@@ -63,10 +57,9 @@ function shiftDropdownUp(dropdown) {
     previousElement.classList.add("dropdown-hl")
 }
 
-function onEnter(prefrences, updatePrefrences, newPreference, Uid, addFunc) {
-    const newPreferences = [...prefrences.prefrences, newPreference]
-    updatePrefrences({prefrences: newPreferences})
-    addFunc(Uid, newPreference)
+function onEnter(updateTypeList, newType, Uid, addFunc) {
+    updateTypeList((prevTypeList) => [...prevTypeList, newType])
+    addFunc(Uid, newType)
     document.querySelector(".dropdown-tag").firstChild.classList.add("dropdown-hl")
 } 
 
@@ -79,7 +72,7 @@ function resetDropdown() {
 }
 
 //Whenever user types function
-function manageKeys(ev, prefrences, updatePrefrences, updateQuery, Uid, addFunc) {
+function manageKeys(ev, updateTypeList, updateQuery, Uid, addFunc) {
     if (ev.keyCode == 40) {
       shiftDropdownDown(document.querySelector(".dropdown-tag"))
     }
@@ -90,8 +83,8 @@ function manageKeys(ev, prefrences, updatePrefrences, updateQuery, Uid, addFunc)
       const hl = document.querySelector(".dropdown-hl")
 
       if (!hl) {return}
-
-      onEnter(prefrences, updatePrefrences, hl.textContent, Uid, addFunc)
+      console.log(addFunc)
+      onEnter(updateTypeList, hl.textContent, Uid, addFunc)
       ev.target.value = ""
       updateQuery("")
     }
@@ -110,15 +103,15 @@ function manageKeys(ev, prefrences, updatePrefrences, updateQuery, Uid, addFunc)
 // add dropdown when user clicks
 // delete dropdown when user unfocuses
 //user tag for when the user types something in
-function PrefrenceTag(props) {
+function TypeTag(props) {
     return (
-        <div className="prefrence-tag" >
-            {props.prefrence}
+        <div className="type-tag" >
+            {props.singleType}
             <button className="delete-btn" onClick={(e) => {
-                props.updatePrefrences({prefrences: props.prefrences.filter((curPrefrence) => {
-                   return props.prefrence != curPrefrence
-                })})
-                props.deleteFunc(props.Uid, props.prefrence)
+                props.updateTypeList((prevTypeList) => prevTypeList.filter((curType) => {
+                   return props.singleType != curType
+                }))
+                props.deleteFunc(props.Uid, props.singleType)
             }}>X</button>
         </div>
     )
@@ -129,7 +122,7 @@ function AddTag(props) {
         <input 
         id="add-tag"
         onKeyDown={(e) => {
-            manageKeys(e, props.prefrences, props.updatePrefrences, props.updateQuery, props.Uid, props.addFunc)
+            manageKeys(e, props.updateTypeList, props.updateQuery, props.Uid, props.addFunc)
         }}
         onFocus={(e) => {
             props.updateVisibility(true)
@@ -163,11 +156,11 @@ function DropdownItem(props) {
             }
         }
         onMouseDown={function(e) {
-                onEnter(props.prefrences, props.updatePrefrences, document.querySelector(".dropdown-hl").textContent, props.Uid, props.addFunc)
+                onEnter(props.updateTypeList, document.querySelector(".dropdown-hl").textContent, props.Uid, props.addFunc)
             }
         }
         tabIndex="0"
-        >{props.prefrence}</span>
+        >{props.singleType}</span>
     )
 }
 
@@ -176,8 +169,8 @@ function Dropdown(props) {
     return (<>
         {props.visible ? 
         <div className="dropdown-tag">
-            {props.queryList.map((prefrence, index) =>
-                <DropdownItem prefrence={prefrence} prefrences={props.prefrences} updatePrefrences={props.updatePrefrences} index={index} key={index} Uid={props.Uid} addFunc={props.addFunc} />
+            {props.queryList.map((singleType, index) =>
+                <DropdownItem singleType={singleType} updateTypeList={props.updateTypeList} index={index} key={index} Uid={props.Uid} addFunc={props.addFunc} />
             )}
         </div>
         : <></>}
@@ -187,25 +180,21 @@ function Dropdown(props) {
 function TagEdit(props) {
     const [dropdownVisible, updateVisibility] = useState(false)
     const [query, updateQuery] = useState("")
+    const [typeList, updateTypeList] = useState([])
 
     useEffect(() => {
-        props.setPrefrences({prefrences: [...props.type]})
+        updateTypeList([...props.fillInList])
     }, [])
-
-    const prefrences = props.prefrences
-    const updatePrefrences = props.setPrefrences
 
     return (
         <>
-            <div className="prefrence-container">{
-                prefrences.prefrences.map((prefrence, index) => 
-                    <PrefrenceTag key={index} prefrence={prefrence} prefrences={prefrences.prefrences} updatePrefrences={updatePrefrences} Uid={props.Uid} deleteFunc={props.deleteFunc}/>
+            <div className="type-container">{
+                typeList.map((singleType, index) => 
+                    <TypeTag key={index} singleType={singleType} updateTypeList={updateTypeList} Uid={props.Uid} deleteFunc={props.deleteFunc}/>
                 )}
-
-            </div>
-            <Dropdown visible={dropdownVisible} prefrences={prefrences} updatePrefrences={updatePrefrences} queryList={getQueryList(query, prefrences.prefrences)} Uid={props.Uid} addFunc={props.addFunc}/>
-            <AddTag prefrences={prefrences} updatePrefrences={updatePrefrences} updateQuery={updateQuery} updateVisibility={updateVisibility} Uid={props.Uid} addFunc={props.addFunc}/>
-
+                <AddTag updateTypeList={updateTypeList} updateQuery={updateQuery} updateVisibility={updateVisibility} Uid={props.Uid} addFunc={props.addFunc}/>
+            </div>  
+            <Dropdown visible={dropdownVisible} updateTypeList={updateTypeList} queryList={getQueryList(query, typeList)} Uid={props.Uid} addFunc={props.addFunc}/>
         </>
     )    
 

@@ -22,6 +22,10 @@ function Login() {
     const username = document.getElementById("username").value
     const password = document.getElementById("password").value
 
+
+    console.log(username, password)
+
+    console.log(JSON.stringify({username: username, password: password}))
     fetchLogin(password, username).then((data) => isSuccess(data))
   }
 

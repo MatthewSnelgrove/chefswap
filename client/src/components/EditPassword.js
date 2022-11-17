@@ -1,7 +1,8 @@
 import {React, useEffect, useState} from "react"
 import "./styles/EditPassword.css"
-import { getUser } from "../pages/fetchFunctions"
 import { changePassword } from "../pages/changeFunctions"
+import { useUser } from "./useUser"
+import ProfilePicture from "./ProfilePicture"
 
 function onSubmit(ev, Uid) {
     const password = ev.target[0].value
@@ -17,23 +18,14 @@ function onSubmit(ev, Uid) {
 
 function EditPassword() {
 
-    const [user, setUser] = useState(null)
-
-    useEffect(() => {
-        function setProperties(user) {
-            setUser(user)
-        }
-
-        getUser(setProperties)
-    }, [])
-
-    if (user == null) return (<></>)
+    const user = useUser()
+    if (user == "loading") return (<></>)
 
     return (
         <form onSubmit={(e) => onSubmit(e, user.accountUid)} className="edit-container">
             <div className="edit-item" style={{marginTop: "35px"}}>
                 <div>
-                    <img src={user.pfpLink} className="profile-pic"></img>
+                    <ProfilePicture pfpLink={user.pfpLink} />
                 </div>
                 <div >
                     <h1 style={{marginTop: "10px" ,fontSize: "25px", marginBottom: "10px"}}>

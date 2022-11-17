@@ -1,6 +1,8 @@
 import {React, useState, useEffect} from "react"
-import { getUser, fetchSpecific} from '../pages/fetchFunctions';
+import { fetchSpecific} from '../pages/fetchFunctions';
 import { changeAddress, changeEmail } from '../pages/changeFunctions';
+import { useUser } from "./useUser";
+import ProfilePicture from "./ProfilePicture";
 
 const provinces = [
     "Ontario",
@@ -17,8 +19,6 @@ const provinces = [
     "Yukon",
     "Nunavut"
 ]
-
-console.log()
 
 function manageAddress(ev) {
     const testRegex = RegExp("[a-zA-Z0-9 ]")
@@ -44,21 +44,21 @@ function manageOnlyText(ev) {
     } 
 }
 
-function onSubmitAddress(e, Uid) {
+function cleanEmptyJSON(JSON) {
+    return Object.fromEntries(Object.entries(JSON).filter((details) => details[1] != ""))
+}
 
-    const addressInfo = {
-        address: {
-            address1: e.target[0].value,
-            address2: e.target[1].value,
-            address3: e.target[2].value,
-            province: e.target[3].value,
-            city: e.target[4].value,
-            postalCode: e.target[5].value
-        }
-    }
-    
-    changeAddress(Uid, addressInfo)
-    
+function onSubmitAddress(e, Uid) {
+    const address = cleanEmptyJSON({
+        address1: e.target[0].value,
+        address2: e.target[1].value,
+        address3: e.target[2].value,
+        province: e.target[3].value,
+        city: e.target[4].value,
+        postalCode: e.target[5].value
+    })
+
+    changeAddress(Uid, {address: address})
 }
 
 function onSubmitEmail(ev, Uid) {
@@ -68,23 +68,30 @@ function onSubmitEmail(ev, Uid) {
 function EditPersonal(props) {
     const [email, setEmail] = useState(null)
     const [address, setAddress] = useState(null)
-    const [user, setUser] = useState(null)
-
-    useEffect(() => {
-        function getProperties(user) {
-            setUser(user)
-            fetchSpecific(user.accountUid, "email")
-            .then((email) => setEmail(email))
-            fetchSpecific(user.accountUid, "address")
-            .then((address) => setAddress(address.address))
-            
-        }
-
-        getUser(getProperties)
-    }, [])
     
+    const user = useUser()
+    // const [user, setUser] = useState(null)
 
-    if (email == null || address == null || user == null ) {return (<></>)}
+    // useEffect(() => {
+    //     function getProperties(user) {
+    //         setUser(user)
+    //         fetchSpecific(user.accountUid, "email")
+    //         .then((email) => setEmail(email))
+    //         fetchSpecific(user.accountUid, "address")
+    //         .then((address) => setAddress(address.address))   
+    //     }
+    //     getUser(getProperties)
+    // }, [])
+    
+    useEffect(() => {
+        if (user == "loading") {return}
+        fetchSpecific(user.accountUid, "email")
+        .then((email) => setEmail(email))
+        fetchSpecific(user.accountUid, "address")
+        .then((address) => setAddress(address.address)) 
+    }, [user])
+    
+    if (user == "loading" || email == null || address == null) {return (<></>)}
     
     const provinceSelect = document.querySelector(".province-select")
     
@@ -96,7 +103,7 @@ function EditPersonal(props) {
         <div className="edit-container">
             <div className="edit-item" style={{marginTop: "35px"}}>
                 <div>
-                    <img src={user.pfpName} className="profile-pic"></img>
+                    <ProfilePicture pfpLink={user.pfpLink} />
                 </div>
                 <div >
                     <h1 style={{marginTop: "10px" ,fontSize: "25px"}}>

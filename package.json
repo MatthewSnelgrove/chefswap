@@ -30,6 +30,8 @@
     "node-fetch": "^3.2.10",
     "pg": "^8.8.0",
     "pg-pool": "^3.5.2",
+    "react-bootstrap": "^2.5.0",
+    "react-hot-toast": "^2.4.0",
     "react-redux": "^8.0.4",
     "react-router-dom": "^6.3.0",
     "react-toastify": "^9.0.8",
@@ -40,7 +42,8 @@
     "swagger-ui-express": "^4.5.0",
     "uuid": "^8.3.2",
     "uuid4": "^2.0.3",
-    "validator": "^13.7.0"
+    "validator": "^13.7.0",
+    "webpack": "^5.74.0"
   },
   "engines": {
     "node": "v16.15.1"
@@ -52,5 +55,9 @@
     "eslint-plugin-react": "^7.31.8",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1"
+  },
+  "peerDependencies": {
+    "react": ">=18.2.0",
+    "react-dom": ">=18.2.0"
   }
 }

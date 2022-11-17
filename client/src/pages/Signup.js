@@ -24,8 +24,14 @@ function Signup() {
     e.preventDefault();
     
     const userObj = {
+      profile: {
+        username: getVal("username"),
+        bio: getVal("bio"),
+        circle: {
+          radius: 3000
+        }
+      },
       email: getVal("email"),
-      username: getVal("username"),
       password: getVal("password"),
       address: {
         address1: getVal("address"),
@@ -36,7 +42,7 @@ function Signup() {
         postalCode: getVal("postalCode")
       } 
     }
-
+    console.log(userObj)
     signupUser(userObj)
     
   }
@@ -60,7 +66,7 @@ function Signup() {
         <input type="text" id="city" name="city" placeholder="*City" required />
         <input type="text" id="province" name="province" placeholder="*Province" required />
         <input type="text" id="postalCode" name="postalCode" placeholder="*Postal Code" pattern="([A-Z]\d){3}" title="Please enter a valid postal code (e.g. A1A1A1)" required />
-
+        <input type="text" id="bio" name="bio" placeholder="Optional bio (will be empty if left empty)" />
         <input type="text" id="address2" name="address2" placeholder="Optional address line 2" />
         <input type="text" id="address3" name="address3" placeholder="Optional address line 3" />
       </fieldset>
