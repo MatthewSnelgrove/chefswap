@@ -79,7 +79,7 @@ function LoggedOut() {
             </li>
             <li className="nav-item">
               <a className="nav-link" href="/login">
-                <StyledBtn text="LOGIN" light color="#db7800" />
+                <StyledBtn text="LOGIN" light color="#ff8c00cb" />
               </a>
             </li>
             <li className="nav-item">

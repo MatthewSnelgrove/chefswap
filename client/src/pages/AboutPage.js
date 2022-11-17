@@ -1,5 +1,6 @@
 import React from "react";
 import Typewriter from "../components/Homepage/Typewriter";
+import StyledBtn from "../components/Homepage/StyledBtn";
 import "./styles/AboutPage.scss";
 
 /**
@@ -13,6 +14,10 @@ function AboutPage() {
           <Typewriter arr={["Connect", "Meet", "Cook", "Eat"]} />
           with aspiring <br></br> chefs of any level.
         </h1>
+        <div className="about-blurb">
+          Chefswap helps users across Canada connect with <br></br> each other — through cooking!
+        </div>
+        <StyledBtn arrowed text="START SWAPPING" link="/signup" />
       </main>
     </div>
   )

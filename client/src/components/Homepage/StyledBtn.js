@@ -8,8 +8,9 @@ import "./styles/StyledBtn.scss";
  * @param {Boolean} arrowed Arrow in text or not
  * @param {Boolean} light Theme is light or not
  * @param {String} text Button text
+ * @param {String} link Link to redirect to once clicked
  */
-function StyledBtn({ arrowed = false, light = false, text, color = "#FB8C00" }) {
+function StyledBtn({ arrowed = false, light = false, text, color = "#FB8C00", link }) {
   const [hover, setHover] = useState(false);
   // console.log(hover);   // test
 
@@ -40,13 +41,15 @@ function StyledBtn({ arrowed = false, light = false, text, color = "#FB8C00" }) 
   let theme = (isLight) ? lightTheme : darkTheme;
 
   return (
-    <button
-      className="StyledBtn"
-      style={theme}
-      onMouseOver={handleFocus}
-      onMouseOut={handleFocus} >
-      {text} {arrow}
-    </button>
+    <a href={(link) ? link : ""}>
+      <button
+        className="StyledBtn"
+        style={theme}
+        onMouseOver={handleFocus}
+        onMouseOut={handleFocus} >
+        {text} {arrow}
+      </button>
+    </a>
   );
 }
 
