@@ -10,11 +10,11 @@
     padding: 2px;
 } */
 
-.prefrence-container {
+.type-container {
     border: 1px solid #EBEDF0;
     width: 100%;
     height: min-content;
-    min-height: 180px;
+    min-height: 110px;
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
@@ -22,7 +22,7 @@
     padding: 3px;
 }
 
-#add-tag, .prefrence-tag {
+#add-tag, .type-tag {
     background-color: lightgray;
     border-radius: 12px;
     width: 100%;
@@ -39,7 +39,7 @@
     border-top: 1px solid #EBEDF0;
 }
 
-.prefrence-tag {
+.type-tag {
     background-color: lightgreen;
     text-align: center;
     font-weight: 600;

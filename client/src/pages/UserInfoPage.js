@@ -25,7 +25,7 @@ function UserInfoPage() {
   return (
     <div>
       <div style={{ marginTop: 100 }}>
-        {user ? <UserProfileContainer user={user} type={"non-user"} /> : ""}
+        {user ? <UserProfileContainer user={user} /> : ''}
       </div>
     </div>
   );

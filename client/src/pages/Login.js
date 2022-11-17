@@ -65,7 +65,7 @@ function Login() {
       return;
     }
 
-    window.location = "http://localhost:3000/";
+    console.log(JSON.stringify({ username: fields.username, password: fields.password }))
   }
 
   // No errors with inputs
