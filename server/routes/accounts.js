@@ -1,4 +1,4 @@
-import express from "express";
+import express, { json } from "express";
 import { pool } from "../configServices/dbConfig.js";
 import camelize from "camelize";
 import bcrypt from "bcryptjs";
@@ -31,6 +31,7 @@ import {
 import { validateUsername2 } from "../middlewares/dataValidation.js";
 import { NotFound } from "express-openapi-validator/dist/openapi.validator.js";
 import { accountProfileQuery, accountQuery } from "../utils/queryHelpers.js";
+import snakeize from "snakeize";
 
 const accountNotFound = {
   status: 404,
@@ -74,7 +75,15 @@ router.get("/", async (req, res, next) => {
   }
   //must also have 'includeDistanceFrom' query param
   //filter by distance from location specified in 'includeDistannceFrom' to centre of accounts' circles
-  if (maxDistance && includeDistanceFrom) {
+  if (maxDistance) {
+    if (!includeDistanceFrom) {
+      next({
+        status: 400,
+        message: "invalid query params",
+        detail:
+          "maxDistance is only valid if includeDistanceFrom is also specified",
+      });
+    }
     numParams++;
     filterString += filterString
       ? ` AND distance <= $${numParams} `
@@ -136,7 +145,7 @@ router.get("/", async (req, res, next) => {
         default:
           next({
             status: 400,
-            message: "invalid query",
+            message: "invalid query params",
             detail: `query param orderBy must equal 'distance' to paginate by distance`,
           });
           return;
@@ -167,7 +176,7 @@ router.get("/", async (req, res, next) => {
         default:
           next({
             status: 400,
-            message: "invalid query",
+            message: "invalid query params",
             detail: `query param orderBy must equal 'avgRating' to paginate by avgRating`,
           });
           return;
@@ -267,14 +276,8 @@ router.post("/", async (req, res, next) => {
   const addressRes = camelize(
     await pool.query(
       `INSERT INTO address(
-        address1, 
-        address2, 
-        address3, 
-        city, 
-        province, 
-        postal_code, 
-        latitude, 
-        longitude) 
+        address1, address2, address3, city, 
+        province, postal_code, latitude, longitude) 
         VALUES($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING *`,
       [
@@ -293,10 +296,7 @@ router.post("/", async (req, res, next) => {
   const circleCentre = generateCircleCentre(location.lat, location.lng, radius);
   const circleRes = camelize(
     await pool.query(
-      `INSERT INTO circle( 
-        latitude, 
-        longitude, 
-        radius) 
+      `INSERT INTO circle(latitude, longitude, radius) 
         VALUES($1, $2, $3) 
         RETURNING *`,
       [circleCentre.latitude, circleCentre.longitude, radius]
@@ -338,16 +338,21 @@ router.post("/", async (req, res, next) => {
         }
       })
   );
+  //Don't want to include addressUid, circleUid, or null address fields in response
+  delete addressRes.addressUid;
+  delete circleRes.circleUid;
+  if (!addressRes.address2) delete addressRes.address2;
+  if (!addressRes.address3) delete addressRes.address3;
   const accountRes = allAccountsRes ? allAccountsRes.rows[0] : null;
   if (accountRes) {
     await pool.query("COMMIT");
     const resBody = {
-      proflie: {
+      profile: {
+        accountUid: accountRes.accountUid,
         username: accountRes.username,
         createTime: accountRes.createTime,
         updateTime: accountRes.updateTime,
         bio: accountRes.bio,
-        avgRating: accountRes.avgRating,
         numRatings: accountRes.numRatings,
         circle: circleRes,
         images: [],
@@ -357,6 +362,7 @@ router.post("/", async (req, res, next) => {
       email: accountRes.email,
       address: addressRes,
     };
+    console.log(resBody);
     res.status(201).json(resBody);
     return;
   }
@@ -436,8 +442,24 @@ router.put("/:accountUid/email", checkAuth, async (req, res, next) => {
  * if authenticated with requested account, update password
  */
 router.put("/:accountUid/password", checkAuth, async (req, res, next) => {
-  req.body.passhash = await bcrypt.hash(req.body.password, 12);
-  await setSingleFieldInAccount(req, res, next, "passhash");
+  const accountUid = req.params.accountUid;
+  //Create passhash
+  const passhash = await bcrypt.hash(req.body.password, 12);
+  //Returned field is arbitrary. Just checking that something was modified
+  const query = await pool.query(
+    `UPDATE account 
+        SET passhash=$1, update_time=now()
+        WHERE account_uid=$2
+        RETURNING account_uid`,
+    [passhash, accountUid]
+  );
+  //In case db error when querying
+  const accountExists = query ? query.rows[0] : null;
+  if (!accountExists) {
+    next(accountNotFound);
+    return;
+  }
+  res.sendStatus(204);
 });
 
 /**
@@ -471,7 +493,7 @@ router.get("/:accountUid/address", checkAuth, async (req, res, next) => {
     next(accountNotFound);
     return;
   }
-  res.status(200).json(address);
+  res.status(200).json(address.address);
 });
 
 /**
@@ -479,9 +501,8 @@ router.get("/:accountUid/address", checkAuth, async (req, res, next) => {
  */
 router.put("/:accountUid/address", checkAuth, async (req, res, next) => {
   const accountUid = req.params.accountUid;
-  const { address1, address2, address3, city, province, postalCode } =
-    req.body.address;
-  const gmapsRes = await fetch(addressToGmapsUrl(req.body.address));
+  const { address1, address2, address3, city, province, postalCode } = req.body;
+  const gmapsRes = await fetch(addressToGmapsUrl(req.body));
   const location = (await gmapsRes.json()).results[0].geometry.location;
   const address = camelize(
     await pool.query(
@@ -515,6 +536,10 @@ router.put("/:accountUid/address", checkAuth, async (req, res, next) => {
     next(accountNotFound);
     return;
   }
+  //Don't want to include addressUid or null addressLines in response
+  delete address.addressUid;
+  if (!address.address2) delete address.address2;
+  if (!address.address3) delete address.address3;
   res.status(200).json(address);
 });
 
@@ -555,7 +580,7 @@ router.get("/:accountUid/circle", async (req, res, next) => {
  * updates user's circle.
  * requires radius field representing radius of circle in metres with 50<=radius<=3000
  */
-router.post("/:accountUid/circle", checkAuth, async (req, res, next) => {
+router.put("/:accountUid/circle", checkAuth, async (req, res, next) => {
   const accountUid = req.params.accountUid;
   const radius = req.body.radius;
   const position = camelize(
@@ -586,6 +611,8 @@ router.post("/:accountUid/circle", checkAuth, async (req, res, next) => {
       ]
     )
   ).rows[0];
+  //remove circleUid from res
+  delete circle.circleUid;
   res.status(200).json(circle);
 });
 
@@ -607,13 +634,13 @@ router.get("/:accountUid/pfp", async (req, res, next) => {
     next(accountNotFound);
     return;
   }
-  res.status(200).json(generateImageLink(query.pfpName));
+  res.status(200).json({ pfpLink: generateImageLink(query.pfpName) });
 });
 
 router.put(
   "/:accountUid/pfp",
   checkAuth,
-  uploadHandler.single("file"),
+  uploadHandler.single("image"),
   async (req, res, next) => {
     const accountUid = req.params.accountUid;
     const imageName = req.file.originalname;
@@ -643,7 +670,7 @@ router.put(
           console.log(e);
         }
       }
-      res.status(201).json(generateImageLink(pfp.pfpName));
+      res.status(200).json({ pfpLink: generateImageLink(pfp.pfpName) });
     });
     blobStream.end(req.file.buffer);
   }
@@ -670,8 +697,9 @@ router.get("/:accountUid/images", async (req, res, next) => {
   //replace imageName with imageLink
   Object.keys(images).forEach((key) => {
     images[key].imageLink = generateImageLink(images[key].imageName);
+    delete images[key].imageName;
   });
-  res.status(200).json(images);
+  res.status(200).json({ images: images });
 });
 
 /**
@@ -680,7 +708,7 @@ router.get("/:accountUid/images", async (req, res, next) => {
 router.post(
   "/:accountUid/images",
   checkAuth,
-  uploadHandler.single("file"),
+  uploadHandler.single("image"),
   async (req, res, next) => {
     const accountUid = req.params.accountUid;
     const imageName = req.file.originalname;
@@ -699,12 +727,42 @@ router.post(
           [accountUid, blob.name]
         )
       ).rows[0];
+      //replace imageName with imageLink
       image.imageLink = generateImageLink(image.imageName);
+      delete image.imageName;
       res.status(201).json(image);
     });
     blobStream.end(req.file.buffer);
   }
 );
+
+/**
+ * return an image associated with accountUid
+ */
+router.get("/:accountUid/images/:imageUid", async (req, res, next) => {
+  const accountUid = req.params.accountUid;
+  const imageUid = req.params.imageUid;
+  const image = camelize(
+    await pool.query(
+      `SELECT * 
+        FROM image
+        WHERE account_uid=$1 AND image_uid=$2`,
+      [accountUid, imageUid]
+    )
+  ).rows[0];
+  //specified image not found at path account with that accountUid
+  if (!image) {
+    next({
+      message: "image not found",
+      detail: "image with specified uid not found under specified account",
+    });
+    return;
+  }
+  //replace imageName with imageLink
+  image.imageLink = generateImageLink(image.imageName);
+  delete image.imageName;
+  res.status(200).json(image);
+});
 
 /**
  * delete image from user's images
@@ -743,7 +801,7 @@ router.get("/:accountUid/cuisinePreferences", async (req, res, next) => {
         COALESCE(json_agg(preference ORDER BY preference) 
                   FILTER (WHERE preference IS NOT NULL), 
                   '[]'
-        ) AS preferences
+        ) AS cuisine_preferences
         FROM account 
         LEFT JOIN cuisine_preference USING(account_uid)
         WHERE account_uid=$1
@@ -806,22 +864,7 @@ router.post(
       next(accountNotFound);
       return;
     }
-    //get updated preferences
-    const cuisinePreferences = camelize(
-      await pool.query(
-        `SELECT 
-        COALESCE(json_agg(preference ORDER BY preference) 
-                  FILTER (WHERE preference IS NOT NULL), 
-                  '[]'
-        ) AS preferences
-        FROM account 
-        LEFT JOIN cuisine_preference USING(account_uid)
-        WHERE account_uid=$1
-        GROUP BY account_uid;`,
-        [accountUid]
-      )
-    ).rows[0];
-    res.status(200).json(cuisinePreferences);
+    res.status(201).json({ cuisinePreference: insertRes.rows[0].preference });
   }
 );
 
@@ -879,7 +922,7 @@ router.get("/:accountUid/cuisineSpecialities", async (req, res, next) => {
         COALESCE(json_agg(speciality ORDER BY speciality) 
                   FILTER (WHERE speciality IS NOT NULL), 
                   '[]'
-        ) AS specialities
+        ) AS cuisine_specialities
         FROM account 
         LEFT JOIN cuisine_speciality USING(account_uid)
         WHERE account_uid=$1
@@ -943,22 +986,9 @@ router.post(
       next(accountNotFound);
       return;
     }
+
     //get updated specialities
-    const cuisineSpecialities = camelize(
-      await pool.query(
-        `SELECT 
-        COALESCE(json_agg(speciality ORDER BY speciality) 
-                  FILTER (WHERE speciality IS NOT NULL), 
-                  '[]'
-        ) AS specialities
-        FROM account 
-        LEFT JOIN cuisine_speciality USING(account_uid)
-        WHERE account_uid=$1
-        GROUP BY account_uid;`,
-        [accountUid]
-      )
-    ).rows[0];
-    res.status(200).json(cuisineSpecialities);
+    res.status(201).json({ cuisineSpeciality: insertRes.rows[0].speciality });
   }
 );
 
@@ -1040,47 +1070,52 @@ async function getSingleFieldFromAccount(req, res, next, field) {
     next(accountNotFound);
     return;
   }
-  res.status(200).json(query[field]);
+  res.status(200).json({ [field]: query[field] });
 }
 
 async function setSingleFieldInAccount(req, res, next, field) {
   const accountUid = req.params.accountUid;
   const value = req.body[field];
-  const allQueryRes = await pool
-    .query(
-      `UPDATE account 
-        SET ${field}=$1, update_time=now()
+  //fields are in snakecase in DB
+  const DBField = snakeize(field);
+  const query = camelize(
+    await pool
+      .query(
+        `UPDATE account 
+        SET ${DBField}=$1, update_time=now()
         WHERE account_uid=$2
-        RETURNING account_uid`,
-      [value, accountUid]
-    )
-    .catch((e) => {
-      switch (e.constraint) {
-        case "account_username_key":
-          next({
-            staus: 409,
-            message: "invalid username",
-            detail: "username already exists",
-          });
-          return;
-        case "account_email_key":
-          next({
-            status: 409,
-            message: "invalid email",
-            detail: "email already exists",
-          });
-          return;
-        default:
-          next({});
-          return;
-      }
-    });
-  const queryRes = allQueryRes ? allQueryRes.rows[0] : null;
-  if (!queryRes) {
+        RETURNING ${DBField}`,
+        [value, accountUid]
+      )
+      .catch((e) => {
+        switch (e.constraint) {
+          case "account_username_key":
+            next({
+              staus: 409,
+              message: "invalid username",
+              detail: "username already exists",
+            });
+            return;
+          case "account_email_key":
+            next({
+              status: 409,
+              message: "invalid email",
+              detail: "email already exists",
+            });
+            return;
+          default:
+            next({});
+            return;
+        }
+      })
+  );
+  //in case account deleted
+  const accountExists = query ? query.rows[0] : null;
+  if (!accountExists) {
     next(accountNotFound);
     return;
   }
-  res.status(200).json(value);
+  res.status(200).json({ [field]: query.rows[0][field] });
 }
 
 function generateCircleCentre(latitude, longitude, radius) {

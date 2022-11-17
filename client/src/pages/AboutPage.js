@@ -1,11 +1,8 @@
-import React from 'react'
-import Navbar from "../components/Navbar"
+import React from "react";
+import Navbar from "../components/Navbar";
 
 function AboutPage() {
-  return ( <div>
-    
-  </div>
-  )
+  return <div></div>;
 }
 
-export default AboutPage
+export default AboutPage;

@@ -8,7 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server/index.js",
     "build": "cd client && npm install && npm run build",
-    "dev": "nodemon server/index.js"
+    "dev": "nodemon server/index.js",
+    "pretty": "prettier --write \"./**/*.{js,jsx,json}\""
   },
   "keywords": [],
   "author": "",

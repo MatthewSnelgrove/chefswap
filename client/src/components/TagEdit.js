@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import "./styles/TagEdit.css"
 import 'react-toastify/dist/ReactToastify.css';
@@ -6,23 +6,23 @@ import "./styles/Tag.css"
 
 const maxQueryLength = 6
 const FoodItems = [
-    "Indian",
-    "Italian",
-    "Greek",
-    "Pizza",
-    "Thai"
+  "Indian",
+  "Italian",
+  "Greek",
+  "Pizza",
+  "Thai"
 ]
 
 function getQueryList(queryValue, typeList) {
-    if (typeList.length == maxQueryLength) return ([])
+  if (typeList.length == maxQueryLength) return ([])
 
-    const queryRegex = RegExp(queryValue, "g")
-    const filterList = FoodItems.filter((singleType) => queryRegex.test(singleType) && !(typeList.includes(singleType)))
-    
-    return filterList
-} 
+  const queryRegex = RegExp(queryValue, "g")
+  const filterList = FoodItems.filter((singleType) => queryRegex.test(singleType) && !(typeList.includes(singleType)))
 
-  
+  return filterList
+}
+
+
 
 // shiftDropdownDown()
 // shifts the dropdown one down from what the user is selecting
@@ -34,66 +34,75 @@ function getQueryList(queryValue, typeList) {
 // updates prefrences with the old prefrences + the new one from the hl tag which is a class
 
 function shiftDropdownDown(dropdown) {
-    if (dropdown.childElementCount <= 1) {return}
+  if (dropdown.childElementCount <= 1) {
+    return;
+  }
 
-    const hlElement = dropdown.querySelector(".dropdown-hl")
-    const nextElement = hlElement.nextElementSibling
+  const hlElement = dropdown.querySelector(".dropdown-hl");
+  const nextElement = hlElement.nextElementSibling;
 
-    if (nextElement == null) {return}
+  if (nextElement == null) {
+    return;
+  }
 
-    hlElement.classList.remove("dropdown-hl")
-    nextElement.classList.add("dropdown-hl")
+  hlElement.classList.remove("dropdown-hl");
+  nextElement.classList.add("dropdown-hl");
 }
-  
+
 function shiftDropdownUp(dropdown) {
-    if (dropdown.childElementCount <= 1) {return}
+  if (dropdown.childElementCount <= 1) {
+    return;
+  }
 
-    const hlElement = dropdown.querySelector(".dropdown-hl")
-    const previousElement = hlElement.previousElementSibling
+  const hlElement = dropdown.querySelector(".dropdown-hl");
+  const previousElement = hlElement.previousElementSibling;
 
-    if (previousElement == null) {return}
+  if (previousElement == null) {
+    return;
+  }
 
-    hlElement.classList.remove("dropdown-hl")
-    previousElement.classList.add("dropdown-hl")
+  hlElement.classList.remove("dropdown-hl");
+  previousElement.classList.add("dropdown-hl");
 }
 
 function onEnter(updateTypeList, newType, Uid, addFunc) {
-    updateTypeList((prevTypeList) => [...prevTypeList, newType])
-    addFunc(Uid, newType)
-    document.querySelector(".dropdown-tag").firstChild.classList.add("dropdown-hl")
-} 
+  updateTypeList((prevTypeList) => [...prevTypeList, newType])
+  addFunc(Uid, newType)
+  document.querySelector(".dropdown-tag").firstChild.classList.add("dropdown-hl")
+}
 
 function resetDropdown() {
-    const dropdown = document.querySelector(".dropdown-tag")
+  const dropdown = document.querySelector(".dropdown-tag");
 
-    if (!dropdown.firstChild) {return}
+  if (!dropdown.firstChild) {
+    return;
+  }
 
-    dropdown.firstChild.classList.add("dropdown-hl")
+  dropdown.firstChild.classList.add("dropdown-hl");
 }
 
 //Whenever user types function
 function manageKeys(ev, updateTypeList, updateQuery, Uid, addFunc) {
-    if (ev.keyCode == 40) {
-      shiftDropdownDown(document.querySelector(".dropdown-tag"))
-    }
-    else if (ev.keyCode == 38) {
-      shiftDropdownUp(document.querySelector(".dropdown-tag"))
-    }
-    else if (ev.keyCode == 13) {
-      const hl = document.querySelector(".dropdown-hl")
-
-      if (!hl) {return}
-      console.log(addFunc)
-      onEnter(updateTypeList, hl.textContent, Uid, addFunc)
-      ev.target.value = ""
-      updateQuery("")
-    }
-  
-    const checkRegex = RegExp("[^a-zA-Z]", "g")
-    if (checkRegex.test(ev.key)) {
-      ev.preventDefault()
-    }
+  if (ev.keyCode == 40) {
+    shiftDropdownDown(document.querySelector(".dropdown-tag"))
   }
+  else if (ev.keyCode == 38) {
+    shiftDropdownUp(document.querySelector(".dropdown-tag"))
+  }
+
+  if (!hl) { return }
+  console.log(addFunc)
+  onEnter(updateTypeList, hl.textContent, Uid, addFunc)
+  ev.target.value = ""
+  updateQuery("")
+}
+
+const checkRegex = RegExp("[^a-zA-Z]", "g")
+if (checkRegex.test(ev.key)) {
+  ev.preventDefault()
+}
+  }
+}
 
 //represents the "Add title" pill
 // When user clicks they can then start typing
@@ -104,100 +113,103 @@ function manageKeys(ev, updateTypeList, updateQuery, Uid, addFunc) {
 // delete dropdown when user unfocuses
 //user tag for when the user types something in
 function TypeTag(props) {
-    return (
-        <div className="type-tag" >
-            {props.singleType}
-            <button className="delete-btn" onClick={(e) => {
-                props.updateTypeList((prevTypeList) => prevTypeList.filter((curType) => {
-                   return props.singleType != curType
-                }))
-                props.deleteFunc(props.Uid, props.singleType)
-            }}>X</button>
-        </div>
-    )
+  return (
+    <div className="type-tag" >
+      {props.singleType}
+      <button className="delete-btn" onClick={(e) => {
+        props.updateTypeList((prevTypeList) => prevTypeList.filter((curType) => {
+          return props.singleType != curType
+        }))
+        props.deleteFunc(props.Uid, props.singleType)
+      }}>X</button>
+    </div>
+  )
 }
 
 function AddTag(props) {
-    return (
-        <input 
-        id="add-tag"
-        onKeyDown={(e) => {
-            manageKeys(e, props.updateTypeList, props.updateQuery, props.Uid, props.addFunc)
-        }}
-        onFocus={(e) => {
-            props.updateVisibility(true)
-            props.updateQuery(e.target.value)
-        }}
-        onBlur={(e) => {
-            props.updateVisibility(false)
-        }}
-        onChange={(e) => {
-            props.updateQuery(e.target.value)
-            resetDropdown()
-        }}
-        autoComplete="off"
-        ></input>
-    )
+  return (
+    <input
+      id="add-tag"
+      onKeyDown={(e) => {
+        manageKeys(e, props.updateTypeList, props.updateQuery, props.Uid, props.addFunc)
+      }}
+      onFocus={(e) => {
+        props.updateVisibility(true)
+        props.updateQuery(e.target.value)
+      }}
+      onBlur={(e) => {
+        props.updateVisibility(false)
+      }}
+      onChange={(e) => {
+        props.updateQuery(e.target.value)
+        resetDropdown()
+      }}
+      autoComplete="off"
+    ></input>
+  )
 }
 
 function DropdownItem(props) {
-    return (
-        <span id={"dropdown-item".concat(props.index)} className={(props.index == 0) ? "dropdown-hl" : {}} 
-        onMouseEnter={(e) => {
-                const dropdownitem = document.getElementById("dropdown-item".concat(props.index))
-                const curHighlight = document.querySelector(".dropdown-hl")
+  return (
+    <span
+      id={"dropdown-item".concat(props.index)}
+      className={props.index == 0 ? "dropdown-hl" : {}}
+      onMouseEnter={(e) => {
+        const dropdownitem = document.getElementById(
+          "dropdown-item".concat(props.index)
+        );
+        const curHighlight = document.querySelector(".dropdown-hl");
 
-                if (dropdownitem == curHighlight) {return}
-
-                if (dropdownitem && curHighlight) {
-                    dropdownitem.classList.add("dropdown-hl")
-                    curHighlight.classList.remove("dropdown-hl")
-                }
-            }
+        if (dropdownitem == curHighlight) {
+          return;
         }
-        onMouseDown={function(e) {
-                onEnter(props.updateTypeList, document.querySelector(".dropdown-hl").textContent, props.Uid, props.addFunc)
-            }
+        onMouseDown = {
+          function(e) {
+            onEnter(props.updateTypeList, document.querySelector(".dropdown-hl").textContent, props.Uid, props.addFunc)
+          }
         }
-        tabIndex="0"
-        >{props.singleType}</span>
+        tabIndex = "0"
+          > { props.singleType }</span >
     )
-}
-
+      }
 
 function Dropdown(props) {
-    return (<>
-        {props.visible ? 
-        <div className="dropdown-tag">
+    return (
+      <>
+        {props.visible ? (
+          <div className="dropdown-tag">
             {props.queryList.map((singleType, index) =>
-                <DropdownItem singleType={singleType} updateTypeList={props.updateTypeList} index={index} key={index} Uid={props.Uid} addFunc={props.addFunc} />
+              <DropdownItem singleType={singleType} updateTypeList={props.updateTypeList} index={index} key={index} Uid={props.Uid} addFunc={props.addFunc} />
             )}
-        </div>
-        : <></>}
-    </>)
-}
+          </div>
+        ) : (
+          <></>
+        )}
+      </>
+    );
+  }
 
-function TagEdit(props) {
+  function TagEdit(props) {
     const [dropdownVisible, updateVisibility] = useState(false)
     const [query, updateQuery] = useState("")
     const [typeList, updateTypeList] = useState([])
 
     useEffect(() => {
-        updateTypeList([...props.fillInList])
+      updateTypeList([...props.fillInList])
     }, [])
 
     return (
-        <>
-            <div className="type-container">{
-                typeList.map((singleType, index) => 
-                    <TypeTag key={index} singleType={singleType} updateTypeList={updateTypeList} Uid={props.Uid} deleteFunc={props.deleteFunc}/>
-                )}
-                <AddTag updateTypeList={updateTypeList} updateQuery={updateQuery} updateVisibility={updateVisibility} Uid={props.Uid} addFunc={props.addFunc}/>
-            </div>  
-            <Dropdown visible={dropdownVisible} updateTypeList={updateTypeList} queryList={getQueryList(query, typeList)} Uid={props.Uid} addFunc={props.addFunc}/>
-        </>
-    )    
+      <>
+        <div className="type-container">{
+          typeList.map((singleType, index) =>
+            <TypeTag key={index} singleType={singleType} updateTypeList={updateTypeList} Uid={props.Uid} deleteFunc={props.deleteFunc} />
+          )}
+          <AddTag updateTypeList={updateTypeList} updateQuery={updateQuery} updateVisibility={updateVisibility} Uid={props.Uid} addFunc={props.addFunc} />
+        </div>
+        <Dropdown visible={dropdownVisible} updateTypeList={updateTypeList} queryList={getQueryList(query, typeList)} Uid={props.Uid} addFunc={props.addFunc} />
+      </>
+    )
 
-}
+  }
 
-export default TagEdit
+  export default TagEdit;

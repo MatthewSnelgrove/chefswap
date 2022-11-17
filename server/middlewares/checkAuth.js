@@ -4,14 +4,14 @@ export default function checkAuth(req, res, next) {
   if (accountUid !== req.session.accountUid) {
     if (req.session.accountUid) {
       next({
-        staus: 403,
+        status: 403,
         message: "not authenticated with targeted account",
         detail: "this action requires authentication with targeted account",
       });
       return;
     }
     next({
-      staus: 401,
+      status: 401,
       message: "not authenticated",
       detail: "this action requires authentication with targeted account",
     });

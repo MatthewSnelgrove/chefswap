@@ -3,7 +3,7 @@ import { pool } from "../configServices/dbConfig.js";
 import bcrypt from "bcryptjs";
 import camelize from "camelize";
 import * as dotenv from "dotenv";
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
 
 export const router = express.Router();
 
@@ -50,7 +50,7 @@ router.post("/", async (req, res, next) => {
   //valid username, password
   if (await bcrypt.compare(password, account.passhash)) {
     req.session.accountUid = account.accountUid;
-    res.status(201).send(req.session);
+    res.status(201).json(req.session);
   }
   //Wrong password
   else {

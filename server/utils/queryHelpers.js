@@ -49,7 +49,6 @@ export function accountProfileQuery(includeDistanceFrom) {
               'avg_rating', account.avg_rating, 
               'num_ratings', account.num_ratings, 
               'circle', json_build_object(
-                'circle_uid', circle.circle_uid, 
                 'radius', circle.radius, 
                 'latitude', circle.latitude,
                 'longitude', circle.longitude
@@ -114,31 +113,32 @@ export function accountQuery(includeDistanceFrom) {
               : ``
           }
           SELECT 
-            json_build_object(
-              'account_uid', account.account_uid, 
-              'username', account.username, 
-              'create_time', account.create_time, 
-              'update_time', account.update_time, 
-              'bio', account.bio, 
-              'pfp_link', 'https://storage.googleapis.com/${
-                process.env.GCS_BUCKET
-              }/' || account.pfp_name, 
-              'avg_rating', account.avg_rating, 
-              'num_ratings', account.num_ratings, 
-              'circle', json_build_object(
-                'circle_uid', circle.circle_uid, 
-                'radius', circle.radius, 
-                'latitude', circle.latitude,
-                'longitude', circle.longitude
-              ),
-              'images', COALESCE(temp_image_table.images, '[]'),
-              'cuisine_preferences', COALESCE(temp_preference_table.preferences, '[]'),
-              'cuisine_specialities', COALESCE(temp_speciality_table.specialities, '[]')
-              ${
-                includeDistanceFrom
-                  ? `, 'distance', temp_distance_table.distance`
-                  : ``
-              }
+            json_strip_nulls(
+              json_build_object(
+                'account_uid', account.account_uid, 
+                'username', account.username, 
+                'create_time', account.create_time, 
+                'update_time', account.update_time, 
+                'bio', account.bio, 
+                'pfp_link', 'https://storage.googleapis.com/${
+                  process.env.GCS_BUCKET
+                }/' || account.pfp_name, 
+                'avg_rating', account.avg_rating, 
+                'num_ratings', account.num_ratings, 
+                'circle', json_build_object(
+                  'radius', circle.radius, 
+                  'latitude', circle.latitude,
+                  'longitude', circle.longitude
+                ),
+                'images', COALESCE(temp_image_table.images, '[]'),
+                'cuisine_preferences', COALESCE(temp_preference_table.preferences, '[]'),
+                'cuisine_specialities', COALESCE(temp_speciality_table.specialities, '[]')
+                ${
+                  includeDistanceFrom
+                    ? `, 'distance', temp_distance_table.distance`
+                    : ``
+                }
+              )
             ) profile,
             account.email,
             json_strip_nulls(

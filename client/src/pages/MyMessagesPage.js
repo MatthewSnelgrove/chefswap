@@ -1,6 +1,6 @@
-import React from 'react';
-import ConversationContainer from '../components/ConversationContainer';
-import MessageSwapSwitch from '../components/MessageSwapSwitch';
+import React from "react";
+import ConversationContainer from "../components/ConversationContainer";
+import MessageSwapSwitch from "../components/MessageSwapSwitch";
 import "./styles/MyMessagesPage.scss";
 
 function MyMessagesPage() {
@@ -14,4 +14,4 @@ function MyMessagesPage() {
   );
 }
 
-export default MyMessagesPage
+export default MyMessagesPage;
