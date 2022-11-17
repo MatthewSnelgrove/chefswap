@@ -74,17 +74,17 @@ function LoggedOut() {
           <ul className="navbar-nav ms-auto navbar-list-btns">
             <li className="nav-item" style={{ marginRight: "20px" }}>
               <a className="nav-link" href="/about">
-                <StyledBtn text="ABOUT" color="rgb(0, 0, 80)" />
+                <StyledBtn text="ABOUT" color="rgb(0, 0, 80)" link="/about" />
               </a>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="/login">
-                <StyledBtn text="LOGIN" light color="#ff8c00cb" />
+                <StyledBtn text="LOGIN" light color="#ff8c00cb" link="/login" />
               </a>
             </li>
             <li className="nav-item">
               <a className="nav-link" href="/signup">
-                <StyledBtn text="SIGNUP" arrowed />
+                <StyledBtn text="SIGNUP" arrowed link="/signup" />
               </a>
             </li>
           </ul>
