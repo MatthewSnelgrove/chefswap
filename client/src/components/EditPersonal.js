@@ -90,9 +90,9 @@ function EditPersonal(props) {
   useEffect(() => {
     if (user == "loading") { return }
     fetchSpecific(user.accountUid, "email")
-      .then((email) => setEmail(email))
+    .then((email) => setEmail(email))
     fetchSpecific(user.accountUid, "address")
-      .then((address) => setAddress(address.address))
+    .then((address) => setAddress(address.address))
   }, [user])
 
   if (user == "loading" || email == null || address == null) { return (<></>) }

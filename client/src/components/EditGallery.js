@@ -32,12 +32,12 @@ function EditGallery() {
               if (e.target.value == "") { return }
               const formData = new FormData
               formData.append("file", e.target.files[0])
-              addNewPhoto(uid, formData, "http://localhost:3000/accounts/gallery")
+              addNewPhoto(user.accountUid, formData, "http://localhost:3000/accounts/gallery")
             }} style={{ display: "none" }} />
           </label>
         </form>
       </div>
-      <div className="profile-img-container"> {images.images.map((imgJSON, index) =>
+      <div className="profile-img-container"> {images.map((imgJSON, index) =>
         <GalleryImg key={index} imgJSON={imgJSON} images={images} setImages={setImages} />
       )}
       </div>

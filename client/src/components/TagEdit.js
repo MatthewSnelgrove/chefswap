@@ -82,25 +82,26 @@ function resetDropdown() {
 }
 
 //Whenever user types function
-function manageKeys(ev, updateTypeList, updateQuery, Uid, addFunc) {
+function manageKeys(ev, prefrences, updatePrefrences, updateQuery) {
   if (ev.keyCode == 40) {
     shiftDropdownDown(document.querySelector(".dropdown-tag"))
   }
   else if (ev.keyCode == 38) {
     shiftDropdownUp(document.querySelector(".dropdown-tag"))
   }
+  else if (ev.keyCode == 13) {
+    const hl = document.querySelector(".dropdown-hl")
 
-  if (!hl) { return }
-  console.log(addFunc)
-  onEnter(updateTypeList, hl.textContent, Uid, addFunc)
-  ev.target.value = ""
-  updateQuery("")
-}
+    if (!hl) {return}
 
-const checkRegex = RegExp("[^a-zA-Z]", "g")
-if (checkRegex.test(ev.key)) {
-  ev.preventDefault()
-}
+    onEnter(prefrences, updatePrefrences, hl.textContent)
+    ev.target.value = ""
+    updateQuery("")
+  }
+
+  const checkRegex = RegExp("[^a-zA-Z]", "g")
+  if (checkRegex.test(ev.key)) {
+    ev.preventDefault()
   }
 }
 
@@ -163,15 +164,16 @@ function DropdownItem(props) {
         if (dropdownitem == curHighlight) {
           return;
         }
-        onMouseDown = {
-          function(e) {
-            onEnter(props.updateTypeList, document.querySelector(".dropdown-hl").textContent, props.Uid, props.addFunc)
-          }
+      }}
+      onMouseDown = {function(e) {
+          onEnter(props.updateTypeList, document.querySelector(".dropdown-hl").textContent, props.Uid, props.addFunc)
         }
-        tabIndex = "0"
-          > { props.singleType }</span >
-    )
-      }
+        }
+      tabIndex = "0"
+    >{props.singleType}</span >
+   )
+}
+
 
 function Dropdown(props) {
     return (
