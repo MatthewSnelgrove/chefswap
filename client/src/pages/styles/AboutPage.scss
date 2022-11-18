@@ -1,17 +1,26 @@
 @import "../../variables";
 
-.AboutPage {
+@mixin page-section {
   width: 100vw;
   height: 100vh;
-
+  min-height: 500px;
   background-color: $cs-light-cream;
 
-  padding-top: 10vh;
+  max-width: 100%;
+
+  position: relative;
 }
 
-.intro-desc {
+.AboutPage {
+  @include page-section;
+
+  padding-top: 10vh;
+  display: flex;
+}
+
+.intro-main {
   width: 50%;
-  height: 90vh;
+  height: 100%;
 
   padding-left: 5vw;
 
@@ -31,4 +40,14 @@
   font-size: 1.1em;
 
   margin-bottom: 6%;
+}
+
+.graphic {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-demo-section {
+  @include page-section;
 }

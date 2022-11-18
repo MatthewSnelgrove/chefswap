@@ -1,0 +1,25 @@
+.AnimatedImgContainer {
+  position: relative;
+}
+
+.AnimatedImg {
+  max-width: 100%;
+  height: auto;
+
+  object-fit: cover;
+
+  // animation: 0.5s ease-in 1 normal both animate-up;
+  // animation: 0.5s ease-in 1 reverse both animate-up;
+
+  transition: left 0.3s,
+    bottom 0.3s;
+}
+
+@keyframes animate-up {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

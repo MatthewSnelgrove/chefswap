@@ -73,19 +73,19 @@ function LoggedOut() {
         <div className="collapse navbar-collapse" id="navbarNavDropdown">
           <ul className="navbar-nav ms-auto navbar-list-btns">
             <li className="nav-item" style={{ marginRight: "20px" }}>
-              <a className="nav-link" href="/about">
+              <div className="nav-link">
                 <StyledBtn text="ABOUT" color="rgb(0, 0, 80)" link="/about" />
-              </a>
+              </div>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/login">
+              <div className="nav-link">
                 <StyledBtn text="LOGIN" light color="#ff8c00cb" link="/login" />
-              </a>
+              </div>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/signup">
+              <div className="nav-link">
                 <StyledBtn text="SIGNUP" arrowed link="/signup" />
-              </a>
+              </div>
             </li>
           </ul>
         </div>
