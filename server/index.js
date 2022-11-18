@@ -94,7 +94,7 @@ app.use("/api/v1/swaps", swapsRouter);
 app.use((err, req, res, next) => {
   //if multiple errors (from openapi validator) return those errors.
   //if one error (my custom errors) return array with just that error
-  console.log(err);
+  // console.log(err);
   const errors = err.errors
     ? err.errors.map((error) => ({
         path: req.originalUrl,

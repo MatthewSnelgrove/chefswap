@@ -638,18 +638,29 @@ router.get("/:accountUid/pfp", async (req, res, next) => {
   res.status(200).json({ pfpLink: generateImageLink(query.pfpName) });
 });
 
-router.put(
-  "/:accountUid/pfp",
-  checkAuth,
-  uploadHandler.single("image"),
-  async (req, res, next) => {
+router.put("/:accountUid/pfp", checkAuth, async (req, res, next) => {
+  uploadHandler.single("image")(req, res, (err) => {
+    if (err) {
+      //wrong field name in request (not image) or multiple images sent in same field
+      if (err.code === "LIMIT_UNEXPECTED_FILE") {
+        next({
+          message: "invalid field name",
+          detail: `image field name numst be "image" and must contain 1 image`,
+        });
+        return;
+      } else {
+        //some other multer error
+        next(err);
+        return;
+      }
+    }
     const accountUid = req.params.accountUid;
     const imageName = req.file.originalname;
     const blob = bucket.file(uuid4() + imageName);
     const blobStream = blob.createWriteStream();
     blobStream.on("error", (err) => {
-      console.log(err);
-      next({});
+      //some GCS error
+      next(err);
     });
     blobStream.on("finish", async () => {
       const oldImageName = (
@@ -674,8 +685,8 @@ router.put(
       res.status(200).json({ pfpLink: generateImageLink(pfp.pfpName) });
     });
     blobStream.end(req.file.buffer);
-  }
-);
+  });
+});
 
 /**
  * return images associated with accountUid
@@ -706,11 +717,22 @@ router.get("/:accountUid/images", async (req, res, next) => {
 /**
  * add image to user's images
  */
-router.post(
-  "/:accountUid/images",
-  checkAuth,
-  uploadHandler.single("image"),
-  async (req, res, next) => {
+router.post("/:accountUid/images", checkAuth, async (req, res, next) => {
+  uploadHandler.single("image")(req, res, (err) => {
+    if (err) {
+      //wrong field name in request (not image) or multiple images sent in same field
+      if (err.code === "LIMIT_UNEXPECTED_FILE") {
+        next({
+          message: "invalid field name",
+          detail: `image field name numst be "image" and must contain 1 image`,
+        });
+        return;
+      } else {
+        //some other multer error
+        next(err);
+        return;
+      }
+    }
     const accountUid = req.params.accountUid;
     const imageName = req.file.originalname;
     const blob = bucket.file(uuid4() + imageName);
@@ -734,8 +756,8 @@ router.post(
       res.status(201).json(image);
     });
     blobStream.end(req.file.buffer);
-  }
-);
+  });
+});
 
 /**
  * return an image associated with accountUid
