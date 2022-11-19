@@ -5,6 +5,7 @@
 .AnimatedImg {
   max-width: 100%;
   height: auto;
+  opacity: 0;
 
   object-fit: cover;
 
@@ -12,7 +13,11 @@
   // animation: 0.5s ease-in 1 reverse both animate-up;
 
   transition: left 0.3s,
-    bottom 0.3s;
+    bottom 0.3s,
+    opacity 0.3s;
+
+  transition-timing-function: ease-in;
+  transition-duration: 0.3s;
 }
 
 @keyframes animate-up {
