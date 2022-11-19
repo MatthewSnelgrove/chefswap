@@ -50,6 +50,21 @@
   align-items: center;
 }
 
+.github-msg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 3%;
+
+  color: $cs-gray-2;
+
+  text-align: center;
+
+  a {
+    color: inherit;
+  }
+}
+
 .product-demo-section {
   @include page-section;
 }

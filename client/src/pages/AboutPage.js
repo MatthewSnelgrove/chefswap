@@ -123,6 +123,15 @@ function AboutPage() {
           </AnimatedImg>
         </div>
 
+        <div className="github-msg">
+          Made with ❤️ on&nbsp;
+          <a
+            href="https://github.com/MatthewSnelgrove/chefswap"
+            target="_blank"
+            rel="noreferrer">
+            GitHub!
+          </a>
+        </div>
       </div>
 
       <div className="product-demo-section">
