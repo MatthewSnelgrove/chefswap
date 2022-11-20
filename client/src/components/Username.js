@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 import "./styles/Username.scss";
 
 /**
@@ -13,8 +13,10 @@ export default class Username extends Component {
     const username = this.props.username;
 
     return (
-      <div className="username-container" style={{ fontSize: size }}>{username}</div>
-    )
+      <div className="username-container" style={{ fontSize: size }}>
+        {username}
+      </div>
+    );
   }
 }
 

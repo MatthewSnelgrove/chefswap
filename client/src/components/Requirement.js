@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 import "./styles/Requirement.scss";
 
 function Requirement({ pass, requirementText }) {
-  let textColor = (pass) ? { color: "rgb(0, 166, 83)" } : { color: "gray" };
+  let textColor = pass ? { color: "rgb(0, 166, 83)" } : { color: "gray" };
 
   return (
     <div className="requirement">
@@ -10,7 +10,7 @@ function Requirement({ pass, requirementText }) {
         &#11044; &nbsp; {requirementText}
       </div>
     </div>
-  )
+  );
 }
 
-export default Requirement
+export default Requirement;

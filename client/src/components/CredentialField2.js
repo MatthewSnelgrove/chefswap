@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import "./styles/CredentialField.scss";
 
 /**
@@ -12,8 +12,17 @@ import "./styles/CredentialField.scss";
  * @param {Boolean} clicked Whether input has been focused or not
  * @param {Object} error Error object from validateFunctions.js
  */
-function CredentialField2({ type = "text", label, id, size, value, onChange, onBlur, clicked, error }) {
-
+function CredentialField2({
+  type = "text",
+  label,
+  id,
+  size,
+  value,
+  onChange,
+  onBlur,
+  clicked,
+  error,
+}) {
   // Logic for handling error message styles
   let fieldBorder = "3px solid gray";
   let errorVisibility = "hidden";
@@ -52,10 +61,10 @@ function CredentialField2({ type = "text", label, id, size, value, onChange, onB
     let text = document.getElementById(id).value;
 
     let field = {
-      [id]: text
+      [id]: text,
     };
 
-    console.log(field);   // log
+    console.log(field); // log
     onChange(field);
   }
 
@@ -63,7 +72,7 @@ function CredentialField2({ type = "text", label, id, size, value, onChange, onB
   function handleBlur() {
     if (!value) animateLabelDown();
 
-    console.log(id + " just blurred");    // log
+    console.log(id + " just blurred"); // log
     onBlur(id);
   }
 
@@ -73,12 +82,16 @@ function CredentialField2({ type = "text", label, id, size, value, onChange, onB
   }
 
   // Remove * from beginning if focused
-  let labelText = (clicked) ? label.replace("*", "") : label;
+  let labelText = clicked ? label.replace("*", "") : label;
 
   return (
-    <div className="form-input-container" id={id + "-input-container"} style={{ width: `${size}%` }}>
+    <div
+      className="form-input-container"
+      id={id + "-input-container"}
+      style={{ width: `${size}%` }}
+    >
       <input
-        autoComplete='off'
+        autoComplete="off"
         type={type}
         id={id}
         name={id}
@@ -95,10 +108,15 @@ function CredentialField2({ type = "text", label, id, size, value, onChange, onB
         {labelText}
       </label>
 
-      <div className="input-error-msg" id={id + "-error-msg"}
-        style={{ visibility: errorVisibility }}>{error?.msg || ""}</div>
+      <div
+        className="input-error-msg"
+        id={id + "-error-msg"}
+        style={{ visibility: errorVisibility }}
+      >
+        {error?.msg || ""}
+      </div>
     </div>
-  )
+  );
 }
 
-export default CredentialField2
+export default CredentialField2;

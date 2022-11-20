@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import "../components/styles/CredentialField.scss";
 
 /**
@@ -11,19 +11,32 @@ import "../components/styles/CredentialField.scss";
  * @param {Number} size Optional percent width of input field
  * @param {Function} onUpdate Parent function to handle error updates
  */
-function CredentialField({ type = "text", label, name, validateFcn, size = 100, onUpdate }) {
+function CredentialField({
+  type = "text",
+  label,
+  name,
+  validateFcn,
+  size = 100,
+  onUpdate,
+}) {
   const [error, setError] = useState({
     error: false,
     msg: "",
   });
   const [clicked, setClicked] = useState(false);
 
-  if (!label || !validateFcn || !onUpdate || typeof validateFcn !== "function" || typeof onUpdate !== "function") {
+  if (
+    !label ||
+    !validateFcn ||
+    !onUpdate ||
+    typeof validateFcn !== "function" ||
+    typeof onUpdate !== "function"
+  ) {
     throw new Error("Missing arguments");
   }
 
   // Logic for error message
-  let isVisible = (error.error) ? "visible" : "hidden";
+  let isVisible = error.error ? "visible" : "hidden";
   let borderColor;
   if (!error.error && error.msg === "success") borderColor = "3px solid green";
   else if (error.error) borderColor = "3px solid red";
@@ -57,7 +70,7 @@ function CredentialField({ type = "text", label, name, validateFcn, size = 100, 
     setClicked(true);
 
     // update parent form state
-    onUpdate(name, newError.error)
+    onUpdate(name, newError.error);
   }
 
   function handleInputChange() {
@@ -69,13 +82,29 @@ function CredentialField({ type = "text", label, name, validateFcn, size = 100, 
 
   return (
     <div className="form-input-container" style={{ width: `${size}%` }}>
-      <input autoComplete='stoppleaseihatechrome' type={type} id={name} name={name} onBlur={handleInputBlur} onChange={handleInputChange}
-        onFocus={animateLabelUp} style={{ borderBottom: borderColor }} />
-      <label htmlFor={name} className="input-label" id={name + "-label"}>{label}</label>
+      <input
+        autoComplete="stoppleaseihatechrome"
+        type={type}
+        id={name}
+        name={name}
+        onBlur={handleInputBlur}
+        onChange={handleInputChange}
+        onFocus={animateLabelUp}
+        style={{ borderBottom: borderColor }}
+      />
+      <label htmlFor={name} className="input-label" id={name + "-label"}>
+        {label}
+      </label>
 
-      <div className="input-error-msg" id={name + "-error-msg"} style={{ visibility: isVisible }}>{error.msg || ""}</div>
+      <div
+        className="input-error-msg"
+        id={name + "-error-msg"}
+        style={{ visibility: isVisible }}
+      >
+        {error.msg || ""}
+      </div>
     </div>
-  )
+  );
 }
 
-export default CredentialField
+export default CredentialField;

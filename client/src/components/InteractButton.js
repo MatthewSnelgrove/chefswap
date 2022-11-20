@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 import "./styles/InteractButton.scss";
 
 /**
@@ -15,10 +15,14 @@ export default class InteractButton extends Component {
     const onClick = this.props.onClick;
 
     return (
-      <button className="interact-btn" onClick={onClick} style={{ backgroundColor: color }}>
+      <button
+        className="interact-btn"
+        onClick={onClick}
+        style={{ backgroundColor: color }}
+      >
         {text}
       </button>
-    )
+    );
   }
 }
 
@@ -31,5 +35,7 @@ InteractButton.propTypes = {
 InteractButton.defaultProps = {
   text: "Button",
   color: "rgb(255,229,208)",
-  onClick: () => { alert("Button pressed"); },
+  onClick: () => {
+    alert("Button pressed");
+  },
 };

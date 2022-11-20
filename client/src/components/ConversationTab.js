@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 import "./styles/ConversationTab.scss";
 import Avatar from "./Avatar";
 import Username from "./Username";
@@ -12,8 +12,8 @@ import Username from "./Username";
  */
 export default class ConversationTab extends Component {
   render() {
-    const user = this.props.user;      // user json obj from db
-    const status = this.props.status;   // testing, 0 - no swap, 1 - pending, 2 - ongoing
+    const user = this.props.user; // user json obj from db
+    const status = this.props.status; // testing, 0 - no swap, 1 - pending, 2 - ongoing
 
     let bc = "transparent";
 
@@ -22,13 +22,16 @@ export default class ConversationTab extends Component {
 
     return (
       <button className="conversation-tab-container">
-        <div className="status-bar" style={{
-          backgroundColor: `${bc}`,
-        }}></div>
+        <div
+          className="status-bar"
+          style={{
+            backgroundColor: `${bc}`,
+          }}
+        ></div>
         <Avatar />
         <Username username={user.username} />
       </button>
-    )
+    );
   }
 }
 

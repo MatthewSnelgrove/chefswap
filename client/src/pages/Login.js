@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import "./styles/_SignupLogin.scss";
 import { fetchLogin } from "./fetchFunctions";
 import Modal from "../components/Modal";
 import CredentialField from "../components/CredentialField2";
 
 function Login() {
-
   // State holding all fields needed for specific form
   const [fields, setFields] = useState({
     username: "",
@@ -22,7 +21,7 @@ function Login() {
   function handleFieldChange(field) {
     setFields({
       ...fields,
-      ...field
+      ...field,
     });
   }
 
@@ -51,9 +50,10 @@ function Login() {
       alert("Form contains errors or uncompleted fields");
     } else {
       // TODO: Return api response for displaying error on frontend******************
-      fetchLogin(fields.password, fields.username).then((data) => isSuccess(data));
+      fetchLogin(fields.password, fields.username).then((data) =>
+        isSuccess(data)
+      );
     }
-
   }
 
   // Callback function on login success
@@ -65,14 +65,23 @@ function Login() {
       return;
     }
 
-    window.location = "http://localhost:3000/";
+    console.log(JSON.stringify({ username: fields.username, password: fields.password }))
   }
 
   // No errors with inputs
   return (
-    <Modal title="Welcome Back!" backgroundUrl={"https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fimg1.cookinglight.timeinc.net%2Fsites%2Fdefault%2Ffiles%2Fstyles%2F4_3_horizontal_-_1200x900%2Fpublic%2F1525725671%2F1805w-mise-en-place.jpg%3Fitok%3DiokQjOQ9%261525727462"}>
+    <Modal
+      title="Welcome Back!"
+      backgroundUrl={
+        "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fimg1.cookinglight.timeinc.net%2Fsites%2Fdefault%2Ffiles%2Fstyles%2F4_3_horizontal_-_1200x900%2Fpublic%2F1525725671%2F1805w-mise-en-place.jpg%3Fitok%3DiokQjOQ9%261525727462"
+      }
+    >
       {/* <form action="/api/auth/login" method="post" className="signup-login-form"> */}
-      <form onSubmit={handleSubmit} className="signup-login-form" autoComplete='off'>
+      <form
+        onSubmit={handleSubmit}
+        className="signup-login-form"
+        autoComplete="off"
+      >
         <fieldset>
           <CredentialField
             label="Username"
@@ -82,7 +91,8 @@ function Login() {
             onChange={handleFieldChange}
             onBlur={handleFieldBlur}
             clicked={fieldsClicked.username}
-            error={null} />
+            error={null}
+          />
           <CredentialField
             type="password"
             label="Password"
@@ -92,13 +102,16 @@ function Login() {
             onChange={handleFieldChange}
             onBlur={handleFieldBlur}
             clicked={fieldsClicked.password}
-            error={null} />
+            error={null}
+          />
         </fieldset>
 
-        <button type="submit" className="submit-btn">Log in</button>
+        <button type="submit" className="submit-btn">
+          Log in
+        </button>
       </form>
     </Modal>
-  )
+  );
 }
 
 export default Login;
