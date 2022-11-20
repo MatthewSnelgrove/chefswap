@@ -1,6 +1,8 @@
 import { React, useState, useEffect } from "react";
-import "./styles/Navbar.scss";
 import { signoutUser } from "../pages/fetchFunctions"
+import Logo from './Homepage/Logo';
+import StyledBtn from './Homepage/StyledBtn';
+import "./styles/Navbar.scss";
 import { useUser } from "./useUser"
 import ProfilePicture from './ProfilePicture';
 
@@ -17,8 +19,8 @@ function LoggedIn(props) {
   return (
     <nav className="navbar navbar-expand-sm bg-light navbar-fixed">
       <div className="container-fluid">
-        <a className="navbar-brand" href="/about">
-          Chefswap
+        <a className="navbar-brand" href="/">
+          <Logo />
         </a>
         <button
           className="navbar-toggler"
@@ -100,10 +102,10 @@ function LoggedIn(props) {
 
 function LoggedOut() {
   return (
-    <nav className="navbar navbar-expand-sm bg-light navbar-fixed">
+    <nav className="navbar navbar-expand-sm navbar-fixed">
       <div className="container-fluid">
-        <a className="navbar-brand" href="/about">
-          Chefswap
+        <a className="navbar-brand" href="/">
+          <Logo />
         </a>
         <button
           className="navbar-toggler"
@@ -117,46 +119,21 @@ function LoggedOut() {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarNavDropdown">
-          <ul className="navbar-nav ms-auto">
-            <li className="nav-item dropdown">
-              <a
-                className="nav-link dropdown-toggle"
-                href="#"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Learn More
-              </a>
-              <ul className="dropdown-menu">
-                <li>
-                  <a className="dropdown-item" href="/about">
-                    About Chefswap
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="/about-us">
-                    About Us
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="/help">
-                    Help
-                  </a>
-                </li>
-              </ul>
-            </li>
-          </ul>
-          <ul className="navbar-nav">
-            <li className="nav-item">
-              <a className="nav-link" aria-current="page" href="/login">
-                Login
-              </a>
+          <ul className="navbar-nav ms-auto navbar-list-btns">
+            <li className="nav-item" style={{ marginRight: "20px" }}>
+              <div className="nav-link">
+                <StyledBtn text="ABOUT" color="rgb(0, 0, 80)" link="/about" />
+              </div>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="/signup">
-                Signup
-              </a>
+              <div className="nav-link">
+                <StyledBtn text="LOGIN" light color="#ff8c00cb" link="/login" />
+              </div>
+            </li>
+            <li className="nav-item">
+              <div className="nav-link">
+                <StyledBtn text="SIGNUP" arrowed link="/signup" />
+              </div>
             </li>
           </ul>
         </div>
