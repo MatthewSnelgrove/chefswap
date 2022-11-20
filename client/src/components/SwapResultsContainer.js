@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import SwapListing from "./SwapListing";
 import "./styles/SwapResultsContainer.scss";
@@ -20,7 +20,7 @@ export default class SwapResultsContainer extends Component {
     const isSubArray = (arr, subarr) => {
       let isSub = true;
 
-      subarr.forEach(element => {
+      subarr.forEach((element) => {
         if (!arr.includes(element)) isSub = false;
       });
 
@@ -33,7 +33,6 @@ export default class SwapResultsContainer extends Component {
 
       // Check cuisine name
       if (!isSubArray(user.cuisineSpecialties, cuisineChecked)) pass = false;
-
       // Check min ratings
       else if (user.avg_rating < minRating) pass = false;
 
@@ -78,25 +77,34 @@ export default class SwapResultsContainer extends Component {
         username: "Mock user 3",
         distance: 74,
         avg_rating: 3.9,
-        cuisineSpecialties: ["Indian", "Vietnamese", "Italian", "Chinese", "Korean"],
+        cuisineSpecialties: [
+          "Indian",
+          "Vietnamese",
+          "Italian",
+          "Chinese",
+          "Korean",
+        ],
       },
     };
 
     // Array of user objs
-    let exUserArr = Object.keys(exUsers).map(userKey => exUsers[userKey]);
+    let exUserArr = Object.keys(exUsers).map((userKey) => exUsers[userKey]);
 
     // Filter by all filters
-    exUserArr = exUserArr.filter(user => passesFilters(user));
+    exUserArr = exUserArr.filter((user) => passesFilters(user));
 
     // Map filtered array to JSX
-    const exUserJSX = exUserArr.map(user => <SwapListing username={user.username} distance={user.distance}
-      rating={user.avg_rating} cuisineSpecialties={user.cuisineSpecialties} key={user.username} />);
+    const exUserJSX = exUserArr.map((user) => (
+      <SwapListing
+        username={user.username}
+        distance={user.distance}
+        rating={user.avg_rating}
+        cuisineSpecialties={user.cuisineSpecialties}
+        key={user.username}
+      />
+    ));
 
-    return (
-      <div className="swap-results-container">
-        {exUserJSX}
-      </div>
-    )
+    return <div className="swap-results-container">{exUserJSX}</div>;
   }
 }
 

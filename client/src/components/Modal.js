@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import "./styles/Modal.scss";
 
 /**
@@ -9,23 +9,23 @@ import "./styles/Modal.scss";
 function Modal({ children, title = "Chefswap", backgroundUrl }) {
   // console.log(`rgba(128, 128, 128, 0.701), ${backgroundUrl}`);    // test
   return (
-    <div className="cred-modal-container" style={{ backgroundImage: `linear-gradient(rgba(128, 128, 128, 0.3), rgba(128, 128, 128, 0.3)), url(${backgroundUrl})` }}>
-
+    <div
+      className="cred-modal-container"
+      style={{
+        backgroundImage: `linear-gradient(rgba(128, 128, 128, 0.3), rgba(128, 128, 128, 0.3)), url(${backgroundUrl})`,
+      }}
+    >
       <div className="popup">
         <div className="cred-modal-header">
           <div className="header-title">{title}</div>
           <button className="close-modal-btn">
-            <span className="material-symbols-rounded">
-              close
-            </span>
+            <span className="material-symbols-rounded">close</span>
           </button>
         </div>
-        <div className="cred-modal-content">
-          {children}
-        </div>
+        <div className="cred-modal-content">{children}</div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Modal
+export default Modal;

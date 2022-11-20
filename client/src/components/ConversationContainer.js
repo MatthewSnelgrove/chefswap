@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import PeopleContainer from "./PeopleContainer";
 import "./styles/ConversationContainer.scss";
-import Chatbox from './Chatbox';
+import Chatbox from "./Chatbox";
 
 /**
  * Container component for entire conversations page (/my-messages)
@@ -16,6 +16,6 @@ export default class ConversationContainer extends Component {
           <Chatbox />
         </div>
       </div>
-    )
+    );
   }
 }

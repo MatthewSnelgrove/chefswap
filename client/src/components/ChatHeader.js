@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import Avatar from './Avatar';
-import Username from './Username';
-import ChatInteract from './ChatInteract';
+import React, { Component } from "react";
+import Avatar from "./Avatar";
+import Username from "./Username";
+import ChatInteract from "./ChatInteract";
 import "./styles/ChatHeader.scss";
 
 /**
@@ -19,6 +19,6 @@ export default class ChatHeader extends Component {
 
         <ChatInteract status={1} />
       </div>
-    )
+    );
   }
 }

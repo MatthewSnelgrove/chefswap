@@ -169,7 +169,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
       summary: Read an account. If signed in, response contains all account data. Otherwise, response only contains profile data.
       responses:
@@ -193,7 +199,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/username:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
       summary: Read the username of an account.
       responses:
@@ -253,7 +265,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/email:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
       summary: Read the email of an account. Must be signed in with specified account.
       responses:
@@ -313,7 +331,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/password:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     put:
       summary: Update the password of an account. Must be signed in with speficied account.
       requestBody:
@@ -342,7 +366,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/address:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
       summary: Read address of an account. Must be signed in with speficied account.
       responses:
@@ -389,7 +419,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/bio:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
       summary: Read bio of an account.
       responses:
@@ -447,7 +483,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/circle:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
       summary: Read circle of an account.
       responses:
@@ -490,7 +532,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/pfp:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
       summary: Read the pfp of an account.
       responses:
@@ -548,7 +596,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/images:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
       summary: Read the images of an account.
       responses:
@@ -603,7 +657,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/images/{imageUid}:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       - name: imageUid
         description: The uuid of the image
         in: path
@@ -643,7 +703,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/rating:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
       summary: Read the rating of an account.
       responses:
@@ -668,7 +734,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/cuisinePreferences:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
       summary: Read the cuisine preferences of an account.
       responses:
@@ -730,7 +802,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/cuisinePreferences/{preference}:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       - in: path
         name: preference
         description: A cuisine preference of an account.
@@ -754,7 +832,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/cuisineSpecialities:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     get:
       summary: Read the cuisine specialities of an account.
       responses:
@@ -816,7 +900,13 @@ paths:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/accounts/{accountUid}/cuisineSpecialities/{speciality}:
     parameters:
-      - $ref: "#/components/parameters/AccountUid"
+      - name: accountUid
+        description: The uuid of an account
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       - in: path
         name: speciality
         description: A cuisine speciality of an account.
@@ -1071,15 +1161,20 @@ components:
     CuisineType:
       type: string
       enum:
+        - BBQ
+        - Cajun
+        - Chinese
+        - Greek
+        - Indi
         - Indian
         - Italian
-        - Greek
+        - Japanese
+        - Korean
+        - Mediterranean
         - Mexican
         - Pizza
         - Thai
-        - BBQ
-        - Chinese
-        - Indi
+        - Vietnamese
     AccountProfile:
       type: object
       description: profile data available without authentication
@@ -1110,7 +1205,9 @@ components:
         pfpLink:
           $ref: "#/components/schemas/ImageLink"
         avgRating:
-          $ref: "#/components/schemas/AvgRating"
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/AvgRating"
         numRatings:
           readOnly: true
           allOf:

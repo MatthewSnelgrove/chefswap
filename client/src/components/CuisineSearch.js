@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "./styles/CuisineSearch.scss";
 import "../general.scss";
@@ -21,16 +21,23 @@ export default class CuisineSearch extends Component {
   render() {
     return (
       <div className="cuisine-search-container">
-
-        <label htmlFor="cuisine-search" className="label-gray">Search</label>
-        <input type="text" id="cuisine-search" name="cuisine-search" placeholder="Cuisine name"
-          value={this.props.cuisineTyped} onChange={this.handleTypedChange} />
+        <label htmlFor="cuisine-search" className="label-gray">
+          Search
+        </label>
+        <input
+          type="text"
+          id="cuisine-search"
+          name="cuisine-search"
+          placeholder="Cuisine name"
+          value={this.props.cuisineTyped}
+          onChange={this.handleTypedChange}
+        />
       </div>
-    )
+    );
   }
 }
 
 CuisineSearch.propTypes = {
   cuisineTyped: PropTypes.string.isRequired,
   onTypedChange: PropTypes.func.isRequired,
-}
+};

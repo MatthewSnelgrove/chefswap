@@ -141,4 +141,4 @@ function AboutPage() {
   )
 }
 
-export default AboutPage
+export default AboutPage;

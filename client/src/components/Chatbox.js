@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import ChatContent from "./ChatContent";
 import ChatHeader from "./ChatHeader";
 import ChatInput from "./ChatInput";
@@ -16,6 +16,6 @@ export default class Chatbox extends Component {
         <ChatContent />
         <ChatInput />
       </div>
-    )
+    );
   }
 }
