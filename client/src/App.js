@@ -5,7 +5,6 @@ import AboutPage from "./pages/AboutPage";
 import AboutMorePage from "./pages/AboutMorePage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-
 import MySwapsPage from "./pages/MySwapsPage";
 import MyMessagesPage from "./pages/MyMessagesPage";
 import FindSwapPage from "./pages/FindSwapPage";
@@ -32,7 +31,7 @@ function App() {
         <ToastContainer autoClose={2000} />
         <Routes>
           <Route path="/" element={<AboutPage />} />
-          <Route path="/about-us" element={<AboutUsPage />} />
+          <Route path="/about" element={<AboutMorePage />} />
 
           {/* May not need */}
           <Route path="/login" element={<Login />} />
