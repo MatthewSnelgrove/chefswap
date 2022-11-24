@@ -7,7 +7,7 @@ import "./styles/UserEditPage.css"
 function UserEditPage(props) {
   return (
     <OnlyLoggedIn linkPage={"http://localhost:3000/login"} >
-      <div className="form-container">
+      <div className="form-container" style={{ paddingTop: "40px" }}>
         <ul className="list-links">
           <EditListLink curSelected={props.name} link={"http://localhost:3000/accounts/edit"} listType={"EditProfile"} display={"Edit Profile"} />
           <EditListLink curSelected={props.name} link={"http://localhost:3000/accounts/password/change"} listType={"EditPassword"} display={"Change Password"} />

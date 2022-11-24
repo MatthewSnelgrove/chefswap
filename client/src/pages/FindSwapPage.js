@@ -46,7 +46,7 @@ export default function FindSwapPage() {
   }
 
   return (
-    <div className="find-swap-page">
+    <div className="find-swap-page" style={{ paddingTop: "90px" }}>
       <div className="find-swap-content">
         <FilterForm
           cuisineTyped={cuisineTyped}

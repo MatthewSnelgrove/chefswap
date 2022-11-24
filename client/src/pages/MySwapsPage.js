@@ -52,7 +52,7 @@ function MySwapsPage() {
   };
 
   return (
-    <div>
+    <div style={{ paddingTop: "90px" }}>
       <div className="swap-container">
         <h1 className="px-5 swap-text">Swaps</h1>
         {/* <div >
