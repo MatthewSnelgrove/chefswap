@@ -19,7 +19,8 @@ function CredentialField2({
   size,
   value,
   onChange,
-  onBlur,
+  onBlur = () => { },
+  onFocus = () => { },
   clicked,
   error,
 }) {
@@ -52,8 +53,8 @@ function CredentialField2({
   function handleFocus() {
     animateLabelUp();
 
-    // Set clicked state in login/signup page
-    handleClick();
+    // Set focused state in login page ONLY
+    onFocus(id);
   }
 
   // Passing typed value back to FormContainer
@@ -76,11 +77,6 @@ function CredentialField2({
     onBlur(id);
   }
 
-  // Handle click
-  function handleClick() {
-    onBlur(id);
-  }
-
   // Remove * from beginning if focused
   let labelText = clicked ? label.replace("*", "") : label;
 
@@ -99,7 +95,6 @@ function CredentialField2({
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        onClick={handleClick}
         style={{ borderBottom: fieldBorder }} />
       <label
         htmlFor={id}

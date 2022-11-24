@@ -12,7 +12,7 @@ function Login() {
   });
 
   // State holding if field clicked
-  const [fieldsClicked, setFieldsClicked] = useState({
+  const [fieldsFocused, setFieldsFocused] = useState({
     username: false,
     password: false,
   });
@@ -25,10 +25,10 @@ function Login() {
     });
   }
 
-  // Handles onblur for inputs and updates clicked state
-  function handleFieldBlur(field) {
-    setFieldsClicked({
-      ...fieldsClicked,
+  // Handles onfocus for inputs and updates focused state
+  function handleFieldFocus(field) {
+    setFieldsFocused({
+      ...fieldsFocused,
       [field]: true,
     });
   }
@@ -39,8 +39,8 @@ function Login() {
 
     // HANDLE FORM ERRORS
     let formContainsError = false;
-    Object.values(fieldsClicked).forEach((clicked) => {
-      if (!clicked) {
+    Object.values(fieldsFocused).forEach((focused) => {
+      if (!focused) {
         formContainsError = true;
       }
     });
@@ -89,8 +89,8 @@ function Login() {
             size="90"
             value={fields.username}
             onChange={handleFieldChange}
-            onBlur={handleFieldBlur}
-            clicked={fieldsClicked.username}
+            onFocus={handleFieldFocus}
+            clicked={fieldsFocused.username}
             error={null}
           />
           <CredentialField
@@ -100,8 +100,8 @@ function Login() {
             size="90"
             value={fields.password}
             onChange={handleFieldChange}
-            onBlur={handleFieldBlur}
-            clicked={fieldsClicked.password}
+            onFocus={handleFieldFocus}
+            clicked={fieldsFocused.password}
             error={null}
           />
         </fieldset>
