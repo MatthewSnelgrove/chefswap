@@ -23,7 +23,7 @@ function UserInfoPage() {
   }, []);
 
   return (
-    <div>
+    <div style={{ paddingTop: "50px" }}>
       <div style={{ marginTop: 100 }}>
         {user ? <UserProfileContainer user={user} /> : ''}
       </div>

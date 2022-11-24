@@ -17,7 +17,7 @@ import "./styles/FilterForm.scss";
 export default class FilterForm extends Component {
   render() {
     return (
-      <div className="filter-form-container">
+      <div className="filter-form-container" style={{ paddingTop: "20px" }}>
         <form action="">
           <FilterByCuisineSection
             cuisineTyped={this.props.cuisineTyped}
