@@ -68,7 +68,7 @@ function AboutPage() {
         <main className="intro-main">
           <h1 className="about-header">
             <Typewriter arr={["Connect", "Meet", "Cook", "Eat"]} />
-            with aspiring <br></br> chefs of any level.
+            with talented <br></br> chefs of every level.
           </h1>
           <div className="about-blurb">
             Chefswap helps users across Canada connect with each other through a love for cooking and eating!
