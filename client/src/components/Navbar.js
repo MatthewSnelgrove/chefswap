@@ -17,7 +17,7 @@ function LoggedIn(props) {
   const user = props.user;
 
   return (
-    <nav className="navbar navbar-expand-sm bg-light navbar-fixed">
+    <nav className="navbar navbar-expand-sm navbar-fixed">
       <div className="container-fluid">
         <a className="navbar-brand" href="/">
           <Logo />
