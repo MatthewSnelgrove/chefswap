@@ -1,6 +1,17 @@
 // Collection of functions to validate user input fields
-// Functions MUST return an object with structure: {error: Boolean, msg: String}
-// On success, return {error: false, msg: "success"}
+/* 
+Functions MUST return an object with structure: 
+{
+  error: Boolean, 
+  msg: String
+}
+
+On success, return 
+{
+  error: false, 
+  msg: "success"
+}
+*/
 
 /**
  * For signup/login username field
@@ -104,6 +115,63 @@ export function validateEmail(text) {
     return {
       error: true,
       msg: "Invalid email format",
+    };
+  } else
+    return {
+      error: false,
+      msg: "success",
+    };
+}
+
+/**
+ * For address lines 1, 2, 3 on signup form
+ * @param {String} text address.length <= 80
+ */
+export function validateAddress(text) {
+  if (text.length > 80) {
+    return {
+      error: true,
+      msg: "Address too long",
+    };
+  } else
+    return {
+      error: false,
+      msg: "success",
+    };
+}
+
+/**
+ * For city input on signup form
+ * @param {String} text city.length <= 35
+ */
+export function validateCity(text) {
+  if (text.length > 35) {
+    return {
+      error: true,
+      msg: "City too long",
+    };
+  } else
+    return {
+      error: false,
+      msg: "success",
+    };
+}
+
+/**
+ * For postal code input on signup form
+ * @param {String} text Must match postal code regex
+ */
+export function validatePostalCode(text) {
+  if (!text.match(/^([A-Z][0-9]){3}$/)) {
+    return {
+      error: true,
+      msg: "Expected format: A1A1A1",
+    };
+  }
+  if (!text.match(/^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJ-NPRSTV-Z]\d[ABCEGHJ-NPRSTV-Z]\d$/)) {
+    return {
+      error: true,
+      msg: "Invalid Canadian postal code",
     };
   } else
     return {
