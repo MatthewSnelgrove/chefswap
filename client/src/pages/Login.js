@@ -92,6 +92,7 @@ function Login() {
             onFocus={handleFieldFocus}
             clicked={fieldsFocused.username}
             error={null}
+            required
           />
           <CredentialField
             type="password"
@@ -103,6 +104,7 @@ function Login() {
             onFocus={handleFieldFocus}
             clicked={fieldsFocused.password}
             error={null}
+            required
           />
         </fieldset>
 

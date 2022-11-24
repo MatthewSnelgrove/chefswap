@@ -8,9 +8,11 @@ import "./styles/CredentialField.scss";
  * @param {String} label Label name for input field (starting with upper case)
  * @param {String} id Id and name value
  * @param {Function} onChange Function to handle input change
- * @param {Function} onBlur Function to handle input blur
+ * @param {Function} onBlur Function to handle input blur (signup only)
+ * @param {Function} onFocus Function to handle input focus (login only)
  * @param {Boolean} clicked Whether input has been focused or not
  * @param {Object} error Error object from validateFunctions.js
+ * @param {Boolean} required Required tag for inputs
  */
 function CredentialField2({
   type = "text",
@@ -23,6 +25,7 @@ function CredentialField2({
   onFocus = () => { },
   clicked,
   error,
+  required = false,
 }) {
   // Logic for handling error message styles
   let fieldBorder = "3px solid gray";
@@ -95,7 +98,8 @@ function CredentialField2({
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        style={{ borderBottom: fieldBorder }} />
+        style={{ borderBottom: fieldBorder }}
+        required={required} />
       <label
         htmlFor={id}
         className="input-label"

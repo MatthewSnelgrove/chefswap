@@ -142,6 +142,7 @@ function Signup() {
             onBlur={handleFieldBlur}
             clicked={fieldsClicked.email}
             error={errors.emailError}
+            required
           />
           <CredentialField
             label="*Username"
@@ -152,6 +153,7 @@ function Signup() {
             onBlur={handleFieldBlur}
             clicked={fieldsClicked.username}
             error={errors.usernameError}
+            required
           />
 
           <div
@@ -168,6 +170,7 @@ function Signup() {
               onBlur={handleFieldBlur}
               clicked={fieldsClicked.password}
               error={errors.passwordError}
+              required
             />
             <CredentialField
               type="password"
