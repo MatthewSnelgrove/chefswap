@@ -134,7 +134,7 @@ function Signup() {
           <legend>Account Details</legend>
           <CredentialField
             type="email"
-            label="*Email"
+            label="Email *"
             id="email"
             size="90"
             value={fields.email}
@@ -145,7 +145,7 @@ function Signup() {
             required
           />
           <CredentialField
-            label="*Username"
+            label="Username *"
             id="username"
             size="90"
             value={fields.username}
@@ -162,7 +162,7 @@ function Signup() {
           >
             <CredentialField
               type="password"
-              label="*Password"
+              label="Password *"
               id="password"
               size="50"
               value={fields.password}
@@ -174,7 +174,7 @@ function Signup() {
             />
             <CredentialField
               type="password"
-              label="*Confirm Password"
+              label="Confirm Password *"
               id="confirmPassword"
               size="50"
               value={fields.confirmPassword}

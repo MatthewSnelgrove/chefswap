@@ -80,9 +80,6 @@ function CredentialField2({
     onBlur(id);
   }
 
-  // Remove * from beginning if focused
-  let labelText = clicked ? label.replace("*", "") : label;
-
   return (
     <div
       className="form-input-container"
@@ -104,7 +101,7 @@ function CredentialField2({
         htmlFor={id}
         className="input-label"
         id={id + "-label"}>
-        {labelText}
+        {label}
       </label>
 
       <div
