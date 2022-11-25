@@ -109,10 +109,12 @@ function Signup() {
 
     // Uncompleted fields
     Object.keys(errors).forEach((field) => {
-      if ((field === "address2Error" || field === "address3Error") && errors[field]?.error) {
-        formContainsError = true;
+      if ((field === "address2Error" || field === "address3Error")) {
+        if (errors[field]?.error) formContainsError = true;
       }
+
       else if (!errors[field] || errors[field].error) {
+        console.log("ERROR");
         formContainsError = true;
       }
     });
@@ -171,7 +173,7 @@ function Signup() {
               clicked={fieldsClicked.email}
               error={errors.emailError}
               required
-          />
+            />
             <CredentialField
               label="Username *"
               id="username"
@@ -182,36 +184,36 @@ function Signup() {
               clicked={fieldsClicked.username}
               error={errors.usernameError}
               required
-          />
+            />
 
-          <div
-            className="password-fields"
-            style={{ width: "90%", display: "flex" }}
-          >
-            <CredentialField
-              type="password"
-              label="Password *"
-              id="password"
-              size="50"
-              value={fields.password}
-              onChange={handleFieldChange}
-              onBlur={handleFieldBlur}
-              clicked={fieldsClicked.password}
-              error={errors.passwordError}
-              required
-            />
-            <CredentialField
-              type="password"
-              label="Confirm Password *"
-              id="confirmPassword"
-              size="50"
-              value={fields.confirmPassword}
-              onChange={handleFieldChange}
-              onBlur={handleFieldBlur}
-              clicked={fieldsClicked.confirmPassword}
-              error={errors.confirmPasswordError}
-            />
-          </div>
+            <div
+              className="password-fields"
+              style={{ width: "90%", display: "flex" }}
+            >
+              <CredentialField
+                type="password"
+                label="Password *"
+                id="password"
+                size="50"
+                value={fields.password}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
+                clicked={fieldsClicked.password}
+                error={errors.passwordError}
+                required
+              />
+              <CredentialField
+                type="password"
+                label="Confirm Password *"
+                id="confirmPassword"
+                size="50"
+                value={fields.confirmPassword}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
+                clicked={fieldsClicked.confirmPassword}
+                error={errors.confirmPasswordError}
+              />
+            </div>
 
             <PasswordRequirements
               password={fields.password}
@@ -224,28 +226,28 @@ function Signup() {
           <fieldset className="address-details">
             <legend>Address</legend>
 
-          <CredentialField
-            label="Address 1 *"
-            id="address1"
-            size="90"
-            value={fields.address1}
-            onChange={handleFieldChange}
-            onBlur={handleFieldBlur}
-            clicked={fieldsClicked.address1}
-            error={errors.address1Error}
-          />
-          <CredentialField
-            label="City *"
-            id="city"
-            size="90"
-            value={fields.city}
-            onChange={handleFieldChange}
-            onBlur={handleFieldBlur}
-            clicked={fieldsClicked.city}
-            error={errors.cityError}
-          />
+            <CredentialField
+              label="Address 1 *"
+              id="address1"
+              size="90"
+              value={fields.address1}
+              onChange={handleFieldChange}
+              onBlur={handleFieldBlur}
+              clicked={fieldsClicked.address1}
+              error={errors.address1Error}
+            />
+            <CredentialField
+              label="City *"
+              id="city"
+              size="90"
+              value={fields.city}
+              onChange={handleFieldChange}
+              onBlur={handleFieldBlur}
+              clicked={fieldsClicked.city}
+              error={errors.cityError}
+            />
 
-          {/* <CredentialField
+            {/* <CredentialField
             label="Province *"
             id="province"
             size="90"
@@ -256,101 +258,101 @@ function Signup() {
             error={errors.provinceError}
           /> */}
 
-          <Select
-            className="province-dropdown"
-            classNamePrefix="province-dropdown"
-            options={provinces}
-            isClearable={true}
-            isSearchable={true}
-            placeholder={<div>Province *</div>}
-            name="province"
-            required
-            onChange={() => {
-              setTimeout(() => {
-                let province = document.getElementsByName("province")[0].value;
-                console.log(`Province: ${province}`);
-                handleFieldChange({ province: province })
-              }, 100);
-            }}
-            onBlur={() => {
-              handleFieldBlur("province");
-            }}
-            styles={{
-              control: styles => {
-                return {
-                  ...styles,
-                  ":focus": {
-                    boxShadow: "0 0 0 1px #FB8C00",
-                    borderColor: "#FB8C00"
+            <Select
+              className="province-dropdown"
+              classNamePrefix="province-dropdown"
+              options={provinces}
+              isClearable={true}
+              isSearchable={true}
+              placeholder={<div>Province *</div>}
+              name="province"
+              required
+              onChange={() => {
+                setTimeout(() => {
+                  let province = document.getElementsByName("province")[0].value;
+                  console.log(`Province: ${province}`);
+                  handleFieldChange({ province: province })
+                }, 100);
+              }}
+              onBlur={() => {
+                handleFieldBlur("province");
+              }}
+              styles={{
+                control: styles => {
+                  return {
+                    ...styles,
+                    ":focus": {
+                      boxShadow: "0 0 0 1px #FB8C00",
+                      borderColor: "#FB8C00"
+                    }
+                  }
+                },
+                option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+                  return {
+                    ...styles,
+                    backgroundColor: isSelected
+                      ? "#FFA726"
+                      : isFocused
+                        ? "#ffa8262f"
+                        : "white",
+                    ":active": {
+                      ...styles[":active"],
+                      backgroundColor: "#ffa8266d"
+                    }
                   }
                 }
-              },
-              option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-                return {
-                  ...styles,
-                  backgroundColor: isSelected
-                    ? "#FFA726"
-                    : isFocused
-                      ? "#ffa8262f"
-                      : "white",
-                  ":active": {
-                    ...styles[":active"],
-                    backgroundColor: "#ffa8266d"
-                  }
-                }
-              }
-            }}
-          />
+              }}
+            />
 
-          <div
-            className="input-error-msg"
-            id={"province-error-msg"}
-            style={{
-              visibility: errors.provinceError?.error ? "visible" : "hidden",
-              width: "86%",
-              marginBottom: "18px"
-            }}
-          >
-            {errors.provinceError?.msg || "sdasd"}
-          </div>
+            <div
+              className="input-error-msg"
+              id={"province-error-msg"}
+              style={{
+                visibility: errors.provinceError?.error ? "visible" : "hidden",
+                width: "86%",
+                marginBottom: "18px"
+              }}
+            >
+              {errors.provinceError?.msg || "sdasd"}
+            </div>
 
-          <CredentialField
-            label="Postal Code *"
-            id="postalCode"
-            size="90"
-            value={fields.postalCode}
-            onChange={handleFieldChange}
-            onBlur={handleFieldBlur}
-            clicked={fieldsClicked.postalCode}
-            error={errors.postalCodeError}
-          />
-
-          <div
-            className="optional-address-lines"
-            style={{ width: "90%", display: "flex" }}
-          >
             <CredentialField
-              label="Address line 2"
-              id="address2"
-              size="50"
-              value={fields.address2}
+              label="Postal Code *"
+              id="postalCode"
+              size="90"
+              value={fields.postalCode}
               onChange={handleFieldChange}
               onBlur={handleFieldBlur}
-              clicked={fieldsClicked.address2}
-              error={errors.address2Error}
+              clicked={fieldsClicked.postalCode}
+              error={errors.postalCodeError}
             />
-            <CredentialField
-              label="Address line 3"
-              id="address3"
-              size="50"
-              value={fields.address3}
-              onChange={handleFieldChange}
-              onBlur={handleFieldBlur}
-              clicked={fieldsClicked.address3}
-              error={errors.address3Error}
-            />
-          </div>
-        </fieldset>
+
+            <div
+              className="optional-address-lines"
+              style={{ width: "90%", display: "flex" }}
+            >
+              <CredentialField
+                label="Address line 2"
+                id="address2"
+                size="50"
+                value={fields.address2}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
+                clicked={fieldsClicked.address2}
+                error={errors.address2Error}
+              />
+              <CredentialField
+                label="Address line 3"
+                id="address3"
+                size="50"
+                value={fields.address3}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
+                clicked={fieldsClicked.address3}
+                error={errors.address3Error}
+              />
+            </div>
+          </fieldset>
 
           <button type="submit" className="submit-btn">
             Start Swapping!
