@@ -842,7 +842,7 @@ paths:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
-      summary: Get all swaps an account is a part of.
+      summary: Get all swaps an account is a part of. Must be signed in with specified account.
       parameters:
         - in: query
           name: status
@@ -930,7 +930,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /api/v1/swaps/{accountUid}/{swapperUid}/{matchNum}:
+  /api/v1/swaps/{accountUid}/{swapperUid}/{requestTimestamp}:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
       - name: swapperUid
@@ -940,18 +940,18 @@ paths:
         schema:
           type: string
           format: uuid
-      - name: matchNum
-        description: Number that increments with the number of swaps between two specific accounts.
+      - name: requestTimestamp
+        description: Url encoded timestamp of corresponding to time the swap was requested.
         in: path
         required: true
         schema:
-          type: integer
-          minimum: 0
+          type: string
+          format: date-time
     get:
-      summary: Get the specific swap between the specified accounts with specified matchNum.
+      summary: Get the specific swap between the specified accounts with specified requestTimestamp. Must be signed in with specified account.
       responses:
         200:
-          description: The matchNum'th swap betweeen specified accounts.
+          description: The swap betweeen specified accounts with specified requestTimestamp.
           content:
             application/json:
               schema:
@@ -967,7 +967,7 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
     delete:
-      summary: Delete the specific swap between the specified accounts with specified matchNum. Must be signed in with specified account.
+      summary: Delete the specific swap between the specified accounts with specified requestTimestamp. Must be signed in with specified account.
       responses:
         204:
           description: Successfully deleted swap.
@@ -981,7 +981,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /api/v1/swaps/{accountUid}/{swapperUid}/{matchNum}/{status}:
+  /api/v1/swaps/{accountUid}/{swapperUid}/{requestTimestamp}/{status}:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
       - name: swapperUid
@@ -991,13 +991,13 @@ paths:
         schema:
           type: string
           format: uuid
-      - name: matchNum
-        description: Number that increments with the number of swaps between two specific accounts.
+      - name: requestTimestamp
+        description: Url encoded timestamp of corresponding to time the swap was requested.
         in: path
         required: true
         schema:
-          type: integer
-          minimum: 0
+          type: string
+          format: date-time
       - name: status
         description: The status of a swap (pending, ongoing, ended).
         in: path
@@ -1230,7 +1230,7 @@ components:
             - Manitoba
             - Saskatchewan
             - Nova Scotia
-            - New Brusnwick
+            - New Brunswick
             - Newfoundland and Labrador
             - Prince Edward Island
             - Northwest Territories
@@ -1332,7 +1332,6 @@ components:
       required:
         - requesterUid
         - requesteeUid
-        - matchNum
         - requestTimestamp
         - status
       properties:
@@ -1343,10 +1342,6 @@ components:
         requesteeUid:
           type: string
           format: uuid
-        matchNum:
-          readOnly: true
-          type: integer
-          minimum: 0
         requestTimestamp:
           readOnly: true
           type: string
@@ -1360,7 +1355,9 @@ components:
           type: string
           format: date-time
         status:
-          $ref: "#/components/schemas/SwapStatus"
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/SwapStatus"
     Errors:
       type: array
       items:

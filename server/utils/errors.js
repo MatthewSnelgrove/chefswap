@@ -21,3 +21,9 @@ export const unauthorized = {
   message: "not authenticated",
   detail: "this action requires authentication with targeted account",
 };
+
+export const swapNotFound = {
+  status: 404,
+  message: "swap not found",
+  detail: "specified swap does not exist",
+};

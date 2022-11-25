@@ -5,7 +5,7 @@ import slugToUuid from "../utils/slugToUuid.js";
 import { validateRating } from "../utils/dataValidation.js";
 import uuid4 from "uuid4";
 import checkAuth from "../middlewares/checkAuth.js";
-import { accountNotFound } from "../utils/errors.js";
+import { accountNotFound, swapNotFound } from "../utils/errors.js";
 import stripNulls from "../utils/stripNulls.js";
 
 export const router = express.Router();
@@ -138,7 +138,151 @@ router.get("/:accountUid", checkAuth, async (req, res, next) => {
   return;
 });
 
-router.post("/:requesterSlug/:requesteeSlug", async (req, res) => {
+//create new swap
+router.post("/:accountUid", checkAuth, async (req, res, next) => {
+  const requesterUid = req.params.accountUid;
+  const requesteeUid = req.body.requesteeUid;
+  const newSwapRes = camelize(
+    await pool
+      .query(
+        `INSERT INTO swap (requester_uid, requestee_uid)
+        VALUES ($1, $2) 
+        RETURNING 
+          requester_uid, 
+          requestee_uid,
+          request_timestamp,
+          accept_timestamp,
+          end_timestamp,
+          requester_rating,
+          requestee_rating`,
+        [requesterUid, requesteeUid]
+      )
+      .catch((e) => {
+        switch (e.constraint) {
+          //should only happen if identical req sent multiple times because of some network quirk
+          case "swap_pkey":
+            next({
+              status: 409,
+              message: "invalid swap",
+              detail: "swap already exists",
+            });
+            return;
+          //same requester/requestee uids. can't swap with yourself
+          case "swap_check":
+            next({
+              status: 400,
+              message: "invalid swap",
+              detail: "you cannot swap with yourself",
+            });
+          //catch all normal existing swaps
+          case "unique_swap_constraint":
+            next({
+              status: 409,
+              message: "invalid swap",
+              detail: "swap already exists",
+            });
+            return;
+          //should not happen
+          default:
+            next({});
+            return;
+        }
+      })
+  );
+  const newSwap = newSwapRes ? newSwapRes.rows[0] : null;
+  if (newSwap) {
+    //strip all null fields
+    stripNulls(newSwap);
+    res.status(201).json(newSwap);
+  }
+});
+
+router.get(
+  "/:accountUid/:swapperUid/:requestTimestamp",
+  checkAuth,
+  async (req, res, next) => {
+    const { accountUid, swapperUid, requestTimestamp } = req.params;
+    const swap = camelize(
+      await pool.query(
+        `SELECT 
+      requester_uid,
+      requestee_uid,
+      request_timestamp, 
+      accept_timestamp,
+      end_timestamp, 
+      requester_rating, 
+      requestee_rating
+      FROM swap
+      WHERE ((swap.requester_uid=$1 AND swap.requestee_uid=$2) 
+              OR (swap.requester_uid=$2 AND swap.requestee_uid=$1)
+             ) AND request_timestamp=$3
+      `,
+        [accountUid, swapperUid, requestTimestamp]
+      )
+    ).rows[0];
+    //no results can mean no swaps for account, or account does not exist
+    if (!swap) {
+      const accountExists = camelize(
+        await pool.query(
+          `SELECT account_uid FROM account WHERE account_uid=$1`,
+          [accountUid]
+        )
+      ).rows[0];
+      const swapperExists = camelize(
+        await pool.query(
+          `SELECT account_uid FROM account WHERE account_uid=$1`,
+          [swapperUid]
+        )
+      ).rows[0];
+      if (!accountExists || !swapperExists) {
+        res.next(accountNotFound);
+        return;
+      }
+      next(swapNotFound);
+      return;
+    }
+    //remove all null fields
+    stripNulls(swap);
+    //add status field
+    if (swap.endTimestamp) {
+      swap.status = "pending";
+    } else if (swap.acceptTimestamp) {
+      swap.status = "ongoing";
+    } else {
+      swap.status = "pending";
+    }
+    res.status(200).json(swap);
+    return;
+  }
+);
+
+router.delete(
+  "/:accountUid/:swapperUid/:requestTimestamp",
+  checkAuth,
+  async (req, res, next) => {
+    const { accountUid, swapperUid, requestTimestamp } = req.params;
+    const swap = camelize(
+      await pool.query(
+        `DELETE FROM swap 
+      WHERE ((swap.requester_uid=$1 AND swap.requestee_uid=$2) 
+             OR (swap.requester_uid=$2 AND swap.requestee_uid=$1)
+            ) AND request_timestamp=$3
+            RETURNING *
+      `,
+        [accountUid, swapperUid, requestTimestamp]
+      )
+    ).rows[0];
+    //swap doesn't exist
+    if (!swap) {
+      next(swapNotFound);
+      return;
+    }
+    //swap successfully deleted
+    res.sendStatus(204);
+  }
+);
+
+router.post("/:accountUid/:swapperUid", async (req, res) => {
   const { requesterSlug, requesteeSlug } = req.params;
   const status = req.body.status;
   const requesterUid = slugToUuid(requesterSlug);

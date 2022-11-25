@@ -268,7 +268,7 @@ router.get("/", async (req, res, next) => {
  */
 router.post("/", async (req, res, next) => {
   const { profile, email, password, address } = req.body;
-  const { username, bio, circle } = profile;
+  const { username, bio = "", circle } = profile;
   const radius = circle.radius;
   const { address1, address2, address3, city, province, postalCode } = address;
   const gmapsUrl = addressToGmapsUrl(address);
