@@ -1,1 +1,59 @@
-@import "../node_modules/bootstrap/scss/variables";
+$cs-light-cream: #fffef2;
+$cs-cream-1: #FFFDE7;
+$cs-cream-2: #F4EEE0;
+
+$cs-brown-1: #A1887F;
+$cs-brown-2: #795548;
+$cs-brown-3: #5D4037;
+$cs-brown-4: #3E2723;
+
+$cs-blue-1: #00002e;
+
+$cs-orange-1: #FFE0B2;
+$cs-orange-2: #FFCC80;
+$cs-orange-3: #FFB74D;
+$cs-orange-4: #FFA726;
+$cs-orange-5: #FB8C00;
+$cs-orange-6: #db7800;
+$cs-dark-orange: rgb(149, 80, 1);
+
+$cs-gray-1: rgb(200, 200, 200);
+$cs-gray-2: rgb(150, 150, 150);
+
+:root {
+    --cs-white-1: #FFFFFF;
+    --cs-black-1: rgba(0, 0, 0, 1);
+    --cs-black-2: rgb(15, 15, 15);
+    --cs-grey-1: #EBEDF0;
+    --cs-lightblue-1: rgb(0, 149, 246);
+    --cs-cream-1: #FFFDE7;
+    --cs-cream-2: #F4EEE0;
+    --cs-brown-1: #A1887F;
+    --cs-brown-2: #795548;
+    --cs-brown-3: #5D4037;
+    --cs-brown-4: #3E2723;
+    --cs-orange-1: #FFE0B2;
+    --cs-orange-2: #FFCC80;
+    --cs-orange-3: #FFB74D;
+    --cs-orange-4: #FFA726;
+    --cs-orange-5: #FB8C00;
+    --cs-dark-orange: rgb(149, 80, 1);
+    --font-bold-1: 500;
+    --navbar-height: 58.5px;
+}
+
+.modal-scheme {
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 1) 0px 5px 25px;
+}
+
+.full-contain {
+    margin-top: -13px;
+    height: calc(100% - var(--navbar-height));
+    position: absolute;
+    width: 100%;
+}
+
+.opacity-text {
+    opacity: 0.75;
+}

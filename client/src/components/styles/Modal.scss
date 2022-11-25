@@ -1,3 +1,5 @@
+@import "../../variables";
+
 .cred-modal-container {
   position: fixed;
   top: 0;
@@ -12,14 +14,11 @@
   background-size: cover;
 
   overflow: auto;
+
+  padding-top: 30px;
 }
 
 .popup {
-  // position: absolute;
-  // top: 10vh;
-  // left: 25vw;
-  // right: 25vw;
-
   width: 50%;
   height: fit-content;
   margin-top: 5%;
@@ -29,7 +28,8 @@
   padding: 2.5% 3%;
   padding-bottom: 6%;
   border-radius: 20px;
-  box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 20px;
+
+  box-shadow: rgba(0, 0, 0, 1) 0px 5px 25px;
 }
 
 .cred-modal-header {
@@ -46,7 +46,7 @@
 .header-title {
   font-size: 1.5em;
   font-weight: 650;
-  color: rgb(149, 80, 1);
+  color: $cs-dark-orange;
 }
 
 .close-modal-btn {
@@ -64,5 +64,4 @@
 
   max-height: 80%;
   width: 100%;
-  // overflow-y: auto;
 }

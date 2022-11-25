@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import ConversationTab from '../components/ConversationTab';
+import React, { Component } from "react";
+import ConversationTab from "../components/ConversationTab";
 import "./styles/PeopleContainer.scss";
 
 /**
@@ -31,9 +31,8 @@ export default class PeopleContainer extends Component {
           <ConversationTab user={user3} />
           <ConversationTab user={user3} />
           <ConversationTab user={user3} />
-
         </div>
       </div>
-    )
+    );
   }
 }

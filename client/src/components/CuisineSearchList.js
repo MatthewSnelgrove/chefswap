@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import CuisineListItem from "./CuisineListItem";
 import "./styles/CuisineSearchList.scss";
@@ -13,20 +13,33 @@ import "./styles/CuisineSearchList.scss";
 export default class CuisineSearchList extends Component {
   render() {
     // TODO: get all cuisine names from db
-    const cuisines = ["Indian", "Pizza", "Korean", "Chinese", "Italian", "Vietnamese", "Cereal"];
+    const cuisines = [
+      "Indian",
+      "Pizza",
+      "Korean",
+      "Chinese",
+      "Italian",
+      "Vietnamese",
+      "Cereal",
+    ];
     const cuisineChecked = this.props.cuisineChecked;
     const cuisineTyped = this.props.cuisineTyped;
 
-    let cuisineList = cuisines.filter(cuisine => cuisine.toLowerCase().includes(cuisineTyped.toLowerCase()));
-    cuisineList = cuisineList.map(cuisine =>
-      <CuisineListItem tag={cuisine} checked={cuisineChecked.includes(cuisine)} key={cuisine}
-        onTickedChange={this.props.onTickedChange} />);
+    let cuisineList = cuisines.filter((cuisine) =>
+      cuisine.toLowerCase().includes(cuisineTyped.toLowerCase())
+    );
+    cuisineList = cuisineList.map((cuisine) => (
+      <CuisineListItem
+        tag={cuisine}
+        checked={cuisineChecked.includes(cuisine)}
+        key={cuisine}
+        onTickedChange={this.props.onTickedChange}
+      />
+    ));
 
     return (
-      <fieldset className="cuisine-list-container">
-        {cuisineList}
-      </fieldset>
-    )
+      <fieldset className="cuisine-list-container">{cuisineList}</fieldset>
+    );
   }
 }
 
@@ -34,4 +47,4 @@ CuisineSearchList.propTypes = {
   cuisineChecked: PropTypes.array.isRequired,
   cuisineTyped: PropTypes.string.isRequired,
   onTickedChange: PropTypes.func.isRequired,
-}
+};

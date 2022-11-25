@@ -1,0 +1,130 @@
+.form-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    margin-top: 24px;
+    width: 100%;
+}
+
+.change-bio-button {
+    width: min-content;
+    white-space: nowrap;
+    margin-top: 10px;
+    font-size: 27px;
+    border: 0;
+    background-color: var(--cs-dark-orange);
+    border-radius: 10px;
+    color: var(--cs-white-1);
+}
+
+.username-place {
+    font-size: 40px;
+    margin-bottom: 0px;
+}
+
+.profile-container {
+    margin-top: 35px;
+    display: flex;
+    align-items: center;
+}
+
+#bio {
+    font-size: 22px;
+}
+
+.profile-pic-button {
+    background-color: inherit;
+    text-align: left;
+    border: 0px;
+    padding: 0px;
+    font-weight: var(--font-bold-1);
+    color: var(--cs-lightblue-1);
+    font-size: large;
+    cursor: pointer;
+    font-size: 25px;
+}
+
+.form-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.profile-pic {
+    height: 50px;
+    width: 50px;
+    border-radius: 40px;
+}
+
+.submitBtn {
+    border: 0;
+    background-color: var(--cs-orange-4);
+    color: white;
+    font-weight: var(--font-bold-1);
+    border-radius: 10px;
+    font-size: 17px;
+}
+
+.form-item > :nth-child(1) {
+    width: 500px;
+    display: flex;
+    justify-content: flex-end;
+    height: 100%;
+}
+
+.form-item > :nth-child(2) {
+    width: 800px;
+}
+
+.form-item > div > label {
+    font-weight: var(--font-bold-1);
+    font-size: 26px;
+    text-align: right;
+}
+
+
+
+.dropdown-profile > span:not(:first-child) {
+    border-top: 1px solid #EBEDF0;
+}
+
+.dropdown-hl {
+    background-color: aqua;
+}
+
+.a-drop {
+    margin-top: 5px;
+    z-index: 0;
+}
+
+.form-item input {
+    border: 1px solid #EBEDF0;
+    background-color: rgb(250,250,250);
+    border-radius: 10px;
+}
+
+.form-item textarea {
+    border: 1px solid #EBEDF0;
+}
+
+.info-text {
+    opacity: 0.7;
+    font-size: 22px;
+}
+
+@media (max-width: 1600px) {
+    .form-info {
+        margin-left: 10px;
+        border-left: 0px;
+    }
+
+    .form-item > :nth-child(1) {
+        width: 30%;
+    }
+
+    .form-item > :nth-child(2) {
+        width: 60%;
+    }
+  }
+

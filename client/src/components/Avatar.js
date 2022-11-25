@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 import "./styles/Avatar.scss";
 
 /**
@@ -21,7 +21,7 @@ export default class Avatar extends Component {
       <div className="avatar-container">
         <img src={pfpURL} alt="Avatar" className="avatar" style={style} />
       </div>
-    )
+    );
   }
 }
 
@@ -31,6 +31,7 @@ Avatar.propTypes = {
 };
 
 Avatar.defaultProps = {
-  avatarURL: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
+  avatarURL:
+    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
   size: 30,
 };

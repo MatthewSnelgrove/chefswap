@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import FilterByCuisineSection from './FilterByCuisineSection';
+import React, { Component } from "react";
+import FilterByCuisineSection from "./FilterByCuisineSection";
 import FilterByRating from "./FilterByRating";
 import FilterByDistance from "./FilterByDistance";
 import PropTypes from "prop-types";
@@ -17,16 +17,25 @@ import "./styles/FilterForm.scss";
 export default class FilterForm extends Component {
   render() {
     return (
-      <div className="filter-form-container">
+      <div className="filter-form-container" style={{ paddingTop: "20px" }}>
         <form action="">
-          <FilterByCuisineSection cuisineTyped={this.props.cuisineTyped}
-            cuisineChecked={this.props.cuisineChecked} onTypedChange={this.props.onTypedChange}
-            onTickedChange={this.props.onTickedChange} />
-          <FilterByRating rating={this.props.rating} onRatingChange={this.props.onRatingChange} />
-          <FilterByDistance distance={this.props.distance} onDistanceChange={this.props.onDistanceChange} />
+          <FilterByCuisineSection
+            cuisineTyped={this.props.cuisineTyped}
+            cuisineChecked={this.props.cuisineChecked}
+            onTypedChange={this.props.onTypedChange}
+            onTickedChange={this.props.onTickedChange}
+          />
+          <FilterByRating
+            rating={this.props.rating}
+            onRatingChange={this.props.onRatingChange}
+          />
+          <FilterByDistance
+            distance={this.props.distance}
+            onDistanceChange={this.props.onDistanceChange}
+          />
         </form>
       </div>
-    )
+    );
   }
 }
 
