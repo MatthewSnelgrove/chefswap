@@ -3,3 +3,19 @@
     width: 50px;
     border-radius: 40px;
 }
+
+.large-profile-pic {
+    height: 130px;
+    width: 130px;
+    border-radius: 80px;
+}
+
+.type-route-button {
+    border: 0px;
+    background-color: inherit;
+    margin-left: -5px;
+}
+
+.border-profile {
+    border: 3px solid var(--cs-black-1);
+}

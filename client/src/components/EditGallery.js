@@ -1,25 +1,24 @@
 import { React, useEffect, useState } from "react";
 import "./styles/EditGallery.css";
-import { getUser } from "../pages/fetchFunctions";
 import { addNewPhoto, deletePhoto } from "../pages/changeFunctions"
 import { useUser } from "./useUser";
 
-const GalleryLink = "http://localhost:3000/accounts/gallery"
 const imgLength = "200px"
 
 function EditGallery() {
   const [images, setImages] = useState([])
   const [deleteImg, setDeleteImg] = useState(null)
   const user = useUser()
+  const globalVars = global.config
+  const loading = globalVars.userStates.loading
+  const GalleryLink = globalVars.pages.editGallery
 
   useEffect(() => {
-    if (user == "loading") { return }
+    if (user == loading) { return }
     setImages([...user.images])
   }, [user])
 
-  if (user == "loading") return (<></>)
-
-  console.log(user)
+  if (user == loading) return (<></>)
 
   return (
     <div className="gallery-container">
@@ -31,16 +30,17 @@ function EditGallery() {
             <input type="file" id="file" accept="image/png, image/jpeg" onChange={(e) => {
               if (e.target.value == "") { return }
               const formData = new FormData
-              formData.append("file", e.target.files[0])
-              addNewPhoto(user.accountUid, formData, "http://localhost:3000/accounts/gallery")
+              formData.append("image", e.target.files[0])
+              addNewPhoto(user.accountUid, formData, GalleryLink)
             }} style={{ display: "none" }} />
           </label>
         </form>
       </div>
       <div className="profile-img-container"> {images.map((imgJSON, index) =>
-        <GalleryImg key={index} imgJSON={imgJSON} images={images} setImages={setImages} />
+        <GalleryImg key={index} imgJSON={imgJSON} images={images} setDeleteImg={setDeleteImg} setImages={setImages} />
       )}
       </div>
+      <ConfirmModal setImages={setImages} deleteImg={deleteImg}/>
     </div>
 
   )

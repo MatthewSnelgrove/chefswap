@@ -62,7 +62,9 @@ function onSubmitAddress(e, Uid) {
     postalCode: e.target[5].value
   })
 
-  changeAddress(Uid, { address: address })
+  console.log(address)
+
+  changeAddress(Uid, address)
 }
 
 function onSubmitEmail(ev, Uid) {
@@ -74,28 +76,18 @@ function EditPersonal(props) {
   const [address, setAddress] = useState(null)
 
   const user = useUser()
-  // const [user, setUser] = useState(null)
-
-  // useEffect(() => {
-  //     function getProperties(user) {
-  //         setUser(user)
-  //         fetchSpecific(user.accountUid, "email")
-  //         .then((email) => setEmail(email))
-  //         fetchSpecific(user.accountUid, "address")
-  //         .then((address) => setAddress(address.address))   
-  //     }
-  //     getUser(getProperties)
-  // }, [])
+  const globalVars = global.config
+  const loading = globalVars.userStates.loading
 
   useEffect(() => {
-    if (user == "loading") { return }
+    if (user == loading) { return }
     fetchSpecific(user.accountUid, "email")
-    .then((email) => setEmail(email))
+    .then((email) => setEmail(email.email))
     fetchSpecific(user.accountUid, "address")
-    .then((address) => setAddress(address.address))
+    .then((address) => setAddress(address))
   }, [user])
 
-  if (user == "loading" || email == null || address == null) { return (<></>) }
+  if (user == loading || email == null || address == null) { return (<></>) }
 
   const provinceSelect = document.querySelector(".province-select")
 

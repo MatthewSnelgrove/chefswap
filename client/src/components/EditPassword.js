@@ -13,13 +13,14 @@ function onSubmit(ev, Uid) {
     return;
   }
 
-  //changePassword(Uid, password)
+  changePassword(Uid, password)
 }
 
 function EditPassword() {
-
   const user = useUser()
-  if (user == "loading") return (<></>)
+  const globalVars = global.config
+
+  if (user == globalVars.userStates.loading) return (<></>)
 
   return (
     <form onSubmit={(e) => onSubmit(e, user.accountUid)} className="edit-container">
@@ -39,7 +40,7 @@ function EditPassword() {
         <label>
           New Password
         </label>
-        <input id="password" minLength={8} pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,50}$" type="password" required></input>
+        <input id="password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,50}$" type="password" required></input>
       </div>
       <div className="edit-item">
         <label>

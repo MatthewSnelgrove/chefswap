@@ -1,12 +1,12 @@
 import React from "react";
+import "./styles/EditListLink.css"
 
 function EditListLink(props) {
-    const StyleSelected = {borderLeft: "2px solid black", backgroundColor: "white"}
     const curSelected = props.curSelected
     const listType = props.listType
 
     return (
-        <li style={curSelected == listType ? StyleSelected: {}}>
+        <li id={curSelected == listType ? "style-selected": {}}>
             <a className="full-a" onClick={(e) => {
                 if (curSelected == listType) {return}
                 window.location = props.link

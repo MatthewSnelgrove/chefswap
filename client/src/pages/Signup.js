@@ -11,6 +11,7 @@ import {
   validateMatching,
 } from "../utils/validationFunctions";
 import PasswordRequirements from "../components/PasswordRequirements";
+import OnlyLoggedOut from "../components/OnlyLoggedOut";
 
 function Signup() {
   // State holding all fields needed for specific form
@@ -120,94 +121,96 @@ function Signup() {
   }
 
   return (
-    <Modal
-      title="Welcome to Chefswap!"
-      backgroundUrl="https://cdn.pixabay.com/photo/2021/01/31/13/18/food-5966920_1280.jpg"
-    >
-      {/* <form action="/api/auth/register" method="post" className="signup-login-form"> */}
-      <form
-        onSubmit={handleSubmit}
-        className="signup-login-form"
-        autoComplete="off"
+    <OnlyLoggedOut>
+      <Modal
+        title="Welcome to Chefswap!"
+        backgroundUrl="https://cdn.pixabay.com/photo/2021/01/31/13/18/food-5966920_1280.jpg"
       >
-        <fieldset className="account-details">
-          <legend>Account Details</legend>
-          <CredentialField
-            type="email"
-            label="*Email"
-            id="email"
-            size="90"
-            value={fields.email}
-            onChange={handleFieldChange}
-            onBlur={handleFieldBlur}
-            clicked={fieldsClicked.email}
-            error={errors.emailError}
-          />
-          <CredentialField
-            label="*Username"
-            id="username"
-            size="90"
-            value={fields.username}
-            onChange={handleFieldChange}
-            onBlur={handleFieldBlur}
-            clicked={fieldsClicked.username}
-            error={errors.usernameError}
-          />
-
-          <div
-            className="password-fields"
-            style={{ width: "90%", display: "flex" }}
-          >
+        {/* <form action="/api/auth/register" method="post" className="signup-login-form"> */}
+        <form
+          onSubmit={handleSubmit}
+          className="signup-login-form"
+          autoComplete="off"
+        >
+          <fieldset className="account-details">
+            <legend>Account Details</legend>
             <CredentialField
-              type="password"
-              label="*Password"
-              id="password"
-              size="50"
-              value={fields.password}
+              type="email"
+              label="*Email"
+              id="email"
+              size="90"
+              value={fields.email}
               onChange={handleFieldChange}
               onBlur={handleFieldBlur}
-              clicked={fieldsClicked.password}
-              error={errors.passwordError}
+              clicked={fieldsClicked.email}
+              error={errors.emailError}
             />
             <CredentialField
-              type="password"
-              label="*Confirm Password"
-              id="confirmPassword"
-              size="50"
-              value={fields.confirmPassword}
+              label="*Username"
+              id="username"
+              size="90"
+              value={fields.username}
               onChange={handleFieldChange}
               onBlur={handleFieldBlur}
-              clicked={fieldsClicked.confirmPassword}
-              error={errors.confirmPasswordError}
+              clicked={fieldsClicked.username}
+              error={errors.usernameError}
             />
-          </div>
 
-          <PasswordRequirements
-            password={fields.password}
-            confirmError={errors.confirmPasswordError}
-            size="85"
-          />
-        </fieldset>
+            <div
+              className="password-fields"
+              style={{ width: "90%", display: "flex" }}
+            >
+              <CredentialField
+                type="password"
+                label="*Password"
+                id="password"
+                size="50"
+                value={fields.password}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
+                clicked={fieldsClicked.password}
+                error={errors.passwordError}
+              />
+              <CredentialField
+                type="password"
+                label="*Confirm Password"
+                id="confirmPassword"
+                size="50"
+                value={fields.confirmPassword}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
+                clicked={fieldsClicked.confirmPassword}
+                error={errors.confirmPasswordError}
+              />
+            </div>
 
-        {/* Add validation HERE */}
-        <fieldset className="address-details">
-          <legend>Address</legend>
+            <PasswordRequirements
+              password={fields.password}
+              confirmError={errors.confirmPasswordError}
+              size="85"
+            />
+          </fieldset>
 
-          {/* TODO: Add G Maps API? */}
-          <input type="text" id="address" name="address1" placeholder="*Address" required />
-          <input type="text" id="city" name="city" placeholder="*City" required />
-          <input type="text" id="province" name="province" placeholder="*Province" required />
-          <input type="text" id="postalCode" name="postalCode" placeholder="*Postal Code" pattern="([A-Z]\d){3}" title="Please enter a valid postal code (e.g. A1A1A1)" required />
+          {/* Add validation HERE */}
+          <fieldset className="address-details">
+            <legend>Address</legend>
 
-          <input type="text" id="address2" name="address2" placeholder="Optional address line 2" />
-          <input type="text" id="address3" name="address3" placeholder="Optional address line 3" />
-        </fieldset>
+            {/* TODO: Add G Maps API? */}
+            <input type="text" id="address" name="address1" placeholder="*Address" required />
+            <input type="text" id="city" name="city" placeholder="*City" required />
+            <input type="text" id="province" name="province" placeholder="*Province" required />
+            <input type="text" id="postalCode" name="postalCode" placeholder="*Postal Code" pattern="([A-Z]\d){3}" title="Please enter a valid postal code (e.g. A1A1A1)" required />
 
-        <button type="submit" className="submit-btn">
-          Start Swapping!
-        </button>
-      </form>
-    </Modal>
+            <input type="text" id="address2" name="address2" placeholder="Optional address line 2" />
+            <input type="text" id="address3" name="address3" placeholder="Optional address line 3" />
+          </fieldset>
+
+          <button type="submit" className="submit-btn">
+            Start Swapping!
+          </button>
+        </form>
+      </Modal>
+    </OnlyLoggedOut>
   );
 }
 

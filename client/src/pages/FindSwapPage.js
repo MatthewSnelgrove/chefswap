@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import FilterForm from "../components/FilterForm";
 import Navbar from "../components/Navbar";
+import OnlyLoggedIn from "../components/OnlyLoggedIn";
 import SwapResultsContainer from "../components/SwapResultsContainer";
 import "./styles/FindSwapPage.scss";
-
 /**
  * /find-swaps page
  * @use Navbar, FilterForm, SwapsResultsContainer
@@ -46,24 +46,26 @@ export default function FindSwapPage() {
   }
 
   return (
-    <div className="find-swap-page">
-      <div className="find-swap-content">
-        <FilterForm
-          cuisineTyped={cuisineTyped}
-          cuisineChecked={cuisineChecked}
-          rating={rating}
-          distance={distance}
-          onTypedChange={handleTypedChange}
-          onTickedChange={handleTickedChange}
-          onRatingChange={handleRatingChange}
-          onDistanceChange={handleDistanceChange}
-        />
-        <SwapResultsContainer
-          cuisineChecked={cuisineChecked}
-          rating={rating}
-          distance={distance}
-        />
+    <OnlyLoggedIn >
+      <div className="find-swap-page">
+        <div className="find-swap-content">
+          <FilterForm
+            cuisineTyped={cuisineTyped}
+            cuisineChecked={cuisineChecked}
+            rating={rating}
+            distance={distance}
+            onTypedChange={handleTypedChange}
+            onTickedChange={handleTickedChange}
+            onRatingChange={handleRatingChange}
+            onDistanceChange={handleDistanceChange}
+          />
+          <SwapResultsContainer
+            cuisineChecked={cuisineChecked}
+            rating={rating}
+            distance={distance}
+          />
+        </div>
       </div>
-    </div>
+    </OnlyLoggedIn>
   );
 }

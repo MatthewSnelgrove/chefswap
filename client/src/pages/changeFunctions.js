@@ -112,7 +112,9 @@ export async function deleteSpecialty(Uid, specialty) {
     .catch((reason) => console.log(reason))
 }
 
-export async function changeUserProfile(Uid, profileForm) {
+export async function changeUserProfile(Uid, profileForm, curLocation) {
+  console.log(profileForm)
+  
   await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/pfp`, {
     method: "PUT",
     body: profileForm,
@@ -120,9 +122,11 @@ export async function changeUserProfile(Uid, profileForm) {
   })
     .catch((reason) => console.log(reason))
 
-  toast.success(`Successfully changed profile`, {
-    position: toast.POSITION.TOP_RIGHT
-  });
+  // toast.success(`Successfully changed profile`, {
+  //   position: toast.POSITION.TOP_RIGHT
+  // });
+
+  window.location = curLocation
 }
 
 export async function changePassword(Uid, password) {

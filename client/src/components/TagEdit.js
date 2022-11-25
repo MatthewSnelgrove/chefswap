@@ -4,25 +4,14 @@ import "./styles/TagEdit.css"
 import 'react-toastify/dist/ReactToastify.css';
 import "./styles/Tag.css"
 
-const maxQueryLength = 6
-const FoodItems = [
-  "Indian",
-  "Italian",
-  "Greek",
-  "Pizza",
-  "Thai"
-]
-
 function getQueryList(queryValue, typeList) {
-  if (typeList.length == maxQueryLength) return ([])
+  if (typeList.length == global.config.maxLengths.maxQueryLength) return ([])
 
   const queryRegex = RegExp(queryValue, "g")
-  const filterList = FoodItems.filter((singleType) => queryRegex.test(singleType) && !(typeList.includes(singleType)))
+  const filterList = global.config.cuisineItems.filter((singleType) => queryRegex.test(singleType) && !(typeList.includes(singleType)))
 
   return filterList
 }
-
-
 
 // shiftDropdownDown()
 // shifts the dropdown one down from what the user is selecting
@@ -115,7 +104,7 @@ function manageKeys(ev, prefrences, updatePrefrences, updateQuery) {
 //user tag for when the user types something in
 function TypeTag(props) {
   return (
-    <div className="type-tag" >
+    <div className="tag" >
       {props.singleType}
       <button className="delete-btn" onClick={(e) => {
         props.updateTypeList((prevTypeList) => prevTypeList.filter((curType) => {
@@ -129,7 +118,7 @@ function TypeTag(props) {
 
 function AddTag(props) {
   return (
-    <input
+    <input style={{textAlign: "center"}}
       id="add-tag"
       onKeyDown={(e) => {
         manageKeys(e, props.updateTypeList, props.updateQuery, props.Uid, props.addFunc)
@@ -146,6 +135,7 @@ function AddTag(props) {
         resetDropdown()
       }}
       autoComplete="off"
+      placeholder="Add +"
     ></input>
   )
 }
@@ -156,20 +146,21 @@ function DropdownItem(props) {
       id={"dropdown-item".concat(props.index)}
       className={props.index == 0 ? "dropdown-hl" : {}}
       onMouseEnter={(e) => {
-        const dropdownitem = document.getElementById(
-          "dropdown-item".concat(props.index)
-        );
-        const curHighlight = document.querySelector(".dropdown-hl");
+        const dropdownitem = document.getElementById("dropdown-item".concat(props.index))
+        const curHighlight = document.querySelector(".dropdown-hl")
 
-        if (dropdownitem == curHighlight) {
-          return;
+        if (dropdownitem == curHighlight) {return}
+
+        if (dropdownitem && curHighlight) {
+            dropdownitem.classList.add("dropdown-hl")
+            curHighlight.classList.remove("dropdown-hl")
         }
       }}
       onMouseDown = {function(e) {
           onEnter(props.updateTypeList, document.querySelector(".dropdown-hl").textContent, props.Uid, props.addFunc)
         }
-        }
-      tabIndex = "0"
+      }
+
     >{props.singleType}</span >
    )
 }

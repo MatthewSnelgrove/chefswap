@@ -12,7 +12,7 @@ function ImageGallery(props) {
     }
 
     return (
-        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+        <div id="carouselExampleIndicators" class="carousel slide h-50" data-bs-ride="carousel">
             <div class="carousel-indicators">
                 {props.images.map((image, index) => 
                     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to={index} class={props.index == 0 ? "": "active"}></button>
@@ -38,7 +38,7 @@ function ImageGallery(props) {
 function CarouselItem(props) {
     return (
         <div class={props.index == 0 ? "carousel-item": "carousel-item active"} >
-            <img style={props.imgStyle} src={props.imageLink} class="d-block w-100" />
+            <img className="carouselItem" style={props.imgStyle} src={props.imageLink} class="d-block " />
         </div>
     )
 }

@@ -1,7 +1,7 @@
 import { React } from "react";
 import { useUser } from "./useUser"
 
-function OnlyLoggedIn(props) {
+function OnlyLoggedOut(props) {
     const user = useUser()
     const globalVars = global.config
 
@@ -9,8 +9,8 @@ function OnlyLoggedIn(props) {
         return (<></>)
     }
 
-    if (user == null) {
-        window.location = global.config.pages.login
+    if (user != globalVars.userStates.loading && user != null) {
+        window.location = globalVars.pages.homepage
         return (<></>)
     }
 
@@ -21,4 +21,4 @@ function OnlyLoggedIn(props) {
     )
 }
 
-export default OnlyLoggedIn
+export default OnlyLoggedOut

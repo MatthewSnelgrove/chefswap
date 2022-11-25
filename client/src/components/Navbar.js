@@ -6,7 +6,8 @@ import ProfilePicture from './ProfilePicture';
 
 function Navbar() {
   const user = useUser()
-  if (user === "loading") { return (<></>) }
+  const globalVars = global.config
+  if (user === globalVars.userStates.loading) { return (<></>) }
 
   return (<>{user != null ? <LoggedIn user={user} /> : <LoggedOut />}</>)
 }

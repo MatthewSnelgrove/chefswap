@@ -3,6 +3,7 @@ import "./styles/_SignupLogin.scss";
 import { fetchLogin } from "./fetchFunctions";
 import Modal from "../components/Modal";
 import CredentialField from "../components/CredentialField2";
+import OnlyLoggedOut from "../components/OnlyLoggedOut";
 
 function Login() {
   // State holding all fields needed for specific form
@@ -66,51 +67,54 @@ function Login() {
     }
 
     console.log(JSON.stringify({ username: fields.username, password: fields.password }))
+    window.location = global.config.pages.homepage
   }
 
   // No errors with inputs
   return (
-    <Modal
-      title="Welcome Back!"
-      backgroundUrl={
-        "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fimg1.cookinglight.timeinc.net%2Fsites%2Fdefault%2Ffiles%2Fstyles%2F4_3_horizontal_-_1200x900%2Fpublic%2F1525725671%2F1805w-mise-en-place.jpg%3Fitok%3DiokQjOQ9%261525727462"
-      }
-    >
-      {/* <form action="/api/auth/login" method="post" className="signup-login-form"> */}
-      <form
-        onSubmit={handleSubmit}
-        className="signup-login-form"
-        autoComplete="off"
+    <OnlyLoggedOut>
+      <Modal
+        title="Welcome Back!"
+        backgroundUrl={
+          "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fimg1.cookinglight.timeinc.net%2Fsites%2Fdefault%2Ffiles%2Fstyles%2F4_3_horizontal_-_1200x900%2Fpublic%2F1525725671%2F1805w-mise-en-place.jpg%3Fitok%3DiokQjOQ9%261525727462"
+        }
       >
-        <fieldset>
-          <CredentialField
-            label="Username"
-            id="username"
-            size="90"
-            value={fields.username}
-            onChange={handleFieldChange}
-            onBlur={handleFieldBlur}
-            clicked={fieldsClicked.username}
-            error={null}
-          />
-          <CredentialField
-            type="password"
-            label="Password"
-            id="password"
-            size="90"
-            value={fields.password}
-            onChange={handleFieldChange}
-            onBlur={handleFieldBlur}
-            clicked={fieldsClicked.password}
-            error={null}
-          />
-        </fieldset>
+        {/* <form action="/api/auth/login" method="post" className="signup-login-form"> */}
+        <form
+          onSubmit={handleSubmit}
+          className="signup-login-form"
+          autoComplete="off"
+        >
+          <fieldset>
+            <CredentialField
+              label="Username"
+              id="username"
+              size="90"
+              value={fields.username}
+              onChange={handleFieldChange}
+              onBlur={handleFieldBlur}
+              clicked={fieldsClicked.username}
+              error={null}
+            />
+            <CredentialField
+              type="password"
+              label="Password"
+              id="password"
+              size="90"
+              value={fields.password}
+              onChange={handleFieldChange}
+              onBlur={handleFieldBlur}
+              clicked={fieldsClicked.password}
+              error={null}
+            />
+          </fieldset>
 
-        <button type="submit" className="submit-btn">
-          Log in
-        </button>
-      </form>
-    </Modal>
+          <button type="submit" className="submit-btn">
+            Log in
+          </button>
+        </form>
+      </Modal>
+    </OnlyLoggedOut>
   );
 }
 

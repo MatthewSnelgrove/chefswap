@@ -3,16 +3,17 @@ import EditListLink from '../components/EditListLink'
 import OnlyLoggedIn from '../components/OnlyLoggedIn'
 import "./styles/UserEditPage.css"
 
-
 function UserEditPage(props) {
+  const pages = global.config.pages
+
   return (
-    <OnlyLoggedIn linkPage={"http://localhost:3000/login"} >
-      <div className="form-container">
+    <OnlyLoggedIn>
+      <div className="form-container full-contain">
         <ul className="list-links">
-          <EditListLink curSelected={props.name} link={"http://localhost:3000/accounts/edit"} listType={"EditProfile"} display={"Edit Profile"} />
-          <EditListLink curSelected={props.name} link={"http://localhost:3000/accounts/password/change"} listType={"EditPassword"} display={"Change Password"} />
-          <EditListLink curSelected={props.name} link={"http://localhost:3000/accounts/gallery"} listType={"EditGallery"} display={"Gallery"} />
-          <EditListLink curSelected={props.name} link={"http://localhost:3000/accounts/personal"} listType={"EditPersonal"} display={"Personal Info"} />
+          <EditListLink curSelected={props.name} link={pages.editProfile} listType={"EditProfile"} display={"Edit Profile"} />
+          <EditListLink curSelected={props.name} link={pages.editPassword} listType={"EditPassword"} display={"Change Password"} />
+          <EditListLink curSelected={props.name} link={pages.editGallery} listType={"EditGallery"} display={"Gallery"} />
+          <EditListLink curSelected={props.name} link={pages.editPersonal} listType={"EditPersonal"} display={"Personal Info"} />
         </ul>
         {props.renderType}
       </div>

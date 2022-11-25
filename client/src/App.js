@@ -21,8 +21,11 @@ import { QueryClientProvider, QueryClient } from "react-query";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify"
+import OnlyLoggedOut from "./components/OnlyLoggedOut";
 
 const queryClient = new QueryClient();
+
+
 
 function App() {
   return (
@@ -35,9 +38,7 @@ function App() {
           <Route path="/about-us" element={<AboutUsPage />} />
 
           {/* May not need */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-
+                
           <Route path="/my-swaps" element={<MySwapsPage />} />
           <Route path="/my-messages" element={<MyMessagesPage />} />
           <Route path="/find-swap" element={<FindSwapPage />} />
@@ -46,6 +47,8 @@ function App() {
           <Route path="/accounts/password/change" element={<UserEditPage renderType={<EditPassword />} name="EditPassword" />} />
           <Route path="/accounts/gallery" element={<UserEditPage renderType={<EditGallery />} name="EditGallery" />} />
           <Route path="/accounts/personal" element={<UserEditPage renderType={<EditPersonal />} name="EditPersonal" />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />    
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

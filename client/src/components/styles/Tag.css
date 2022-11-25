@@ -1,13 +1,13 @@
 .tag {
-    border-radius: 12px;
+    border-radius: 10px;
     width: 100%;
     height: 100%;
     padding-left: 7px;
     padding-right: 7px;
-    background-color: lightgreen;
+    background-color: var(--cs-orange-4);
     text-align: center;
-    font-weight: 600;
+    font-weight: 500;
     width: fit-content;
     margin-bottom: 2px;
-    color: black;
+    color: white;
 }
