@@ -1,6 +1,17 @@
 // Collection of functions to validate user input fields
-// Functions MUST return an object with structure: {error: Boolean, msg: String}
-// On success, return {error: false, msg: "success"}
+/* 
+Functions MUST return an object with structure: 
+{
+  error: Boolean, 
+  msg: String
+}
+
+On success, return 
+{
+  error: false, 
+  msg: "success"
+}
+*/
 
 /**
  * For signup/login username field
@@ -39,7 +50,7 @@ export function validateUsername(text) {
 
 /**
  * For signup/login password field
- * @param {String} text 6 <= length <= 50, contains one lowercase, uppercase, digit
+ * @param {String} text 8 <= length <= 50, contains one lowercase, uppercase, digit
  */
 export function validatePassword(text) {
   if (text.length === 0) {
@@ -48,10 +59,10 @@ export function validatePassword(text) {
       msg: "Password required",
     };
   }
-  if (text.length < 6) {
+  if (text.length < 8) {
     return {
       error: true,
-      msg: "Password must be 6 or more characters long",
+      msg: "Password must be 8 or more characters long",
     };
   }
   if (text.length > 50) {
@@ -113,6 +124,112 @@ export function validateEmail(text) {
 }
 
 /**
+ * For address line 1 on signup form
+ * @param {String} text address.length <= 80
+ */
+export function validateAddress(text) {
+  if (text.length === 0) {
+    return {
+      error: true,
+      msg: "Address required",
+    };
+  }
+  if (text.length > 80) {
+    return {
+      error: true,
+      msg: "Address too long",
+    };
+  } else
+    return {
+      error: false,
+      msg: "success",
+    };
+}
+
+/**
+ * For address lines 2, 3 on signup form
+ * @param {String} text length <= 80
+ */
+export function validateOptionalAddress(text) {
+  if (text.length > 80) {
+    return {
+      error: true,
+      msg: "Address too long",
+    };
+  } else
+    return {
+      error: false,
+      msg: "success",
+    };
+}
+
+/**
+ * For city input on signup form
+ * @param {String} text city.length <= 35
+ */
+export function validateCity(text) {
+  if (text.length === 0) {
+    return {
+      error: true,
+      msg: "City required",
+    };
+  }
+  if (text.length > 35) {
+    return {
+      error: true,
+      msg: "City too long",
+    };
+  } else
+    return {
+      error: false,
+      msg: "success",
+    };
+}
+
+/**
+ * For postal code input on signup form
+ * @param {String} text Must match postal code regex
+ */
+export function validatePostalCode(text) {
+  if (text.length === 0) {
+    return {
+      error: true,
+      msg: "Postal code required",
+    };
+  }
+  if (!text.match(/^([A-Z][0-9]){3}$/)) {
+    return {
+      error: true,
+      msg: "Expected format: A1A1A1",
+    };
+  }
+  if (!text.match(/^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJ-NPRSTV-Z]\d[ABCEGHJ-NPRSTV-Z]\d$/)) {
+    return {
+      error: true,
+      msg: "Invalid Canadian postal code",
+    };
+  } else
+    return {
+      error: false,
+      msg: "success",
+    };
+}
+
+
+export function validateProvince(text) {
+  if (text.length === 0) {
+    return {
+      error: true,
+      msg: "Province required",
+    };
+  }
+  else return {
+    error: false,
+    msg: "success"
+  };
+}
+
+/**
  * Returns a false error object regardless of text
  * @param {String} text
  */
@@ -124,13 +241,13 @@ export function dummyValidation(text) {
 }
 
 /**
- * For password (simplified)
+ * For password (simplified, no error msg)
  * @param {String} text Same requirements as validatePassword()
  */
 export function dummyValidatePassword(text) {
   if (
     text.length === 0 ||
-    text.length < 6 ||
+    text.length < 8 ||
     text.length > 50 ||
     !text.match(/[A-Z]/) ||
     !text.match(/[a-z]/) ||

@@ -1,4 +1,4 @@
-// @use "../src/_custom.scss";
+@import "../../variables";
 
 .navbar-fixed {
   position: fixed;
@@ -6,6 +6,18 @@
   left: 0;
   right: 0;
   z-index: 10;
+
+  // Navbar color styling
+  background-color: $cs-light-cream;
+  border-bottom: 1px solid rgb(225, 225, 225);
+  
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.nav-link {
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 .profile-picture-nav {
