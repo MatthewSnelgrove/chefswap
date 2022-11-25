@@ -73,7 +73,7 @@ export async function signupUser(userObj) {
   });
 
   if (!response.ok) {
-    return response.status;
+    return response;
   }
 
   console.log("created user")
@@ -104,7 +104,7 @@ export async function fetchUser() {
   });
 
   if (!response.ok) {
-    return response.status;
+    return response;
   }
 
   const json = await response.json();

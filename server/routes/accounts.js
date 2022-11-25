@@ -126,22 +126,18 @@ router.get("/", async (req, res, next) => {
           numParams += 2;
           paramArray.push(key.distance, key.accountUid);
           filterString += filterString
-            ? ` AND (distance > $${numParams - 1} OR (distance = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`
-            : ` WHERE (distance > $${numParams - 1} OR (distance = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`;
+            ? ` AND (distance > $${numParams - 1} OR (distance = $${numParams - 1
+            } AND account_uid > $${numParams}))`
+            : ` WHERE (distance > $${numParams - 1} OR (distance = $${numParams - 1
+            } AND account_uid > $${numParams}))`;
         case "distanceDesc":
           numParams += 2;
           paramArray.push(key.distance, key.accountUid);
           filterString += filterString
-            ? ` AND (distance < $${numParams - 1} OR (distance = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`
-            : ` WHERE (distance < $${numParams - 1} OR (distance = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`;
+            ? ` AND (distance < $${numParams - 1} OR (distance = $${numParams - 1
+            } AND account_uid > $${numParams}))`
+            : ` WHERE (distance < $${numParams - 1} OR (distance = $${numParams - 1
+            } AND account_uid > $${numParams}))`;
         default:
           next({
             status: 400,
@@ -157,22 +153,18 @@ router.get("/", async (req, res, next) => {
           numParams += 2;
           paramArray.push(key.rating, key.accountUid);
           filterString += filterString
-            ? ` AND (avg_rating > $${numParams - 1} OR (avg_rating = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`
-            : ` WHERE (avg_rating > $${numParams - 1} OR (avg_rating = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`;
+            ? ` AND (avg_rating > $${numParams - 1} OR (avg_rating = $${numParams - 1
+            } AND account_uid > $${numParams}))`
+            : ` WHERE (avg_rating > $${numParams - 1} OR (avg_rating = $${numParams - 1
+            } AND account_uid > $${numParams}))`;
         case "avgRatingDesc":
           numParams += 2;
           paramArray.push(key.rating, key.accountUid);
           filterString += filterString
-            ? ` AND (avg_rating < $${numParams - 1} OR (avg_rating = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`
-            : ` WHERE (avg_rating < $${numParams - 1} OR (avg_rating = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`;
+            ? ` AND (avg_rating < $${numParams - 1} OR (avg_rating = $${numParams - 1
+            } AND account_uid > $${numParams}))`
+            : ` WHERE (avg_rating < $${numParams - 1} OR (avg_rating = $${numParams - 1
+            } AND account_uid > $${numParams}))`;
         default:
           next({
             status: 400,
@@ -265,7 +257,7 @@ router.get("/", async (req, res, next) => {
  */
 router.post("/", async (req, res, next) => {
   const { profile, email, password, address } = req.body;
-  const { username, bio, circle } = profile;
+  const { username, bio = "", circle } = profile;
   const radius = circle.radius;
   const { address1, address2, address3, city, province, postalCode } = address;
   const gmapsUrl = addressToGmapsUrl(address);
@@ -320,20 +312,21 @@ router.post("/", async (req, res, next) => {
         switch (e.constraint) {
           case "account_username_key":
             next({
-              staus: 409,
-              message: "invalid username",
-              detail: "username already exists",
+              status: 409,
+              message: "Invalid username",
+              detail: "Username already exists",
             });
             return;
           case "account_email_key":
             next({
               status: 409,
-              message: "invalid email",
-              detail: "email already exists",
+              message: "Invalid email",
+              detail: "Email already exists",
             });
             return;
           default:
-            next({});
+            console.log(e)
+            next();
             return;
         }
       })
@@ -842,14 +835,14 @@ router.post(
           switch (e.constraint) {
             case "user_cuisine_preference_pkey":
               next({
-                staus: 409,
+                status: 409,
                 message: "preference already set",
                 detail: "account already has specified cuisine preference",
               });
               return;
             case "cuisine_preference_preference_num_check":
               next({
-                staus: 409,
+                status: 409,
                 message: "max cuisine preferences",
                 detail: "maximum number of cuisine preferences already reached",
               });
@@ -963,14 +956,14 @@ router.post(
           switch (e.constraint) {
             case "user_cuisine_speciality_pkey":
               next({
-                staus: 409,
+                status: 409,
                 message: "speciality already set",
                 detail: "account already has specified cuisine speciality",
               });
               return;
             case "cuisine_speciality_speciality_num_check":
               next({
-                staus: 409,
+                status: 409,
                 message: "max cuisine specialities",
                 detail:
                   "maximum number of cuisine specialities already reached",
@@ -1091,16 +1084,16 @@ async function setSingleFieldInAccount(req, res, next, field) {
         switch (e.constraint) {
           case "account_username_key":
             next({
-              staus: 409,
-              message: "invalid username",
-              detail: "username already exists",
+              status: 409,
+              message: "Invalid username",
+              detail: "Username already exists",
             });
             return;
           case "account_email_key":
             next({
               status: 409,
-              message: "invalid email",
-              detail: "email already exists",
+              message: "Invalid email",
+              detail: "Email already exists",
             });
             return;
           default:
