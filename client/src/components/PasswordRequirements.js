@@ -16,7 +16,7 @@ function PasswordRequirements({ password, confirmError, size = 100 }) {
     numberPass = true,
     matchingPass = true;
 
-  if (password.length < 6 || password.length > 50) {
+  if (password.length < 8 || password.length > 50) {
     lengthPass = false;
   }
   if (!password.match(/[a-z]/)) {
@@ -40,7 +40,7 @@ function PasswordRequirements({ password, confirmError, size = 100 }) {
         marginBottom: "20px",
       }}
     >
-      <Requirement pass={lengthPass} requirementText="6-30 characters long" />
+      <Requirement pass={lengthPass} requirementText="8-30 characters long" />
       <Requirement
         pass={lowercasePass}
         requirementText="Contains a lowercase letter"

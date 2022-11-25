@@ -6,11 +6,12 @@ import {
   validateEmail,
   dummyValidatePassword,
   validateUsername,
-  dummyValidation,
   validateMatching,
   validateAddress,
+  validateOptionalAddress,
   validateCity,
-  validatePostalCode
+  validatePostalCode,
+  validateProvince
 } from "../utils/validationFunctions";
 import PasswordRequirements from "../components/PasswordRequirements";
 import Select from "react-select";
@@ -45,6 +46,23 @@ function Signup() {
     address3: false,
   });
 
+  // All Canadian provinces
+  const provinces = [
+    { value: "Ontario", label: "Ontario" },
+    { value: "Quebec", label: "Quebec" },
+    { value: "British Columbia", label: "British Columbia" },
+    { value: "Alberta", label: "Alberta" },
+    { value: "Manitoba", label: "Manitoba" },
+    { value: "Saskatchewan", label: "Saskatchewan" },
+    { value: "Nova Scotia", label: "Nova Scotia" },
+    { value: "New Brunswick", label: "New Brunswick" },
+    { value: "Newfoundland and Labrador", label: "Newfoundland and Labrador" },
+    { value: "Prince Edward Island", label: "Prince Edward Island" },
+    { value: "Northwest Territories", label: "Northwest Territories" },
+    { value: "Yukon", label: "Yukon" },
+    { value: "Nunavut", label: "Nunavut" },
+  ];
+
   // Handles input change and updates state
   function handleFieldChange(field) {
     setFields({
@@ -75,12 +93,13 @@ function Signup() {
     : null;
   errors.address1Error = fieldsClicked.address1 ? validateAddress(fields.address1) : null;
   errors.cityError = fieldsClicked.city ? validateCity(fields.city) : null;
-  errors.provinceError = fieldsClicked.province ? dummyValidation("") : null;
   errors.postalCodeError = fieldsClicked.postalCode
     ? validatePostalCode(fields.postalCode)
     : null;
-  errors.address2Error = dummyValidation("");
-  errors.address3Error = dummyValidation("");
+  errors.address2Error = fieldsClicked.address2 ? validateOptionalAddress(fields.address2) : null;
+  errors.address3Error = fieldsClicked.address3 ? validateOptionalAddress(fields.address3) : null;
+
+  errors.provinceError = fieldsClicked.province ? validateProvince(fields.province) : null;
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -88,8 +107,11 @@ function Signup() {
     let formContainsError = false;
 
     // Uncompleted fields
-    Object.values(errors).forEach((error) => {
-      if (error === null || error.error === true) {
+    Object.keys(errors).forEach((field) => {
+      if ((field === "address2Error" || field === "address3Error") && errors[field]?.error) {
+        formContainsError = true;
+      }
+      else if (!errors[field] || errors[field].error) {
         formContainsError = true;
       }
     });
@@ -200,57 +222,106 @@ function Signup() {
         <fieldset className="address-details">
           <legend>Address</legend>
 
-          <div
-            className="address-city-fields"
-            style={{ width: "90%", display: "flex" }}
-          >
-            <CredentialField
-              label="Address 1 *"
-              id="address1"
-              size="60"
-              value={fields.address1}
-              onChange={handleFieldChange}
-              onBlur={handleFieldBlur}
-              clicked={fieldsClicked.address1}
-              error={errors.address1Error}
-            />
-            <CredentialField
-              label="City *"
-              id="city"
-              size="40"
-              value={fields.city}
-              onChange={handleFieldChange}
-              onBlur={handleFieldBlur}
-              clicked={fieldsClicked.city}
-              error={errors.cityError}
-            />
-          </div>
+          <CredentialField
+            label="Address 1 *"
+            id="address1"
+            size="90"
+            value={fields.address1}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
+            clicked={fieldsClicked.address1}
+            error={errors.address1Error}
+          />
+          <CredentialField
+            label="City *"
+            id="city"
+            size="90"
+            value={fields.city}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
+            clicked={fieldsClicked.city}
+            error={errors.cityError}
+          />
+
+          {/* <CredentialField
+            label="Province *"
+            id="province"
+            size="90"
+            value={fields.province}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
+            clicked={fieldsClicked.province}
+            error={errors.provinceError}
+          /> */}
+
+          <Select
+            className="province-dropdown"
+            classNamePrefix="province-dropdown"
+            options={provinces}
+            isClearable={true}
+            isSearchable={true}
+            placeholder={<div>Province *</div>}
+            name="province"
+            required
+            onChange={() => {
+              setTimeout(() => {
+                let province = document.getElementsByName("province")[0].value;
+                console.log(`Province: ${province}`);
+                handleFieldChange({ province: province })
+              }, 100);
+            }}
+            onBlur={() => {
+              handleFieldBlur("province");
+            }}
+            styles={{
+              control: styles => {
+                return {
+                  ...styles,
+                  ":focus": {
+                    boxShadow: "0 0 0 1px #FB8C00",
+                    borderColor: "#FB8C00"
+                  }
+                }
+              },
+              option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+                return {
+                  ...styles,
+                  backgroundColor: isSelected
+                    ? "#FFA726"
+                    : isFocused
+                      ? "#ffa8262f"
+                      : "white",
+                  ":active": {
+                    ...styles[":active"],
+                    backgroundColor: "#ffa8266d"
+                  }
+                }
+              }
+            }}
+          />
 
           <div
-            className="province-postalcode-fields"
-            style={{ width: "90%", display: "flex" }}
+            className="input-error-msg"
+            id={"province-error-msg"}
+            style={{
+              visibility: errors.provinceError?.error ? "visible" : "hidden",
+              width: "86%",
+              marginBottom: "18px"
+            }}
           >
-            <CredentialField
-              label="Province *"
-              id="province"
-              size="55"
-              value={fields.province}
-              onChange={handleFieldChange}
-              onBlur={handleFieldBlur}
-              clicked={fieldsClicked.province}
-              error={errors.provinceError}
-            />
-            <CredentialField
-              label="Postal Code *"
-              id="postalCode"
-              size="45"
-              value={fields.postalCode}
-              onChange={handleFieldChange}
-              onBlur={handleFieldBlur}
-              clicked={fieldsClicked.postalCode}
-              error={errors.postalCodeError}
-            />
+            {errors.provinceError?.msg || "sdasd"}
           </div>
+
+          <CredentialField
+            label="Postal Code *"
+            id="postalCode"
+            size="90"
+            value={fields.postalCode}
+            onChange={handleFieldChange}
+            onBlur={handleFieldBlur}
+            clicked={fieldsClicked.postalCode}
+            error={errors.postalCodeError}
+          />
 
           <div
             className="optional-address-lines"
@@ -283,7 +354,7 @@ function Signup() {
           Start Swapping!
         </button>
       </form>
-    </Modal>
+    </Modal >
   );
 }
 

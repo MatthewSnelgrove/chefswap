@@ -87,7 +87,7 @@ function CredentialField2({
       style={{ width: `${size}%` }}
     >
       <input
-        autoComplete="off"
+        autoComplete="none"
         type={type}
         id={id}
         name={id}
