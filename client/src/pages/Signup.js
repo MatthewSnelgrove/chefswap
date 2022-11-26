@@ -85,25 +85,16 @@ function Signup() {
 
   // Errors for all inputs
   let errors = {};
-  errors.email = fieldsClicked.email ? validateEmail(fields.email) : null;
-  errors.username = fieldsClicked.username
-    ? validateUsername(fields.username)
-    : null;
-  errors.password = fieldsClicked.password
-    ? dummyValidatePassword(fields.password)
-    : null;
-  errors.confirmPassword = fieldsClicked.confirmPassword
-    ? validateMatching(fields.password, fields.confirmPassword)
-    : null;
-  errors.address1 = fieldsClicked.address1 ? validateAddress(fields.address1) : null;
-  errors.city = fieldsClicked.city ? validateCity(fields.city) : null;
-  errors.postalCode = fieldsClicked.postalCode
-    ? validatePostalCode(fields.postalCode)
-    : null;
-  errors.address2 = fieldsClicked.address2 ? validateOptionalAddress(fields.address2) : null;
-  errors.address3 = fieldsClicked.address3 ? validateOptionalAddress(fields.address3) : null;
-
-  errors.province = fieldsClicked.province ? validateProvince(fields.province) : null;
+  errors.email = validateEmail(fields.email);
+  errors.username = validateUsername(fields.username);
+  errors.password = dummyValidatePassword(fields.password);
+  errors.confirmPassword = validateMatching(fields.password, fields.confirmPassword);
+  errors.address1 = validateAddress(fields.address1);
+  errors.city = validateCity(fields.city);
+  errors.postalCode = validatePostalCode(fields.postalCode);
+  errors.address2 = validateOptionalAddress(fields.address2);
+  errors.address3 = validateOptionalAddress(fields.address3);
+  errors.province = validateProvince(fields.province);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -113,16 +104,16 @@ function Signup() {
     // Uncompleted fields
     Object.keys(errors).forEach((field) => {
       if (field === "address2" || field === "address3") {
-        if (errors[field]?.error) formContainsError.push(field);
+        if (errors[field].error) formContainsError.push(field);
       }
 
-      else if (!errors[field] || errors[field].error) {
+      else if (errors[field].error) {
         formContainsError.push(field);
       }
     });
 
     if (formContainsError.length > 0) {
-      let errorMsg = "Errors were found in the following fields:";
+      let errorMsg = "Errors were found in the following field(s):";
       formContainsError.forEach(field => {
         errorMsg += ` ${field},`;
       });
@@ -158,17 +149,21 @@ function Signup() {
 
       signupPromise
         .then(res => {
+          console.log(res.status);
           if (res.status !== 200) return res.json();
         })
         .then(json => {
           console.log(json[0].detail);
 
-          // Focus on form error message
+          // Scroll to form error message
           document.getElementById("form-error-msg").scrollIntoView({ behavior: "smooth" });
 
           // Set form error from server
           setFormError(json[0].detail);
         })
+        .catch(err => {
+          console.log("Unexpected error in loginPromise: " + err);
+        });
     }
   }
 
@@ -320,7 +315,7 @@ function Signup() {
               className="input-error-msg"
               id={"province-error-msg"}
               style={{
-                visibility: errors.province?.error ? "visible" : "hidden",
+                visibility: (fieldsClicked.province && errors.province.error) ? "visible" : "hidden",
                 width: "86%",
                 marginBottom: "18px"
               }}

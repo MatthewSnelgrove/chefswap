@@ -28,7 +28,7 @@ function PasswordRequirements({ password, confirmError, size = 100 }) {
   if (!password.match(/\d/)) {
     numberPass = false;
   }
-  if (confirmError === null || confirmError.error) {
+  if (confirmError.error) {
     matchingPass = false;
   }
 
@@ -40,7 +40,10 @@ function PasswordRequirements({ password, confirmError, size = 100 }) {
         marginBottom: "20px",
       }}
     >
-      <Requirement pass={lengthPass} requirementText="8-30 characters long" />
+      <Requirement
+        pass={lengthPass}
+        requirementText="8-30 characters long"
+      />
       <Requirement
         pass={lowercasePass}
         requirementText="Contains a lowercase letter"
@@ -49,8 +52,14 @@ function PasswordRequirements({ password, confirmError, size = 100 }) {
         pass={uppercasePass}
         requirementText="Contains an uppercase letter"
       />
-      <Requirement pass={numberPass} requirementText="Contains a number" />
-      <Requirement pass={matchingPass} requirementText="Passwords match" />
+      <Requirement
+        pass={numberPass}
+        requirementText="Contains a number"
+      />
+      <Requirement
+        pass={matchingPass}
+        requirementText="Passwords match"
+      />
     </div>
   );
 }
