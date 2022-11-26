@@ -11,7 +11,7 @@ import "./styles/CredentialField.scss";
  * @param {Function} onBlur Function to handle input blur (signup only)
  * @param {Function} onFocus Function to handle input focus (login only)
  * @param {Boolean} clicked Whether input has been focused or not
- * @param {Object} error Error object from validateFunctions.js
+ * @param {Object} error Error object from validateFunctions.js (NON-NULL)
  * @param {Boolean} required Required tag for inputs
  */
 function CredentialField2({
@@ -31,12 +31,14 @@ function CredentialField2({
   let fieldBorder = "3px solid gray";
   let errorVisibility = "hidden";
 
-  if (error?.error) {
-    fieldBorder = "3px solid red";
-    errorVisibility = "visible";
-  }
-  if (error?.error === false) {
-    fieldBorder = "3px solid green";
+  if (clicked) {
+    if (error.error) {
+      fieldBorder = "3px solid red";
+      errorVisibility = "visible";
+    }
+    if (!error.error) {
+      fieldBorder = "3px solid green";
+    }
   }
 
   // Functions for animating label up and down

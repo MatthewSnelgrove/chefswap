@@ -12,14 +12,7 @@ export async function fetchLogin(password, username) {
     credentials: "include"
   })
 
-  if (!response.ok) {
-    console.log("Failed to get user");
-    return response.status;
-  }
-
-  const json = await response.json();
-
-  return json;
+  return response;
 }
 
 export async function fetchUserFromUid(Uid) {

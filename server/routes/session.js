@@ -40,8 +40,8 @@ router.post("/", async (req, res, next) => {
   //No user with username
   const invalidCredentials = {
     status: 401,
-    message: "invalid credentials",
-    detail: "the provided username/password is invalid",
+    message: "Invalid credentials",
+    detail: "The provided username/password is invalid",
   };
   if (!account) {
     next(invalidCredentials);
