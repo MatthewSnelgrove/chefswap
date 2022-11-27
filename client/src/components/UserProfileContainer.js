@@ -45,7 +45,7 @@ function UserProfileContainer(props) {
       <div className="user-data">
         <div style={{marginTop: "8px"}} class="add-tags">
           <span className="type-text">Cuisine Preferences</span> 
-          {isUser ? <button className="type-route-button" onClick={linkToEditType}><img className="type-edit" style={{width: "25px"}} src="edit3.svg"></img></button>:<img className="type-edit" style={{width: "35px"}} src="navigate.svg"></img>} 
+          <img className="type-edit" style={{width: "35px"}} src="navigate.svg"></img>
           {user.cuisinePreferences.length == 0 ? <span style={{ fontStyle: "italic" }}>{isUser ? "You have no preferences" : "This user has no preferences"}</span>
           : user.cuisinePreferences.map((cuisine, index) =>
             <Tag key={index} cuisine={cuisine} />
@@ -53,7 +53,7 @@ function UserProfileContainer(props) {
         </div>
         <div style={{marginTop: "8px"}} className="add-tags">
           <span className="type-text">Cuisine Specialties</span>  
-          {isUser ? <button className="type-route-button" onClick={linkToEditType}><img className="type-edit" style={{width: "25px"}} src="edit3.svg"></img></button>:<img className="type-edit" style={{width: "35px"}} src="navigate.svg"></img>}    
+          <img className="type-edit" style={{width: "35px"}} src="navigate.svg"></img>
           {user.cuisineSpecialities.length == 0 ?
           <span style={{ fontStyle: "italic" }}>{isUser ? "You have no specialties" : "This user has no specialties"}</span>
           : user.cuisineSpecialities.map((cuisine, index) =>

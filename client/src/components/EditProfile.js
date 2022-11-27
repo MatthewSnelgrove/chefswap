@@ -37,7 +37,7 @@ function EditProfile(props) {
         <div>
           <label>Bio</label>
         </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", flexDirection: "column"}}>
           <textarea id="bio" defaultValue={user.bio}></textarea>
           <button className="change-bio-button" onClick={(e) => {
             changeBio(user.accountUid, document.getElementById("bio").value)
@@ -50,7 +50,7 @@ function EditProfile(props) {
           <label>Cuisine Prefrences</label>
         </div>
         <div style={{ position: "relative" }}>
-          <TagEdit fillInList={user.cuisinePreferences} Uid={user.accountUid} addFunc={addPrefrence} deleteFunc={deletePrefrence} />
+          <TagEdit fillInList={user.cuisinePreferences} Uid={user.accountUid} addFunc={addPrefrence} deleteFunc={deletePrefrence} addPlaceholder={"Add Preferences +"} />
           <div className="info-text a-drop">Cuisine Prefrences tells other users what types of food you like</div>
         </div>
       </div>
@@ -59,7 +59,7 @@ function EditProfile(props) {
           <label>Cuisine Specialties</label>
         </div>
         <div style={{ position: "relative" }}>
-          <TagEdit fillInList={user.cuisineSpecialities} Uid={user.accountUid} addFunc={addSpecialty} deleteFunc={deleteSpecialty} />
+          <TagEdit fillInList={user.cuisineSpecialities} Uid={user.accountUid} addFunc={addSpecialty} deleteFunc={deleteSpecialty} addPlaceholder={"Add Specialties +"} />
           <div className="info-text" style={{ marginTop: "4px" }}>Cuisine Specialties tells other users what types of food you like to make!</div>
         </div>
       </div>
