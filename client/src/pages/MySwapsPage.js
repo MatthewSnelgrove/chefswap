@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SwapList from "../components/SwapList";
 import MySwapSwitch from "../components/MySwapSwitch";
 import "./styles/MySwapsPage.css";
@@ -6,6 +6,10 @@ import MessageSwapSwitch from "../components/MessageSwapSwitch";
 import OnlyLoggedIn from "../components/OnlyLoggedIn";
 
 function MySwapsPage() {
+  useEffect(() => {
+    document.title = "Chefswap | My swaps";
+  }, []);
+
   const people = [];
 
   people[0] = {
@@ -53,7 +57,7 @@ function MySwapsPage() {
   };
 
   return (
-    <OnlyLoggedIn >
+    <OnlyLoggedIn>
       <div style={{ paddingTop: "90px" }}>
         <div className="swap-container">
           <h1 className="px-5 swap-text">Swaps</h1>

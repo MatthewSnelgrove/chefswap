@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CredentialField from "../components/CredentialField2";
 import Modal from "../components/Modal";
 import { signupUser } from "./fetchFunctions";
@@ -11,7 +11,7 @@ import {
   validateOptionalAddress,
   validateCity,
   validatePostalCode,
-  validateProvince
+  validateProvince,
 } from "../utils/validationFunctions";
 import PasswordRequirements from "../components/PasswordRequirements";
 import OnlyLoggedOut from "../components/OnlyLoggedOut";
@@ -19,6 +19,10 @@ import Select from "react-select";
 import "./styles/_SignupLogin.scss";
 
 function Signup() {
+  useEffect(() => {
+    document.title = "Chefswap | Signup";
+  }, []);
+
   // State holding all fields needed for specific form
   const [fields, setFields] = useState({
     email: "",
@@ -88,7 +92,10 @@ function Signup() {
   errors.email = validateEmail(fields.email);
   errors.username = validateUsername(fields.username);
   errors.password = dummyValidatePassword(fields.password);
-  errors.confirmPassword = validateMatching(fields.password, fields.confirmPassword);
+  errors.confirmPassword = validateMatching(
+    fields.password,
+    fields.confirmPassword
+  );
   errors.address1 = validateAddress(fields.address1);
   errors.city = validateCity(fields.city);
   errors.postalCode = validatePostalCode(fields.postalCode);
@@ -105,16 +112,14 @@ function Signup() {
     Object.keys(errors).forEach((field) => {
       if (field === "address2" || field === "address3") {
         if (errors[field].error) formContainsError.push(field);
-      }
-
-      else if (errors[field].error) {
+      } else if (errors[field].error) {
         formContainsError.push(field);
       }
     });
 
     if (formContainsError.length > 0) {
       let errorMsg = "Errors were found in the following field(s):";
-      formContainsError.forEach(field => {
+      formContainsError.forEach((field) => {
         errorMsg += ` ${field},`;
       });
 
@@ -123,14 +128,13 @@ function Signup() {
 
       // Set form error
       setFormError(errorMsg.slice(0, -1));
-
     } else {
       const userObj = {
         profile: {
           username: fields.username,
           circle: {
-            radius: 3000
-          }
+            radius: 3000,
+          },
         },
         email: fields.email,
         password: fields.password,
@@ -148,20 +152,22 @@ function Signup() {
       let signupPromise = signupUser(userObj);
 
       signupPromise
-        .then(res => {
+        .then((res) => {
           console.log(res.status);
           if (res.status !== 200) return res.json();
         })
-        .then(json => {
+        .then((json) => {
           console.log(json[0].detail);
 
           // Scroll to form error message
-          document.getElementById("form-error-msg").scrollIntoView({ behavior: "smooth" });
+          document
+            .getElementById("form-error-msg")
+            .scrollIntoView({ behavior: "smooth" });
 
           // Set form error from server
           setFormError(json[0].detail);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("Unexpected error in loginPromise: " + err);
         });
     }
@@ -276,38 +282,42 @@ function Signup() {
               required
               onChange={() => {
                 setTimeout(() => {
-                  let province = document.getElementsByName("province")[0].value;
+                  let province =
+                    document.getElementsByName("province")[0].value;
                   console.log(`Province: ${province}`);
-                  handleFieldChange({ province: province })
+                  handleFieldChange({ province: province });
                 }, 100);
               }}
               onBlur={() => {
                 handleFieldBlur("province");
               }}
               styles={{
-                control: styles => {
+                control: (styles) => {
                   return {
                     ...styles,
                     ":focus": {
                       boxShadow: "0 0 0 1px #FB8C00",
-                      borderColor: "#FB8C00"
-                    }
-                  }
+                      borderColor: "#FB8C00",
+                    },
+                  };
                 },
-                option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+                option: (
+                  styles,
+                  { data, isDisabled, isFocused, isSelected }
+                ) => {
                   return {
                     ...styles,
                     backgroundColor: isSelected
                       ? "#FFA726"
                       : isFocused
-                        ? "#ffa8262f"
-                        : "white",
+                      ? "#ffa8262f"
+                      : "white",
                     ":active": {
                       ...styles[":active"],
-                      backgroundColor: "#ffa8266d"
-                    }
-                  }
-                }
+                      backgroundColor: "#ffa8266d",
+                    },
+                  };
+                },
               }}
             />
 
@@ -315,9 +325,12 @@ function Signup() {
               className="input-error-msg"
               id={"province-error-msg"}
               style={{
-                visibility: (fieldsClicked.province && errors.province.error) ? "visible" : "hidden",
+                visibility:
+                  fieldsClicked.province && errors.province.error
+                    ? "visible"
+                    : "hidden",
                 width: "86%",
-                marginBottom: "18px"
+                marginBottom: "18px",
               }}
             >
               {errors.province?.msg || ""}
@@ -365,7 +378,7 @@ function Signup() {
             className="input-error-msg"
             id="form-error-msg"
             style={{
-              visibility: (!formError) ? "hidden" : "visible",
+              visibility: !formError ? "hidden" : "visible",
               width: "90%",
               fontSize: "1em",
               textAlign: "center",

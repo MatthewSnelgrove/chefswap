@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { fetchLogin } from "./fetchFunctions";
 import Modal from "../components/Modal";
 import CredentialField from "../components/CredentialField2";
 import OnlyLoggedOut from "../components/OnlyLoggedOut";
-import { validateUsername, validatePassword } from "../utils/validationFunctions";
+import {
+  validateUsername,
+  validatePassword,
+} from "../utils/validationFunctions";
 import "./styles/_SignupLogin.scss";
 
 function Login() {
+  useEffect(() => {
+    document.title = "Chefswap | Login";
+  }, []);
+
   // State holding all fields needed for specific form
   const [fields, setFields] = useState({
     username: "",
@@ -55,7 +62,7 @@ function Login() {
 
     if (formContainsError.length > 0) {
       let errorMsg = "Errors were found in the following field(s): ";
-      formContainsError.forEach(field => {
+      formContainsError.forEach((field) => {
         errorMsg += ` ${field},`;
       });
 
@@ -68,24 +75,25 @@ function Login() {
       let loginPromise = fetchLogin(fields.password, fields.username);
 
       loginPromise
-        .then(res => {
+        .then((res) => {
           if (res.status !== 200 && res.status !== 201) {
             return res.json();
-          }
-          else {
+          } else {
             window.location = global.config.pages.homepage;
           }
         })
-        .then(json => {
+        .then((json) => {
           console.log(json[0].detail);
 
           // Scroll to form error message
-          document.getElementById("form-error-msg").scrollIntoView({ behavior: "smooth" });
+          document
+            .getElementById("form-error-msg")
+            .scrollIntoView({ behavior: "smooth" });
 
           // Set form error from server
           setFormError(json[0].detail);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log("Unexpected error in loginPromise: " + err);
         });
     }
@@ -136,11 +144,11 @@ function Login() {
             className="input-error-msg"
             id="form-error-msg"
             style={{
-              visibility: (!formError) ? "hidden" : "visible",
+              visibility: !formError ? "hidden" : "visible",
               width: "90%",
               fontSize: "1em",
               textAlign: "center",
-              marginTop: "15px"
+              marginTop: "15px",
             }}
           >
             {formError}
