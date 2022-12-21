@@ -99,8 +99,16 @@ export default class SwapResultsContainer extends Component {
         username={user.username}
         distance={user.distance}
         rating={user.avg_rating}
-        cuisineSpecialties={user.cuisineSpecialties}
+        cuisineSpecialities={user.cuisineSpecialties}
         key={user.username}
+        finalColJsx={
+          <>
+            <img className="small-swap-button" src="./swap.svg" style={{height: "80px"}}></img>
+            <button className="swap-button">
+              <span className="swap-text">Send Swap Request</span>
+            </button>
+          </>
+        }
       />
     ));
 

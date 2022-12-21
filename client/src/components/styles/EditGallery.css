@@ -1,6 +1,6 @@
-.addBtn {
+.add-btn {
     border: 0;
-    background-color: rgb(0, 149, 246);
+    background-color: var(--cs-lightblue-1);
     color: white;
     font-weight: 600;
     border-radius: 10px;
@@ -8,6 +8,20 @@
     cursor: pointer;
     padding: 3px;
 }
+
+:root {
+    --gallery-img-size: 325px;
+}
+
+.add-photo-text {
+    font-size: 40px;
+}
+
+.gallery-text {
+    font-size: var(--font-bold-1);
+    font-size: 40px;
+}
+
 
 .header {
     padding-top: 25px;
@@ -19,44 +33,48 @@
     padding-right: 20px;
 }
 
-.draggable {
-    cursor: move;
-}
-
 .image-container {
     width: 100%;
 }
 
-.draggable.dragging {
-    opacity: 0.5;
+.gallery-img-dim {
+    width: var(--gallery-img-size);
+    height: var(--gallery-img-size);
+}
+
+.gallery-img {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+}
+
+.gallery-img-container {
+    position: relative;
+    background-color: var(--cs-grey-1);
+    border-radius: 10px;
+    padding: 8px;
 }
 
 .profile-img-container {
-    margin-top: 27px;
     display: grid;
     gap: 20px;
-    grid-template-columns: repeat(auto-fit, 200px);
+    grid-template-columns: repeat(auto-fit, minmax(var(--gallery-img-size), 1fr));
     margin-left: 20px;
     margin-right: 20px;
-}
-
-.drag-button {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0px;
-    right: 0px;
-    opacity: 0.5;
-    border: 4px solid white
+    margin-top: 30px;
+    align-items: center;
+    align-items: center;
 }
 
 .delete-button {
     position: absolute;
     top: -12px;
     right: -13px;
-    border: 1.5px solid white;
+    border: 0px;
     background-color: #FF033E;
-    border-radius: 10px;
+    border-radius: 15px; 
+    color: white;
+    font-size: 20px;
 }
 
 .delete-button > img {
@@ -66,8 +84,28 @@
     margin-left: 2px;
 }
 
+
 .gallery-container {
     display: flex;
     flex-direction: column;
     width: 100%;
+}
+
+@media (max-width: 970px) {
+    .profile-img-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gallery-img-dim {
+        width: 100%;
+        height: 200px;
+    }
+
+    .add-photo-text {
+        font-size: 25px;
+    }
+
+    .gallery-text {
+        font-size: 25px;
+    }
 }

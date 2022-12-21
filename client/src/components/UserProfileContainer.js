@@ -33,7 +33,7 @@ function UserProfileContainer(props) {
       <div className="profile-header">
         <div className="profile">
           <ProfilePicture pfpLink={user.pfpLink} class="large-profile-pic border-profile" />
-          <span className="username">{user.username}</span>
+          <span className="username-tag">{user.username}</span>
         </div>
         <div className="edit-button-container">
           <span className="edit-profile-text">Edit Profile</span>
@@ -52,10 +52,10 @@ function UserProfileContainer(props) {
           )}
         </div>
         <div style={{marginTop: "8px"}} className="add-tags">
-          <span className="type-text">Cuisine Specialties</span>  
+          <span className="type-text">Cuisine Specialities</span>  
           <img className="type-edit" style={{width: "35px"}} src="navigate.svg"></img>
           {user.cuisineSpecialities.length == 0 ?
-          <span style={{ fontStyle: "italic" }}>{isUser ? "You have no specialties" : "This user has no specialties"}</span>
+          <span style={{ fontStyle: "italic" }}>{isUser ? "You have no specialities" : "This user has no specialities"}</span>
           : user.cuisineSpecialities.map((cuisine, index) =>
             <Tag key={index} cuisine={cuisine} />
           )}

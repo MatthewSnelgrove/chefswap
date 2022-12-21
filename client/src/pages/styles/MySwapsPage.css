@@ -7,3 +7,42 @@
 .swap-text {
     font-size: 40px;
 }
+
+.accept-button, .message-button, .decline-button {
+    border: 0px;
+    background-color: var(--cs-orange-4);
+}
+
+.pending-button-wrapper {
+    display: flex;
+    gap: 7px;
+    background-color: var(--cs-orange-4);
+    border-radius: 10px;
+    border: 2px solid var(--cs-orange-4);
+    margin-right: 10px;
+}
+
+.message-image, .decline-image, .accept-image {
+    font-size: 45px;
+    padding-top: 5px;
+}
+
+.decline-image {
+    color: var(--cs-red-1);
+}
+
+.accept-image {
+    color: var(--cs-green-1);
+}
+
+.message-image {
+    font-size: 40px;
+    color: var(--cs-white-1);
+}
+
+@media (max-width: 990px) {
+    .message-image, .decline-image, .accept-image {
+        font-size: 30px;
+    }
+    
+}

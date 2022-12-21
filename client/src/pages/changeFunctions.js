@@ -82,30 +82,29 @@ export async function deletePrefrence(Uid, prefrence) {
   });
 }
 
-export async function addSpecialty(Uid, specialty) {
-  console.log(specialty)
+export async function addSpeciality(Uid, speciality) {
   await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/cuisineSpecialities`, {
     credentials: "include",
     method: "POST",
-    body: JSON.stringify({ cuisineSpeciality: specialty }),
+    body: JSON.stringify({ cuisineSpeciality: speciality }),
     headers: { "Content-Type": "application/json" },
   })
     .then((response) => {
-      toast.success(`Successfully added ${specialty} from your specialties`, {
+      toast.success(`Successfully added ${speciality} from your specialities`, {
         position: toast.POSITION.TOP_RIGHT
       });
     })
     .catch((reason) => console.log(reason))
 }
 
-export async function deleteSpecialty(Uid, specialty) {
-  await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/cuisineSpecialities/${specialty}`, {
+export async function deleteSpeciality(Uid, speciality) {
+  await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/cuisineSpecialities/${speciality}`, {
     credentials: "include",
     method: "DELETE",
     headers: { "Content-Type": "application/json" }
   })
     .then((response) => {
-      toast.success(`Successfully removed ${specialty} from your specialties`, {
+      toast.success(`Successfully removed ${speciality} from your specialities`, {
         position: toast.POSITION.TOP_RIGHT
       });
     })

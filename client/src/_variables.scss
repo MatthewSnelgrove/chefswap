@@ -26,6 +26,7 @@ $cs-gray-2: rgb(150, 150, 150);
     --cs-black-2: rgb(15, 15, 15);
     --cs-grey-1: #EBEDF0;
     --cs-lightblue-1: rgb(0, 149, 246);
+    --cs-red-1: rgb(252, 9, 9);
     --cs-blue-1: #15002e;
     --cs-blue-2: #0909a5;
     --cs-cream-1: #FFFDE7;
@@ -40,29 +41,8 @@ $cs-gray-2: rgb(150, 150, 150);
     --cs-orange-4: #FFA726;
     --cs-orange-5: #FB8C00;
     --cs-dark-orange: rgb(149, 80, 1);
+    --cs-green-1: rgba(35, 146, 13, 0.705);
     --font-bold-1: 500;
     --navbar-height: 67px;
 }
 
-.carousel-control-prev-icon {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E") !important;
-   }
-   
-.carousel-control-next-icon {
-    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E") !important;
-}
-
-.modal-scheme {
-    border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 1) 0px 5px 25px;
-}
-
-.full-contain {
-    position: absolute;
-    margin-top: calc(var(--navbar-height));
-    width: 100%;
-}
-
-.opacity-text {
-    opacity: 0.75;
-}

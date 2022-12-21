@@ -1,6 +1,5 @@
 import React from "react";
 import SwapList from "../components/SwapList";
-import MySwapSwitch from "../components/MySwapSwitch";
 import "./styles/MySwapsPage.css";
 import MessageSwapSwitch from "../components/MessageSwapSwitch";
 import OnlyLoggedIn from "../components/OnlyLoggedIn";
@@ -11,18 +10,8 @@ function MySwapsPage() {
   people[0] = {
     img: "corn.jpg",
     username: "XD Man",
-    cuisinePrefrences: {
-      indian: true,
-      italian: true,
-    },
-    cuisineSpecialties: {
-      indian: true,
-      italian: true,
-      a: true,
-      itd: true,
-      idian: true,
-      idn: true,
-    },
+    cuisinePrefrences: ["Indian", "Italian"],
+    cuisineSpecialities: ["Indian", "Italian"],
     bio: "Hey guys XDDDas;d;oasndlasnaskldkasnldkansdlkasnkldnaslkdn askldnkasndklasndlkdm;awkdmaslkdmalksmdlkasmdlkasmdkladlksndlasndlasnldnasljdnalsjdnlajsndlaslndn",
     distance: "4km",
     rating: "4.1",
@@ -33,18 +22,8 @@ function MySwapsPage() {
   people[1] = {
     img: "corn.jpg",
     username: "XD Man312389012390120983812903019283812890319038109823",
-    cuisinePrefrences: {
-      indian: true,
-      italian: true,
-    },
-    cuisineSpecialties: {
-      indian: true,
-      italian: true,
-      a: true,
-      itd: true,
-      idian: true,
-      idn: true,
-    },
+    cuisinePrefrences: ["Indian", "Italian"],
+    cuisineSpecialities: ["Indian", "Italian"],
     bio: "Hey guys XDDDas;d;oasndlasnaskldkasnldkansdlkasnkldnaslkdn askldnkasndklasndlkdm;awkdmaslkdmalksmdlkasmdlkasmdkladlksndlasndlasnldnasljdnalsjdnlajsndlaslndn",
     distance: "4km",
     rating: "4.1",
@@ -73,18 +52,38 @@ function MySwapsPage() {
         >
           <MessageSwapSwitch current={0} />
           <div>
-            <SwapList data={people} type={"Pending"} />
+            <SwapList data={people} type={"Pending"} finalColJsx={<PendingButtons />} />
           </div>
           <div>
-            <SwapList data={people} type={"Ongoing"} />
+            <SwapList data={people} type={"Ongoing"} finalColJsx={<></>} />
           </div>
           <div>
-            <SwapList data={people} type={"Past"} />
+            <SwapList data={people} type={"Past"} finalColJsx={<></>} />
           </div>
         </div>
       </div>
     </OnlyLoggedIn>
   );
 }
+
+function PendingButtons(props) {
+  return (
+    <>
+      <div className="pending-button-wrapper">
+        <button className="accept-button">
+          <span class="material-icons-round accept-image">done</span>
+        </button>
+        <button className="decline-button">
+          <span class="material-icons-round decline-image">close</span>
+        </button>
+        <button className="message-button">
+          <span class="material-icons-round message-image">chat</span>
+        </button>
+      </div>
+    </>
+  )
+}
+
+
 
 export default MySwapsPage;

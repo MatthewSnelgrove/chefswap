@@ -1,7 +1,7 @@
 import { React, useEffect, useState } from "react";
 import "./styles/EditProfile.css"
 import TagEdit from "./TagEdit";
-import { changeBio, deletePrefrence, addPrefrence, addSpecialty, deleteSpecialty, changeUserProfile } from "../pages/changeFunctions";
+import { changeBio, deletePrefrence, addPrefrence, addSpeciality, deleteSpeciality, changeUserProfile } from "../pages/changeFunctions";
 import { useUser } from "./useUser";
 import ProfilePicture from "./ProfilePicture";
 
@@ -39,7 +39,7 @@ function EditProfile(props) {
         </div>
         <div style={{ display: "flex", flexDirection: "column"}}>
           <textarea id="bio" defaultValue={user.bio}></textarea>
-          <button className="change-bio-button" onClick={(e) => {
+          <button className="change-bio-button base-btn" onClick={(e) => {
             changeBio(user.accountUid, document.getElementById("bio").value)
             window.location = curLocation
           }}>Change Bio</button>
@@ -50,17 +50,17 @@ function EditProfile(props) {
           <label>Cuisine Prefrences</label>
         </div>
         <div style={{ position: "relative" }}>
-          <TagEdit fillInList={user.cuisinePreferences} Uid={user.accountUid} addFunc={addPrefrence} deleteFunc={deletePrefrence} addPlaceholder={"Add Preferences +"} />
+          <TagEdit fillInList={user.cuisinePreferences} Uid={user.accountUid} addFunc={addPrefrence} deleteFunc={deletePrefrence} addPlaceholder={"Add Preference +"} />
           <div className="info-text a-drop">Cuisine Prefrences tells other users what types of food you like</div>
         </div>
       </div>
       <div style={{marginTop: "75px"}} className="form-item">
         <div>
-          <label>Cuisine Specialties</label>
+          <label>Cuisine Specialities</label>
         </div>
         <div style={{ position: "relative" }}>
-          <TagEdit fillInList={user.cuisineSpecialities} Uid={user.accountUid} addFunc={addSpecialty} deleteFunc={deleteSpecialty} addPlaceholder={"Add Specialties +"} />
-          <div className="info-text" style={{ marginTop: "4px" }}>Cuisine Specialties tells other users what types of food you like to make!</div>
+          <TagEdit fillInList={user.cuisineSpecialities} Uid={user.accountUid} addFunc={addSpeciality} deleteFunc={deleteSpeciality} addPlaceholder={"Add Speciality +"} />
+          <div className="info-text" style={{ marginTop: "4px" }}>Cuisine Specialities tells other users what types of food you like to make!</div>
         </div>
       </div>
     </div>

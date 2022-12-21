@@ -114,7 +114,7 @@
     word-wrap: break-word;
 }
 
-.username {
+.username-tag {
     font-weight: var(--font-bold-1);
     font-size: 45px;
     margin-left: 10px;
