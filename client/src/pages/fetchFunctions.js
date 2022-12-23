@@ -12,14 +12,7 @@ export async function fetchLogin(password, username) {
     credentials: "include"
   })
 
-  if (!response.ok) {
-    console.log("Failed to get user");
-    return response.status;
-  }
-
-  const json = await response.json();
-
-  return json;
+  return response;
 }
 
 export async function fetchUserFromUid(Uid) {
@@ -73,7 +66,7 @@ export async function signupUser(userObj) {
   });
 
   if (!response.ok) {
-    return response.status;
+    return response;
   }
 
   console.log("created user")
@@ -104,7 +97,7 @@ export async function fetchUser() {
   });
 
   if (!response.ok) {
-    return response.status;
+    return response;
   }
 
   const json = await response.json();

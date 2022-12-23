@@ -82,7 +82,7 @@ paths:
             maximum: 2000000000
         - in: query
           name: orderBy
-          description: Specifies the first field to be used for ordering results. Second field (or only if this param is not specified) is always accountUid. Ordering by distance is only valid if includeDistanceFrom is also specified.
+          description: Specifies the first field to be used for ordering results. Second field (or only field if this param is not specified) is always accountUid. Ordering by distance is only valid if includeDistanceFrom is also specified.
           schema:
             type: string
             enum:
@@ -177,6 +177,27 @@ paths:
           type: string
           format: uuid
     get:
+      parameters:
+        - in: query
+          name: includeDistanceFrom
+          description: The distance from the specified latitude+longitude to centre of each account's circle will be added to response body. Both latitude and longitude must be specified.
+          explode: true
+          style: deepObject
+          schema: #if includeDistance exists, it must have both latitude and longitude
+            oneOf:
+              - type: object
+                additionalProperties: false
+                required:
+                  - latitude
+                  - longitude
+                properties:
+                  latitude:
+                    $ref: "#/components/schemas/Latitude"
+                  longitude:
+                    $ref: "#/components/schemas/Longitude"
+              - type: object #workaround to have optional param with required fields
+                nullable: true
+                additionalProperties: false
       summary: Read an account. If signed in, response contains all account data. Otherwise, response only contains profile data.
       responses:
         200:
@@ -928,26 +949,72 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /api/swaps/{accountUid}:
+  /api/v1/swaps/{accountUid}:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
-      summary: Get all swaps an account is a part of.
+      summary: Get all swaps an account is a part of. Must be signed in with specified account.
       parameters:
         - in: query
           name: status
           description: The status of a swap (pending, ongoing, ended).
           schema:
             $ref: "#/components/schemas/SwapStatus"
+        - in: query
+          name: orderBy
+          description: Specifies the first field to be used for ordering results. Second field (or only field if this param is not specified) is always accountUid.
+          schema:
+            type: string
+            enum:
+              - timeAsc
+              - timeDesc
+        - in: query
+          name: key
+          description: All swaps in response will be occur after a swap that has the specified properties according to the ordering set by orderBy. If ordering by time, key must include field "time". In all cases, field accountUid may optionally be provided.
+          explode: true
+          style: deepObject
+          schema:
+            oneOf:
+              - type: object #no ordering (just order by uuidAsc)
+                additionalProperties: false
+                properties:
+                  accountUid:
+                    type: string
+                    format: uuid
+                    default: 00000000-0000-0000-0000-000000000000
+              - type: object #ordering by time
+                additionalProperties: false
+                properties:
+                  accountUid:
+                    type: string
+                    format: uuid
+                    default: 00000000-0000-0000-0000-000000000000
+                  time:
+                    type: integer
+                    format: int64
+        - in: query
+          name: limit
+          description: Response will include up to limit swaps.
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 1000
+            default: 20
       responses:
         200:
           description: The swaps of the account corresponding to the provided uid matching status set in optional query param status.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Swap"
+                type: object
+                required:
+                  - swaps
+                properties:
+                  swaps:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Swap"
         400:
           $ref: "#/components/responses/BadRequest"
         401:
@@ -983,7 +1050,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /api/swaps/{accountUid}/{swapperUid}/{matchNum}:
+  /api/v1/swaps/{accountUid}/{swapperUid}/{requestTimestamp}:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
       - name: swapperUid
@@ -993,18 +1060,18 @@ paths:
         schema:
           type: string
           format: uuid
-      - name: matchNum
-        description: Number that increments with the number of swaps between two specific accounts.
+      - name: requestTimestamp
+        description: Url encoded timestamp of corresponding to time the swap was requested.
         in: path
         required: true
         schema:
-          type: integer
-          minimum: 0
+          type: string
+          format: date-time
     get:
-      summary: Get the specific swap between the specified accounts with specified matchNum.
+      summary: Get the specific swap between the specified accounts with specified requestTimestamp. Must be signed in with specified account.
       responses:
         200:
-          description: The matchNum'th swap betweeen specified accounts.
+          description: The swap betweeen specified accounts with specified requestTimestamp.
           content:
             application/json:
               schema:
@@ -1020,7 +1087,7 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
     delete:
-      summary: Delete the specific swap between the specified accounts with specified matchNum. Must be signed in with specified account.
+      summary: Delete the specific swap between the specified accounts with specified requestTimestamp. Must be signed in with specified account.
       responses:
         204:
           description: Successfully deleted swap.
@@ -1034,7 +1101,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /api/swaps/{accountUid}/{swapperUid}/{matchNum}/{status}:
+  /api/v1/swaps/{accountUid}/{swapperUid}/{requestTimestamp}/status:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
       - name: swapperUid
@@ -1044,22 +1111,26 @@ paths:
         schema:
           type: string
           format: uuid
-      - name: matchNum
-        description: Number that increments with the number of swaps between two specific accounts.
+      - name: requestTimestamp
+        description: Url encoded timestamp of corresponding to time the swap was requested.
         in: path
         required: true
         schema:
-          type: integer
-          minimum: 0
-      - name: status
-        description: The status of a swap (pending, ongoing, ended).
-        in: path
-        required: true
-        schema:
-          $ref: "#/components/schemas/SwapStatus"
+          type: string
+          format: date-time
     put:
       summary: Change the status of a swap. Must be signed in with one of the specified accounts and status must correspond with future status.
       description: Can be set to ongoing if currently pending signed in as account that did no request. Can be set to ended currently ongoing and signed in with either account.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: "#/components/schemas/SwapStatus"
       responses:
         200:
           description: The new status of the swap.
@@ -1118,7 +1189,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Session"
         401:
-          description: Invalid username/password
           $ref: "#/components/responses/Unauthorized"
     delete:
       summary: End the current session.
@@ -1286,7 +1356,7 @@ components:
             - Manitoba
             - Saskatchewan
             - Nova Scotia
-            - New Brusnwick
+            - New Brunswick
             - Newfoundland and Labrador
             - Prince Edward Island
             - Northwest Territories
@@ -1388,7 +1458,6 @@ components:
       required:
         - requesterUid
         - requesteeUid
-        - matchNum
         - requestTimestamp
         - status
       properties:
@@ -1399,10 +1468,6 @@ components:
         requesteeUid:
           type: string
           format: uuid
-        matchNum:
-          readOnly: true
-          type: integer
-          minimum: 0
         requestTimestamp:
           readOnly: true
           type: string
@@ -1416,7 +1481,9 @@ components:
           type: string
           format: date-time
         status:
-          $ref: "#/components/schemas/SwapStatus"
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/SwapStatus"
     Errors:
       type: array
       items:

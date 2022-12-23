@@ -1,10 +1,14 @@
-import { React } from 'react'
-import EditListLink from '../components/EditListLink'
-import OnlyLoggedIn from '../components/OnlyLoggedIn'
-import "./styles/UserEditPage.css"
+import { React, useEffect } from "react";
+import EditListLink from "../components/EditListLink";
+import OnlyLoggedIn from "../components/OnlyLoggedIn";
+import "./styles/UserEditPage.css";
 
 function UserEditPage(props) {
-  const pages = global.config.pages
+  useEffect(() => {
+    document.title = "Chefswap | Edit profile";
+  }, []);
+
+  const pages = global.config.pages;
 
   return (
     <OnlyLoggedIn>
@@ -18,7 +22,7 @@ function UserEditPage(props) {
         {props.renderType}
       </div>
     </OnlyLoggedIn>
-  )
+  );
 }
 
 export default UserEditPage;

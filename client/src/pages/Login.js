@@ -1,11 +1,19 @@
-import React, { useState } from "react";
-import "./styles/_SignupLogin.scss";
+import React, { useEffect, useState } from "react";
 import { fetchLogin } from "./fetchFunctions";
 import Modal from "../components/Modal";
 import CredentialField from "../components/CredentialField2";
 import OnlyLoggedOut from "../components/OnlyLoggedOut";
+import {
+  validateUsername,
+  validatePassword,
+} from "../utils/validationFunctions";
+import "./styles/_SignupLogin.scss";
 
 function Login() {
+  useEffect(() => {
+    document.title = "Chefswap | Login";
+  }, []);
+
   // State holding all fields needed for specific form
   const [fields, setFields] = useState({
     username: "",
@@ -13,10 +21,13 @@ function Login() {
   });
 
   // State holding if field clicked
-  const [fieldsFocused, setFieldsFocused] = useState({
+  const [fieldsClicked, setFieldsClicked] = useState({
     username: false,
     password: false,
   });
+
+  // State holding form error
+  const [formError, setFormError] = useState("");
 
   // Handles input change and updates state
   function handleFieldChange(field) {
@@ -26,48 +37,66 @@ function Login() {
     });
   }
 
-  // Handles onfocus for inputs and updates focused state
-  function handleFieldFocus(field) {
-    setFieldsFocused({
-      ...fieldsFocused,
+  // Handles onblur for inputs and updates focused state
+  function handleFieldBlur(field) {
+    setFieldsClicked({
+      ...fieldsClicked,
       [field]: true,
     });
   }
+
+  // Errors for all inputs
+  let errors = {};
+  errors.username = validateUsername(fields.username);
+  errors.password = validatePassword(fields.password);
 
   // Handle login submit
   function handleSubmit(e) {
     e.preventDefault();
 
     // HANDLE FORM ERRORS
-    let formContainsError = false;
-    Object.values(fieldsFocused).forEach((focused) => {
-      if (!focused) {
-        formContainsError = true;
-      }
+    let formContainsError = [];
+    Object.keys(errors).forEach((field) => {
+      if (errors[field].error) formContainsError.push(field);
     });
 
-    if (formContainsError) {
-      // TODO: Add error message on frontend *******************************************
-      alert("Form contains errors or uncompleted fields");
+    if (formContainsError.length > 0) {
+      let errorMsg = "Errors were found in the following field(s): ";
+      formContainsError.forEach((field) => {
+        errorMsg += ` ${field},`;
+      });
+
+      // Focus on first input with error
+      document.getElementById(formContainsError[0]).focus();
+
+      // Set form error
+      setFormError(errorMsg.slice(0, -1));
     } else {
-      // TODO: Return api response for displaying error on frontend******************
-      fetchLogin(fields.password, fields.username).then((data) =>
-        isSuccess(data)
-      );
+      let loginPromise = fetchLogin(fields.password, fields.username);
+
+      loginPromise
+        .then((res) => {
+          if (res.status !== 200 && res.status !== 201) {
+            return res.json();
+          } else {
+            window.location = global.config.pages.homepage;
+          }
+        })
+        .then((json) => {
+          console.log(json[0].detail);
+
+          // Scroll to form error message
+          document
+            .getElementById("form-error-msg")
+            .scrollIntoView({ behavior: "smooth" });
+
+          // Set form error from server
+          setFormError(json[0].detail);
+        })
+        .catch((err) => {
+          console.log("Unexpected error in loginPromise: " + err);
+        });
     }
-  }
-
-  // Callback function on login success
-  function isSuccess(userObj) {
-    console.log(userObj);
-
-    if (userObj === 401) {
-      alert("Invalid Credentials");
-      return;
-    }
-
-    console.log(JSON.stringify({ username: fields.username, password: fields.password }))
-    window.location = global.config.pages.homepage
   }
 
   // No errors with inputs
@@ -92,11 +121,11 @@ function Login() {
               size="90"
               value={fields.username}
               onChange={handleFieldChange}
-              onFocus={handleFieldFocus}
-              clicked={fieldsFocused.username}
-              error={null}
+              onBlur={handleFieldBlur}
+              clicked={fieldsClicked.username}
+              error={errors.username}
               required
-          />
+            />
             <CredentialField
               type="password"
               label="Password"
@@ -104,12 +133,26 @@ function Login() {
               size="90"
               value={fields.password}
               onChange={handleFieldChange}
-              onFocus={handleFieldFocus}
-              clicked={fieldsFocused.password}
-              error={null}
+              onBlur={handleFieldBlur}
+              clicked={fieldsClicked.password}
+              error={errors.password}
               required
-          />
+            />
           </fieldset>
+
+          <div
+            className="input-error-msg"
+            id="form-error-msg"
+            style={{
+              visibility: !formError ? "hidden" : "visible",
+              width: "90%",
+              fontSize: "1em",
+              textAlign: "center",
+              marginTop: "15px",
+            }}
+          >
+            {formError}
+          </div>
 
           <button type="submit" className="submit-btn">
             Log in

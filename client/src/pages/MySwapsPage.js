@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SwapList from "../components/SwapList";
 import "./styles/MySwapsPage.css";
 import MessageSwapSwitch from "../components/MessageSwapSwitch";
@@ -6,6 +6,10 @@ import OnlyLoggedIn from "../components/OnlyLoggedIn";
 import SwapSwitch from "../components/SwapSwitch";
 
 function MySwapsPage() {
+  useEffect(() => {
+    document.title = "Chefswap | My swaps";
+  }, []);
+
   const people = [];
 
   people[0] = {

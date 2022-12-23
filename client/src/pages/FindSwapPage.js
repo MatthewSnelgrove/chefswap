@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FilterForm from "../components/FilterForm";
-import Navbar from "../components/Navbar";
 import OnlyLoggedIn from "../components/OnlyLoggedIn";
 import SwapResultsContainer from "../components/SwapResultsContainer";
 import "./styles/FindSwapPage.scss";
@@ -9,6 +8,10 @@ import "./styles/FindSwapPage.scss";
  * @use Navbar, FilterForm, SwapsResultsContainer
  */
 export default function FindSwapPage() {
+  useEffect(() => {
+    document.title = "Chefswap | Find swaps";
+  }, []);
+
   const [cuisineTyped, setCuisineTyped] = useState("");
   const [cuisineChecked, setCuisineChecked] = useState([]);
   const [rating, setRating] = useState(1);
@@ -46,7 +49,7 @@ export default function FindSwapPage() {
   }
 
   return (
-    <OnlyLoggedIn >
+    <OnlyLoggedIn>
       <div className="find-swap-page">
         <div className="find-swap-content">
           <FilterForm
