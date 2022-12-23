@@ -50,3 +50,7 @@ code {
   border-radius: 10px;
   color: var(--cs-white-1);
 }
+
+.navbar-margin {
+  margin-top: var(--navbar-height);
+}

@@ -13,8 +13,7 @@ function SwapList(props) {
         </div>
       </div>
 
-      
-
+    
       <div className="list-container">
         {props.data.map((person) => (
           //console.log(person.id)
