@@ -71,7 +71,7 @@ function resetDropdown() {
 }
 
 //Whenever user types function
-function manageKeys(ev, prefrences, updatePrefrences, updateQuery) {
+function manageKeys(ev, updateType, updateQuery, Uid, addFunc) {
   if (ev.keyCode == 40) {
     shiftDropdownDown(document.querySelector(".dropdown-tag"))
   }
@@ -83,7 +83,7 @@ function manageKeys(ev, prefrences, updatePrefrences, updateQuery) {
 
     if (!hl) {return}
 
-    onEnter(prefrences, updatePrefrences, hl.textContent)
+    onEnter(updateType, hl.textContent, Uid, addFunc)
     ev.target.value = ""
     updateQuery("")
   }
@@ -135,7 +135,7 @@ function AddTag(props) {
         resetDropdown()
       }}
       autoComplete="off"
-      placeholder="Add +"
+      placeholder={props.placeholder}
     ></input>
   )
 }
@@ -197,7 +197,7 @@ function Dropdown(props) {
           typeList.map((singleType, index) =>
             <TypeTag key={index} singleType={singleType} updateTypeList={updateTypeList} Uid={props.Uid} deleteFunc={props.deleteFunc} />
           )}
-          <AddTag updateTypeList={updateTypeList} updateQuery={updateQuery} updateVisibility={updateVisibility} Uid={props.Uid} addFunc={props.addFunc} />
+          <AddTag updateTypeList={updateTypeList} updateQuery={updateQuery} updateVisibility={updateVisibility} Uid={props.Uid} addFunc={props.addFunc} placeholder={props.addPlaceholder} />
         </div>
         <Dropdown visible={dropdownVisible} updateTypeList={updateTypeList} queryList={getQueryList(query, typeList)} Uid={props.Uid} addFunc={props.addFunc} />
       </>

@@ -2,3 +2,18 @@
     border-left: 4px solid var(--cs-orange-4);
     background-color: white;
 }
+
+.display-img-small {
+    display: none;
+}
+
+@media (max-width: 710px) {
+    .text-display-big {
+        display: none;
+    }
+
+    .display-img-small {
+        display: block;
+    }
+
+}

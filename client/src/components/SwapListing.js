@@ -19,6 +19,7 @@ function SwapListing(props) {
             />
           </div>
           <div className="user-tag">
+            {/* <div className="username">X-09sk</div> */}
             <div className="username">{props.username}</div>
           </div>
 
@@ -28,7 +29,7 @@ function SwapListing(props) {
               style={{ height: 33, width: 33 }}
               src="../location.png"
             ></img>
-            <span>{props.distance}</span>
+            <span className="distance-display">{props.distance}km</span>
           </div>
           <div className="rating-tag">
             <img
@@ -40,11 +41,13 @@ function SwapListing(props) {
           </div>
         </div>
         <div className="tags">
-          {props.cuisineSpecialties.map((cuisine) => (
-            <Tag key={cuisine} cuisine={cuisine} />
+          {props.cuisineSpecialities.map((cuisine, index) => (
+            <Tag key={index} cuisine={cuisine} />
           ))}
         </div>
-        <button className="bg-info">Swap Request</button>
+        <div className="finalCol-container">
+          {props.finalColJsx}
+        </div>
       </div>
     </div>
   );

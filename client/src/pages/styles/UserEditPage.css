@@ -1,6 +1,7 @@
 .form-container {
     background-color: var(--cs-white-1);
     display: flex;
+    min-height: calc(100% - var(--navbar-height));
 }
 
 /* make smaller screens form continaer width 1150px for the form-container  (using media queries) */
@@ -10,14 +11,13 @@
     --indicator-width: 4px;
 }
 
-
 .list-links {
     list-style: none;
-    min-height: 100%;
     padding-left: 0px;
     padding-right: 0px;
     border-right: 2px solid var(--cs-grey-1);
     margin-bottom: 0px;
+    min-height: 100%;
 }
 
 .list-links > li {
@@ -52,8 +52,13 @@
 }
 
 @media (max-width: 710px) {
+    .list-links > li {
+        padding-right: 11px;
+        padding-left: 11px;
+    }
+
     .list-links {
-      display: none;
+        margin-right: 18px;
     }
 }
   

@@ -4,6 +4,55 @@
     width: 100%;
 }
 
+:root {
+    --image-background-colour: rgba(205, 201, 201, 0.911);
+    --hover-colour : darkgrey;
+    --image-colour: rgba(71, 71, 71, 0.783);
+}
+
 .swap-text {
     font-size: 40px;
+}
+
+.button-wrapper button {
+    border-right: 0px;
+    border-top: 0px;
+    border-bottom: 0px;
+    background-color: var(--image-background-colour);
+    border-radius: 10px;
+    border: 2px solid var(--image-background-colour);
+}
+
+.button-wrapper button:hover {
+    background-color: var(--hover-colour);
+    border: solid 2px var(--hover-colour);
+}
+
+.decline-button:hover span {
+    color: red;
+}
+
+.accept-button:hover span {
+    color: rgb(5, 255, 134);
+}
+
+.button-wrapper {
+    display: flex;
+    /* background-color: var(--image-background-colour); */
+    margin-right: 10px;
+    gap: 2px;
+}
+
+.button-wrapper span {
+    font-size: 45px;
+    padding-top: 5px;
+    color: var(--image-colour);
+    font-weight: 600;
+}
+
+@media (max-width: 990px) {
+    .button-wrapper span {
+        font-size: 35px;
+    }
+    
 }

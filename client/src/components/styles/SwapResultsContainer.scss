@@ -5,3 +5,30 @@
     margin-bottom: 25px;
   }
 }
+
+.swap-button {
+  border: 0px;
+  white-space: nowrap;
+  border-radius: 10px;
+  background-color: var(--cs-lightblue-1);
+}
+
+.swap-text {
+  font-weight: var(--font-bold-1);
+  color: var(--cs-white-1);
+  font-size: 26px;
+}
+
+.small-swap-button {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .swap-button {
+    display: none;
+  }
+
+  .small-swap-button {
+    display: block;
+  }
+}
