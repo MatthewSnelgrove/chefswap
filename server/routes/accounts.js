@@ -75,7 +75,6 @@ router.get("/", async (req, res, next) => {
           "can only order by distance if includeDistanceFrom is also specified",
       });
       return;
-
     }
   }
   if (key.distance && orderBy != "distanceAsc" && orderBy != "distanceDesc") {
@@ -248,7 +247,7 @@ router.get("/:accountUid", async (req, res, next) => {
     return;
   }
   //not authenticated with target account - return only profile data
-  const includeDistanceFrom = req.query.includeDistanceFrom;
+  const { includeDistanceFrom = {} } = req.query;
   const profileRes = camelize(
     await pool.query(`SELECT * FROM get_single_profile($1, $2, $3)`, [
       accountUid,
