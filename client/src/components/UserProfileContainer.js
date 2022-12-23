@@ -1,65 +1,77 @@
-import { React, useState, useEffect } from "react";
-import "./styles/UserProfileContainer.scss";
-import Tag from "./Tag";
-import { getUser } from "../pages/fetchFunctions";
-
-//TODO: add a client side check to see if its the actual eprson and switch message button to edit button if thats the case
+import { React } from 'react';
+import "./styles/UserProfileContainer.css";
+import Tag from './Tag';
+import ImageGallery from './ImageGallery';
+import { useUser } from "./useUser"
+import ProfilePicture from './ProfilePicture';
 
 function UserProfileContainer(props) {
-  const [LoggedUser, setLoggedUser] = useState(null);
-
+  const LoggedUser = useUser()
   const user = props.user;
+  const globalVars = global.config
+  const loading = globalVars.userStates.loading
 
-  useEffect(() => {
-    getUser(setLoggedUser);
-  }, []);
+  if (LoggedUser == loading) return (<></>)
 
-  const isUser = LoggedUser != null && LoggedUser.accountUid == user.accountUid;
+  const isUser = (LoggedUser != null && LoggedUser.accountUid == user.accountUid)
 
   function linkPage() {
-    if (LoggedUser == "N") {
-      return;
-    } else if (isUser) {
-      window.location = "http://localhost:3000/accounts/edit";
-    } else {
-      window.location = "http://localhost:3000/my-messages";
+    if (isUser) {
+      window.location = globalVars.pages.editProfile
+    }
+    else {
+      window.location = globalVars.pages.myMessages
     }
   }
 
+  function linkToEditType() {
+    window.location = globalVars.pages.editProfile
+  }
+
   return (
-    <div>
-      <div className="user-container">
-        <div className="profile_picture shift-upwards">
-          <img src={user.pfpName} alt="User profile" className="profile-img" />
-          <span>{user.username}</span>
+    <div className="user-container full-contain">
+      <div className="profile-header">
+        <div className="profile">
+          <ProfilePicture pfpLink={user.pfpLink} class="large-profile-pic border-profile" />
+          <span className="username">{user.username}</span>
         </div>
-        <button className="user-button" onClick={linkPage}>
-          <img src={isUser ? "edit.svg" : "chat.svg"}></img>
-        </button>
-        <div className="user-data shift-upwards">
-          <div class="add-tags">
-            Cuisine Preferences:{" "}
-            {user.cuisinePreferences.map((cuisine, index) => (
-              <Tag key={index} cuisine={cuisine} />
-            ))}
-          </div>
-          <div className="add-tags">
-            Cuisine Specialties:{" "}
-            {user.cuisineSpecialities.map((cuisine, index) => (
-              <Tag key={index} cuisine={cuisine} />
-            ))}
-          </div>
-          <span className="bio">{user.bio}</span>
-          <span>Image Gallery:</span>
-          <div className="gallery">
-            {user.images.map((img) => (
-              <img src={img.imageName} alt="User image" />
-            ))}
-          </div>
+        <div className="edit-button-container">
+          <span className="edit-profile-text">Edit Profile</span>
+          <button style={{fontWeight: "600"}}className="edit-button" onClick={linkPage}>
+            <img style={{width: "55px"}} src={isUser ? "edit.svg" : "chat.svg"}></img>
+          </button>
         </div>
       </div>
+      <div className="user-data">
+        <div style={{marginTop: "8px"}} class="add-tags">
+          <span className="type-text">Cuisine Preferences</span> 
+          {isUser ? <button className="type-route-button" onClick={linkToEditType}><img className="type-edit" style={{width: "25px"}} src="edit3.svg"></img></button>:<img className="type-edit" style={{width: "35px"}} src="navigate.svg"></img>} 
+          {user.cuisinePreferences.length == 0 ? <span style={{ fontStyle: "italic" }}>{isUser ? "You have no preferences" : "This user has no preferences"}</span>
+          : user.cuisinePreferences.map((cuisine, index) =>
+            <Tag key={index} cuisine={cuisine} />
+          )}
+        </div>
+        <div style={{marginTop: "8px"}} className="add-tags">
+          <span className="type-text">Cuisine Specialties</span>  
+          {isUser ? <button className="type-route-button" onClick={linkToEditType}><img className="type-edit" style={{width: "25px"}} src="edit3.svg"></img></button>:<img className="type-edit" style={{width: "35px"}} src="navigate.svg"></img>}    
+          {user.cuisineSpecialities.length == 0 ?
+          <span style={{ fontStyle: "italic" }}>{isUser ? "You have no specialties" : "This user has no specialties"}</span>
+          : user.cuisineSpecialities.map((cuisine, index) =>
+            <Tag key={index} cuisine={cuisine} />
+          )}
+        </div>
+        <span style={{marginTop: "5px"}} className="bio">{user.bio == "" ? <span style={{ fontStyle: "italic", boxShadow: "10px"  }}>{isUser ? "You have no bio" : "This user has no bio"}</span> : user.bio}</span>
+        <div style={{marginTop: "10px"}}>
+        {user.images.length == 0 ?
+          <span style={{ fontStyle: "italic" }}>{isUser ? "You have no images in your gallery" : "This user has no images"}</span>
+          : <ImageGallery images={user.images} imgStyle={{ height: "450px"}} />
+        }
+        </div>
+       
+        
+      </div>
     </div>
-  );
+  )
 }
 
 export default UserProfileContainer;

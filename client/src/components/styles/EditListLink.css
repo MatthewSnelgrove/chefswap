@@ -1,0 +1,4 @@
+#style-selected {
+    border-left: 4px solid var(--cs-orange-4);
+    background-color: white;
+}

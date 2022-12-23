@@ -1,6 +1,8 @@
-import { React, useState, useEffect } from "react";
-import { getUser, fetchSpecific } from "../pages/fetchFunctions";
-import { changeAddress, changeEmail } from "../pages/changeFunctions";
+import { React, useState, useEffect } from "react"
+import { fetchSpecific } from '../pages/fetchFunctions';
+import { changeAddress, changeEmail } from '../pages/changeFunctions';
+import { useUser } from "./useUser";
+import ProfilePicture from "./ProfilePicture";
 
 const provinces = [
   "Ontario",
@@ -17,8 +19,6 @@ const provinces = [
   "Yukon",
   "Nunavut",
 ];
-
-console.log();
 
 function manageAddress(ev) {
   const testRegex = RegExp("[a-zA-Z0-9 ]");
@@ -48,19 +48,23 @@ function manageOnlyText(ev) {
   }
 }
 
-function onSubmitAddress(e, Uid) {
-  const addressInfo = {
-    address: {
-      address1: e.target[0].value,
-      address2: e.target[1].value,
-      address3: e.target[2].value,
-      province: e.target[3].value,
-      city: e.target[4].value,
-      postalCode: e.target[5].value,
-    },
-  };
+function cleanEmptyJSON(JSON) {
+  return Object.fromEntries(Object.entries(JSON).filter((details) => details[1] != ""))
+}
 
-  changeAddress(Uid, addressInfo);
+function onSubmitAddress(e, Uid) {
+  const address = cleanEmptyJSON({
+    address1: e.target[0].value,
+    address2: e.target[1].value,
+    address3: e.target[2].value,
+    province: e.target[3].value,
+    city: e.target[4].value,
+    postalCode: e.target[5].value
+  })
+
+  console.log(address)
+
+  changeAddress(Uid, address)
 }
 
 function onSubmitEmail(ev, Uid) {
@@ -68,51 +72,41 @@ function onSubmitEmail(ev, Uid) {
 }
 
 function EditPersonal(props) {
-  const [email, setEmail] = useState(null);
-  const [address, setAddress] = useState(null);
-  const [user, setUser] = useState(null);
+  const [email, setEmail] = useState(null)
+  const [address, setAddress] = useState(null)
+
+  const user = useUser()
+  const globalVars = global.config
+  const loading = globalVars.userStates.loading
 
   useEffect(() => {
-    function getProperties(user) {
-      setUser(user);
-      fetchSpecific(user.accountUid, "email").then((email) => setEmail(email));
-      fetchSpecific(user.accountUid, "address").then((address) =>
-        setAddress(address.address)
-      );
-    }
+    if (user == loading) { return }
+    fetchSpecific(user.accountUid, "email")
+    .then((email) => setEmail(email.email))
+    fetchSpecific(user.accountUid, "address")
+    .then((address) => setAddress(address))
+  }, [user])
 
-    getUser(getProperties);
-  }, []);
+  if (user == loading || email == null || address == null) { return (<></>) }
 
-  if (email == null || address == null || user == null) {
-    return <></>;
-  }
-
-  const provinceSelect = document.querySelector(".province-select");
+  const provinceSelect = document.querySelector(".province-select")
 
   if (provinceSelect) {
-    provinceSelect.value = address.province;
+    provinceSelect.value = address.province
   }
 
   return (
     <div className="edit-container">
       <div className="edit-item" style={{ marginTop: "35px" }}>
         <div>
-          <img src={user.pfpName} className="profile-pic"></img>
+          <ProfilePicture pfpLink={user.pfpLink} />
         </div>
-        <div>
+        <div >
           <h1 style={{ marginTop: "10px", fontSize: "25px" }}>
             {user.username}
           </h1>
-          <div
-            className="info-text"
-            style={{ fontWeight: "600", marginTop: "25px" }}
-          >
-            Change Email
-          </div>
-          <div className="info-text">
-            You can change your email without changing your address
-          </div>
+          <div className="info-text" style={{ fontWeight: "600", marginTop: "25px" }}>Change Email</div>
+          <div className="info-text">You can change your email without changing your address</div>
         </div>
       </div>
       <form onSubmit={(e) => onSubmitEmail(e, user.accountUid)}>
@@ -121,28 +115,10 @@ function EditPersonal(props) {
             <label>Email</label>
           </div>
           <div>
-            <input
-              style={{ width: "100%" }}
-              type="email"
-              defaultValue={email}
-              required
-            ></input>
-            <button className="submitBtn" style={{ marginTop: "20px" }}>
-              Change Email
-            </button>
-            <div
-              className="info-text"
-              style={{
-                fontWeight: "600",
-                marginTop: "35px",
-                marginBottom: "0px",
-              }}
-            >
-              Change Address
-            </div>
-            <div className="info-text">
-              You can change your adress without changing your email
-            </div>
+            <input style={{ width: "100%" }} type="email" defaultValue={email} required></input>
+            <button className="submitBtn" style={{ marginTop: "20px" }}>Change Email</button>
+            <div className="info-text" style={{ fontWeight: "600", marginTop: "35px", marginBottom: "0px" }}>Change Address</div>
+            <div className="info-text">You can change your adress without changing your email</div>
           </div>
         </div>
       </form>
@@ -151,40 +127,21 @@ function EditPersonal(props) {
           <div>
             <label>Address1</label>
           </div>
-          <input
-            type="text"
-            defaultValue={address.address1}
-            onKeyDown={(e) => {
-              manageAddress(e);
-            }}
-            required
-          ></input>
+          <input type="text" defaultValue={address.address1} onKeyDown={(e) => { manageAddress(e) }} required></input>
         </div>
         <div className="edit-item">
           <div>
             <label>Address2</label>
           </div>
-          <input
-            type="address"
-            onKeyDown={(e) => {
-              manageAddress(e);
-            }}
-            defaultValue={address.address2 ? address.address2 : ""}
-          ></input>
+          <input type="address" onKeyDown={(e) => { manageAddress(e) }} defaultValue={address.address2 ? address.address2 : ""}></input>
         </div>
         <div className="edit-item">
           <div>
             <label>Address3</label>
           </div>
-          <input
-            type="address"
-            onKeyDown={(e) => {
-              manageAddress(e);
-            }}
-            defaultValue={address.address3 ? address.address3 : ""}
-          ></input>
+          <input type="address" onKeyDown={(e) => { manageAddress(e) }} defaultValue={address.address3 ? address.address3 : ""}></input>
         </div>
-        <div className="edit-item">
+        <div className="edit-item" >
           <div>
             <label>Province</label>
           </div>

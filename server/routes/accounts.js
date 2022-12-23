@@ -75,6 +75,7 @@ router.get("/", async (req, res, next) => {
           "can only order by distance if includeDistanceFrom is also specified",
       });
       return;
+
     }
   }
   if (key.distance && orderBy != "distanceAsc" && orderBy != "distanceDesc") {
@@ -185,8 +186,8 @@ router.post("/", async (req, res, next) => {
           case "account_email_key":
             next({
               status: 409,
-              message: "invalid email",
-              detail: "email already exists",
+              message: "Invalid email",
+              detail: "Email already exists",
             });
             return;
           default:
@@ -973,8 +974,8 @@ async function setSingleFieldInAccount(req, res, next, field) {
           case "account_email_key":
             next({
               status: 409,
-              message: "invalid email",
-              detail: "email already exists",
+              message: "Invalid email",
+              detail: "Email already exists",
             });
             return;
           default:

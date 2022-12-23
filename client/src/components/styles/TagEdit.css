@@ -10,11 +10,11 @@
     padding: 2px;
 } */
 
-.prefrence-container {
-    border: 1px solid #EBEDF0;
+.type-container {
+    border: 1px solid var(--cs-grey-1);
     width: 100%;
     height: min-content;
-    min-height: 180px;
+    min-height: 110px;
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
@@ -22,8 +22,12 @@
     padding: 3px;
 }
 
-#add-tag, .prefrence-tag {
-    background-color: lightgray;
+.type-container * {
+    font-size: 22px;
+}
+
+#add-tag {
+    background-color: var(--cs-grey-1);
     border-radius: 12px;
     width: 100%;
     height: 100%;
@@ -36,21 +40,21 @@
 }
 
 .dropdown-tag > span:not(:first-child) {
-    border-top: 1px solid #EBEDF0;
+    border-top: 1px solid var(--cs-grey-1);
 }
 
-.prefrence-tag {
+/* .type-tag {
     background-color: lightgreen;
     text-align: center;
     font-weight: 600;
     width: fit-content;
     margin-bottom: 2px;
     color: black;
-}
+} */
 
 .dropdown-tag {
     background-color: white;
-    border: 1px solid #EBEDF0;
+    border: 1px solid var(--cs-grey-1);
     border-radius: 0px 0px 10px 10px;
     position: absolute;
     z-index: 5;
@@ -62,8 +66,8 @@
 .delete-btn {
     background: none;
     border: none;
-    font-weight: 600;
-    color: black;
+    font-weight: var(--font-bold-1);
+    color: var(--cs-white-1);
 }
 
 .dropdown-hl {

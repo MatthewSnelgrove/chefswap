@@ -98,20 +98,20 @@ app.use((err, req, res, next) => {
   // console.log(err);
   const errors = err.errors
     ? err.errors.map((error) => ({
-        path: req.originalUrl,
-        message: `${error.path} not valid`,
-        detail: `${error.message}`,
-      }))
+      path: req.originalUrl,
+      message: `${error.path} not valid`,
+      detail: `${error.message}`,
+    }))
     : [
-        {
-          path: req.originalUrl,
-          message: err.message || "unknown server error",
-          detail:
-            err.detail ||
-            err.message ||
-            "request caused an unknown error on the server",
-        },
-      ];
+      {
+        path: req.originalUrl,
+        message: err.message || "unknown server error",
+        detail:
+          err.detail ||
+          err.message ||
+          "request caused an unknown error on the server",
+      },
+    ];
   res.status(err.status || 500).json(errors);
 });
 

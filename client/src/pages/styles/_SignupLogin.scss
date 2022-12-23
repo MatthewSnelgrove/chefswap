@@ -22,7 +22,7 @@
   }
 
   .submit-btn {
-    margin-top: 30px;
+    margin-top: 10px;
     width: 80%;
     padding: 10px 15px;
     border: none;
@@ -39,4 +39,9 @@
 
 #password-input-container, #confirmPassword-input-container {
   height: 70px;
+}
+
+.province-dropdown {
+  width: 88%;
+  margin-bottom: 5px;
 }

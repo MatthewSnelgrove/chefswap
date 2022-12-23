@@ -1,12 +1,13 @@
 .tag {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-    font-size: 22px;
-    display: inline-block;
-    border: 1px solid black;
-    border-radius: 16px;
-    color: green;
-    border-color: green;
-    margin-top: 6px;
-    margin-left: 12px;
-    padding: 3px;
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    padding-left: 7px;
+    padding-right: 7px;
+    background-color: var(--cs-orange-4);
+    text-align: center;
+    font-weight: 500;
+    width: fit-content;
+    margin-bottom: 2px;
+    color: white;
 }

@@ -7,6 +7,10 @@ function UserInfoPage() {
   const { id } = useParams();
 
   useEffect(() => {
+    document.title = `Chefswap | ${id}'s profile`;
+  });
+
+  useEffect(() => {
     const fetchUser = async () => {
       const response = await fetch(
         `http://localhost:3001/api/v1/accounts/?username=${id}`
@@ -22,13 +26,7 @@ function UserInfoPage() {
     fetchUser();
   }, []);
 
-  return (
-    <div>
-      <div style={{ marginTop: 100 }}>
-        {user ? <UserProfileContainer user={user} type={"non-user"} /> : ""}
-      </div>
-    </div>
-  );
+  return <>{user ? <UserProfileContainer user={user} /> : ""}</>;
 }
 
 export default UserInfoPage;

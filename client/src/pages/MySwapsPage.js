@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SwapList from "../components/SwapList";
 import MySwapSwitch from "../components/MySwapSwitch";
 import "./styles/MySwapsPage.css";
 import MessageSwapSwitch from "../components/MessageSwapSwitch";
+import OnlyLoggedIn from "../components/OnlyLoggedIn";
 
 function MySwapsPage() {
+  useEffect(() => {
+    document.title = "Chefswap | My swaps";
+  }, []);
+
   const people = [];
 
   people[0] = {
@@ -52,35 +57,37 @@ function MySwapsPage() {
   };
 
   return (
-    <div>
-      <div className="swap-container">
-        <h1 className="px-5 swap-text">Swaps</h1>
-        {/* <div >
-          <MySwapSwitch hl={"swaps"} />
-        </div> */}
-      </div>
+    <OnlyLoggedIn>
+      <div style={{ paddingTop: "90px" }}>
+        <div className="swap-container">
+          <h1 className="px-5 swap-text">Swaps</h1>
+          {/* <div >
+            <MySwapSwitch hl={"swaps"} />
+          </div> */}
+        </div>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "20px",
-          justifyContent: "center",
-          marginTop: "33px",
-        }}
-      >
-        <MessageSwapSwitch current={0} />
-        <div>
-          <SwapList data={people} type={"Pending"} />
-        </div>
-        <div>
-          <SwapList data={people} type={"Ongoing"} />
-        </div>
-        <div>
-          <SwapList data={people} type={"Past"} />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
+            justifyContent: "center",
+            marginTop: "33px",
+          }}
+        >
+          <MessageSwapSwitch current={0} />
+          <div>
+            <SwapList data={people} type={"Pending"} />
+          </div>
+          <div>
+            <SwapList data={people} type={"Ongoing"} />
+          </div>
+          <div>
+            <SwapList data={people} type={"Past"} />
+          </div>
         </div>
       </div>
-    </div>
+    </OnlyLoggedIn>
   );
 }
 

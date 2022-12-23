@@ -5,21 +5,14 @@ export async function fetchLogin(password, username) {
     method: "POST",
     mode: "cors",
     body: JSON.stringify({
-      password: password,
       username: username,
+      password: password
     }),
-    credentials: "include",
     headers: { "Content-Type": "application/json" },
-  });
+    credentials: "include"
+  })
 
-  if (!response.ok) {
-    console.log("Failed to get user");
-    return response.status;
-  }
-
-  const json = await response.json();
-
-  return json;
+  return response;
 }
 
 export async function fetchUserFromUid(Uid) {
@@ -50,8 +43,10 @@ export function getUser(userfunc) {
   });
 
   userPromise.then((user) => {
-    if (user === 404 || user == 405) {
-      userfunc("N");
+
+    if (user === 404) {
+      console.log("Returning N for user")
+      userfunc("N")
       return;
     }
 
@@ -71,16 +66,14 @@ export async function signupUser(userObj) {
   });
 
   if (!response.ok) {
-    return response.status;
+    return response;
   }
 
-  fetchLogin(userObj.password, userObj.username).then((user) => {
-    if (user == 401) {
-      return;
-    }
-
-    window.location = homepage;
-  });
+  console.log("created user")
+  fetchLogin(userObj.password, userObj.profile.username).then((user) => {
+    console.log(user)
+    window.location = homepage
+  })
 }
 
 export async function signoutUser() {
@@ -95,7 +88,8 @@ export async function signoutUser() {
   }
 }
 
-async function fetchUser() {
+export async function fetchUser() {
+
   const response = await fetch(`http://localhost:3001/api/v1/session`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -103,7 +97,7 @@ async function fetchUser() {
   });
 
   if (!response.ok) {
-    return response.status;
+    return response;
   }
 
   const json = await response.json();

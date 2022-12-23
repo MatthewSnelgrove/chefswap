@@ -1,100 +1,95 @@
 import { React, useEffect, useState } from "react";
 import "./styles/EditGallery.css";
-import { getUser } from "../pages/fetchFunctions";
-import { addNewPhoto, deletePhoto } from "../pages/changeFunctions";
+import { addNewPhoto, deletePhoto } from "../pages/changeFunctions"
+import { useUser } from "./useUser";
+
+const imgLength = "200px"
 
 function EditGallery() {
-  const [images, setImages] = useState(null);
-  const [uid, setUid] = useState(null);
+  const [images, setImages] = useState([])
+  const [deleteImg, setDeleteImg] = useState(null)
+  const user = useUser()
+  const globalVars = global.config
+  const loading = globalVars.userStates.loading
+  const GalleryLink = globalVars.pages.editGallery
 
   useEffect(() => {
-    function setProperties(user) {
-      // const imgLinks = user.images.map((img) => {
-      //     return img.imageLink
-      // })
-      setUid(user.accountUid);
-      setImages({ images: [...user.images] });
-    }
+    if (user == loading) { return }
+    setImages([...user.images])
+  }, [user])
 
-    getUser(setProperties);
-  }, []);
-
-  if (images == null || uid == null) return <></>;
+  if (user == loading) return (<></>)
 
   return (
     <div className="gallery-container">
       <div className="header">
         <span style={{ fontWeight: 600, fontSize: "22px" }}>Gallery</span>
         <form id="image-form">
-          <label
-            className="addBtn"
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-          >
+          <label className="addBtn" onSubmit={(e) => { e.preventDefault() }}>
             Upload new Photo
-            <input
-              type="file"
-              id="file"
-              accept="image/png, image/jpeg"
-              onChange={(e) => {
-                if (e.target.value == "") {
-                  return;
-                }
-                const formData = new FormData();
-                formData.append("file", e.target.files[0]);
-                addNewPhoto(
-                  uid,
-                  formData,
-                  "http://localhost:3000/accounts/gallery"
-                );
-              }}
-              style={{ display: "none" }}
-            />
+            <input type="file" id="file" accept="image/png, image/jpeg" onChange={(e) => {
+              if (e.target.value == "") { return }
+              const formData = new FormData
+              formData.append("image", e.target.files[0])
+              addNewPhoto(user.accountUid, formData, GalleryLink)
+            }} style={{ display: "none" }} />
           </label>
         </form>
       </div>
-      <div className="profile-img-container">
-        {" "}
-        {images.images.map((imgJSON, index) => (
-          <GalleryImg
-            key={index}
-            imgJSON={imgJSON}
-            images={images}
-            setImages={setImages}
-          />
-        ))}
+      <div className="profile-img-container"> {images.map((imgJSON, index) =>
+        <GalleryImg key={index} imgJSON={imgJSON} images={images} setDeleteImg={setDeleteImg} setImages={setImages} />
+      )}
       </div>
+      <ConfirmModal setImages={setImages} deleteImg={deleteImg}/>
     </div>
-  );
+
+  )
 }
 
 function GalleryImg(props) {
   return (
-    <div style={{ width: "130px", height: "130px", position: "relative" }}>
-      <img
-        src={props.imgJSON.imageLink}
-        style={{ width: "130px", height: "130px" }}
-      ></img>
+    <div style={{ width: imgLength, height: imgLength, position: "relative" }}>
+      <img src={props.imgJSON.imageLink} style={{ width: imgLength, height: imgLength }}></img>
       <a className="drag-button"></a>
-      <button
-        onClick={(e) => deleteImg(props.imgJSON, props.images, props.setImages)}
-        className="delete-button"
-      >
+      <button data-bs-toggle="modal" type="button" data-bs-target="#ConfirmModal"
+        onClick={(e) => {
+          props.setDeleteImg({ accountUid: props.imgJSON.accountUid, imageUid: props.imgJSON.imageUid })
+        }}
+        className="delete-button">
         <img src="../remove.PNG"></img>
       </button>
     </div>
-  );
+  )
 }
 
-function deleteImg(imgJSON, images, setImages) {
-  deletePhoto(imgJSON.accountUid, imgJSON.imageUid);
+function ConfirmModal(props) {
+  return (
+    <div class="portfolio-modal modal fade" id="ConfirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Confirm Delete Image</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">Are you sure you want to delete this image?</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onClick={(e) => deleteImg(props.setImages, props.deleteImg)}>Confirm</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
-  var filtered = images.images.filter(function (curImage) {
-    return curImage.imageUid != imgJSON.imageUid;
-  });
 
-  setImages({ images: [...filtered] });
+function deleteImg(setImages, deleteImg) {
+  deletePhoto(deleteImg.accountUid, deleteImg.imageUid)
+  setImages((curImages) => curImages.filter((curImage) => {
+    return curImage.imageUid != deleteImg.imageUid
+  }))
 }
 
 // async function getNewImages(images, setImages) {

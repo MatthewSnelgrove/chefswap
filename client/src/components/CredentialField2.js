@@ -8,9 +8,11 @@ import "./styles/CredentialField.scss";
  * @param {String} label Label name for input field (starting with upper case)
  * @param {String} id Id and name value
  * @param {Function} onChange Function to handle input change
- * @param {Function} onBlur Function to handle input blur
+ * @param {Function} onBlur Function to handle input blur (signup only)
+ * @param {Function} onFocus Function to handle input focus (login only)
  * @param {Boolean} clicked Whether input has been focused or not
- * @param {Object} error Error object from validateFunctions.js
+ * @param {Object} error Error object from validateFunctions.js (NON-NULL)
+ * @param {Boolean} required Required tag for inputs
  */
 function CredentialField2({
   type = "text",
@@ -19,20 +21,24 @@ function CredentialField2({
   size,
   value,
   onChange,
-  onBlur,
+  onBlur = () => { },
+  onFocus = () => { },
   clicked,
   error,
+  required = false,
 }) {
   // Logic for handling error message styles
   let fieldBorder = "3px solid gray";
   let errorVisibility = "hidden";
 
-  if (error?.error) {
-    fieldBorder = "3px solid red";
-    errorVisibility = "visible";
-  }
-  if (error?.error === false) {
-    fieldBorder = "3px solid green";
+  if (clicked) {
+    if (error.error) {
+      fieldBorder = "3px solid red";
+      errorVisibility = "visible";
+    }
+    if (!error.error) {
+      fieldBorder = "3px solid green";
+    }
   }
 
   // Functions for animating label up and down
@@ -51,6 +57,9 @@ function CredentialField2({
   // Animate label up when focused
   function handleFocus() {
     animateLabelUp();
+
+    // Set focused state in login page ONLY
+    onFocus(id);
   }
 
   // Passing typed value back to FormContainer
@@ -73,9 +82,6 @@ function CredentialField2({
     onBlur(id);
   }
 
-  // Remove * from beginning if focused
-  let labelText = clicked ? label.replace("*", "") : label;
-
   return (
     <div
       className="form-input-container"
@@ -83,7 +89,7 @@ function CredentialField2({
       style={{ width: `${size}%` }}
     >
       <input
-        autoComplete="off"
+        autoComplete="none"
         type={type}
         id={id}
         name={id}
@@ -92,9 +98,12 @@ function CredentialField2({
         onFocus={handleFocus}
         onBlur={handleBlur}
         style={{ borderBottom: fieldBorder }}
-      />
-      <label htmlFor={id} className="input-label" id={id + "-label"}>
-        {labelText}
+        required={required} />
+      <label
+        htmlFor={id}
+        className="input-label"
+        id={id + "-label"}>
+        {label}
       </label>
 
       <div
