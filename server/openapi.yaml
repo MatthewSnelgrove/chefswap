@@ -171,6 +171,27 @@ paths:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
     get:
+      parameters:
+        - in: query
+          name: includeDistanceFrom
+          description: The distance from the specified latitude+longitude to centre of each account's circle will be added to response body. Both latitude and longitude must be specified.
+          explode: true
+          style: deepObject
+          schema: #if includeDistance exists, it must have both latitude and longitude
+            oneOf:
+              - type: object
+                additionalProperties: false
+                required:
+                  - latitude
+                  - longitude
+                properties:
+                  latitude:
+                    $ref: "#/components/schemas/Latitude"
+                  longitude:
+                    $ref: "#/components/schemas/Longitude"
+              - type: object #workaround to have optional param with required fields
+                nullable: true
+                additionalProperties: false
       summary: Read an account. If signed in, response contains all account data. Otherwise, response only contains profile data.
       responses:
         200:
@@ -881,6 +902,15 @@ paths:
                   time:
                     type: integer
                     format: int64
+        - in: query
+          name: limit
+          description: Response will include up to limit swaps.
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 1000
+            default: 20
       responses:
         200:
           description: The swaps of the account corresponding to the provided uid matching status set in optional query param status.
@@ -981,7 +1011,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /api/v1/swaps/{accountUid}/{swapperUid}/{requestTimestamp}/{status}:
+  /api/v1/swaps/{accountUid}/{swapperUid}/{requestTimestamp}/status:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
       - name: swapperUid
@@ -998,15 +1028,19 @@ paths:
         schema:
           type: string
           format: date-time
-      - name: status
-        description: The status of a swap (pending, ongoing, ended).
-        in: path
-        required: true
-        schema:
-          $ref: "#/components/schemas/SwapStatus"
     put:
       summary: Change the status of a swap. Must be signed in with one of the specified accounts and status must correspond with future status.
       description: Can be set to ongoing if currently pending signed in as account that did no request. Can be set to ended currently ongoing and signed in with either account.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: "#/components/schemas/SwapStatus"
       responses:
         200:
           description: The new status of the swap.

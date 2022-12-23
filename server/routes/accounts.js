@@ -40,235 +40,96 @@ import stripNulls from "../utils/stripNulls.js";
 router.get("/", async (req, res, next) => {
   const {
     username,
-    includeDistanceFrom,
+    includeDistanceFrom = {},
     maxDistance,
     minRating,
     maxRating,
-    cuisinePreference,
-    cuisineSpeciality,
+    cuisinePreferences,
+    cuisineSpecialities,
     orderBy,
     key = {
       accountUid: "00000000-0000-0000-0000-000000000000",
     },
     limit = 20,
   } = req.query;
-  const queryString = accountProfileQuery(includeDistanceFrom);
-  let filterString = ``;
-  let numParams = includeDistanceFrom ? 2 : 0;
-  let paramArray = [];
-  if (includeDistanceFrom) {
-    paramArray.push(
-      includeDistanceFrom.longitude,
-      includeDistanceFrom.latitude
-    );
-  }
-
-  //filter by username
-  if (username) {
-    numParams++;
-    filterString += filterString
-      ? ` AND username = $${numParams} `
-      : ` WHERE username = $${numParams} `;
-    paramArray.push(username);
-  }
-  //must also have 'includeDistanceFrom' query param
-  //filter by distance from location specified in 'includeDistannceFrom' to centre of accounts' circles
-  if (maxDistance) {
-    if (!includeDistanceFrom) {
+  //validation too complicated for openapi spec
+  if (
+    //includeDistanceFrom.lat/lng will only be valid numbers or undefined due to openapi validation
+    includeDistanceFrom.latitude === undefined ||
+    includeDistanceFrom.longitude === undefined
+  ) {
+    if (maxDistance) {
       next({
         status: 400,
         message: "invalid query params",
         detail:
           "maxDistance is only valid if includeDistanceFrom is also specified",
       });
+      return;
     }
-    numParams++;
-    filterString += filterString
-      ? ` AND distance <= $${numParams} `
-      : ` WHERE distance <= $${numParams} `;
-    paramArray.push(maxDistance);
-  }
-  if (minRating) {
-    numParams++;
-    filterString += filterString
-      ? ` AND account.avg_rating >= $${numParams} `
-      : ` WHERE account.avg_rating >= $${numParams} `;
-    paramArray.push(minRating);
-  }
-  if (maxRating) {
-    numParams++;
-    filterString += filterString
-      ? ` AND account.avg_rating <= $${numParams} `
-      : ` WHERE account.avg_rating <= $${numParams} `;
-    paramArray.push(maxRating);
-  }
-  if (cuisinePreference) {
-    filterString += filterString ? " AND (" : " WHERE (";
-    //flag to add "OR" if more than one preference
-    let flag = false;
-    for (const preference of cuisinePreference) {
-      numParams++;
-      filterString += flag
-        ? ` OR (temp_preference_table.preferences)::jsonb ? $${numParams} `
-        : ` (temp_preference_table.preferences)::jsonb ? $${numParams} `;
-      paramArray.push(preference);
-      flag = true;
-    }
-    filterString += ")";
-  }
-  if (cuisineSpeciality) {
-    filterString += filterString ? " AND (" : " WHERE (";
-    //flag to add "OR" if more than one speciality
-    let flag = false;
-    for (const speciality of cuisineSpeciality) {
-      numParams++;
-      filterString += flag
-        ? ` OR (temp_speciality_table.specialities)::jsonb ? $${numParams} `
-        : ` (temp_speciality_table.specialities)::jsonb ? $${numParams} `;
-      paramArray.push(speciality);
-      flag = true;
-    }
-    filterString += ")";
-  }
-  if (key) {
-    if (key.distance) {
-      switch (orderBy) {
-        case "distanceAsc":
-          numParams += 2;
-          paramArray.push(key.distance, key.accountUid);
-          filterString += filterString
-            ? ` AND (distance > $${numParams - 1} OR (distance = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`
-            : ` WHERE (distance > $${numParams - 1} OR (distance = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`;
-        case "distanceDesc":
-          numParams += 2;
-          paramArray.push(key.distance, key.accountUid);
-          filterString += filterString
-            ? ` AND (distance < $${numParams - 1} OR (distance = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`
-            : ` WHERE (distance < $${numParams - 1} OR (distance = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`;
-        default:
-          next({
-            status: 400,
-            message: "invalid query params",
-            detail: `query param orderBy must equal 'distanceAsc' or 'distanceDesc to paginate by distance`,
-          });
-          return;
-      }
-    } else if (key.avgRating) {
-      switch (orderBy) {
-        case "avgRatingAsc":
-          numParams += 2;
-          paramArray.push(key.rating, key.accountUid);
-          filterString += filterString
-            ? ` AND (avg_rating > $${numParams - 1} OR (avg_rating = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`
-            : ` WHERE (avg_rating > $${numParams - 1} OR (avg_rating = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`;
-        case "avgRatingDesc":
-          numParams += 2;
-          paramArray.push(key.rating, key.accountUid);
-          filterString += filterString
-            ? ` AND (avg_rating < $${numParams - 1} OR (avg_rating = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`
-            : ` WHERE (avg_rating < $${numParams - 1} OR (avg_rating = $${
-                numParams - 1
-              } AND account_uid > $${numParams}))`;
-        default:
-          next({
-            status: 400,
-            message: "invalid query params",
-            detail: `query param orderBy must equal 'avgRatingAsc' or 'avgRatingDesc' to paginate by avgRating`,
-          });
-          return;
-      }
-    }
-    //key only has account_uid (will always exists defaults to min uuid if not specified)
-    else {
-      numParams++;
-      paramArray.push(key.accountUid);
-      filterString += filterString
-        ? ` AND account_uid > $${numParams}`
-        : `WHERE account_uid > $${numParams}`;
+    if (orderBy === "distanceAsc" || orderBy === "distanceDesc") {
+      next({
+        status: 400,
+        message: "invalid query params",
+        detail:
+          "can only order by distance if includeDistanceFrom is also specified",
+      });
+      return;
     }
   }
-  // console.log(queryString, filterString, paramArray);
-  let orderString = "";
-  switch (orderBy) {
-    case "avgRatingAsc":
-      orderString = ` ORDER BY account.avg_rating, account.account_uid `;
-      break;
-    case "avgRatingDesc":
-      orderString = ` ORDER BY account.avg_rating DESC, account.account_uid `;
-      break;
-    case "distanceAsc":
-      //query must have includeDistanceFrom query param to order by distance
-      if (includeDistanceFrom) {
-        orderString = ` ORDER BY distance.distance, account.account_uid`;
-        break;
-      } else {
-        next({
-          status: 400,
-          message: "invalid query params",
-          detail:
-            "query params includeDistanceFrom[latitude] and includeDistanceFrom[longitude] are required to order by distance",
-        });
-        return;
-      }
-    case "distanceDesc":
-      //query must have includeDistanceFrom query param to order by distance
-      if (includeDistanceFrom) {
-        orderString = ` ORDER BY distance.distance DESC, account.account_uid`;
-        break;
-      } else {
-        next({
-          status: 400,
-          message: "invalid query params",
-          detail:
-            "query params includeDistanceFrom[latitude] and includeDistanceFrom[longitude] are required to order by distance",
-        });
-        return;
-      }
-    default:
-      orderString = ` ORDER BY account.account_uid`;
+  if (key.distance && orderBy != "distanceAsc" && orderBy != "distanceDesc") {
+    next({
+      status: 400,
+      message: "invalid query params",
+      detail: `query param orderBy must equal 'distanceAsc' or 'distanceDesc to paginate by distance`,
+    });
+    return;
   }
-  numParams++;
-  paramArray.push(limit);
-  // console.log(
-  //   `${queryString} ${filterString} ${orderString} LIMIT $${numParams}`,
-  //   paramArray
-  // );
-  const accounts = camelize(
+  if (
+    key.avgRating &&
+    orderBy != "avgRatingAsc" &&
+    orderBy != "avgRatingDesc"
+  ) {
+    next({
+      status: 400,
+      message: "invalid query params",
+      detail: `query param orderBy must equal 'avgRatingAsc' or 'avgRatingDesc to paginate by avgRating`,
+    });
+    return;
+  }
+
+  const profiles = camelize(
     await pool.query(
-      `${queryString} ${filterString} ${orderString} LIMIT $${numParams}`,
-      paramArray
+      `SELECT get_profiles($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) AS profile`,
+      [
+        username,
+        includeDistanceFrom.latitude,
+        includeDistanceFrom.longitude,
+        maxDistance,
+        minRating,
+        maxRating,
+        cuisinePreferences,
+        cuisineSpecialities,
+        orderBy,
+        key.accountUid,
+        key.distance,
+        key.avgRating,
+        limit,
+      ]
     )
   ).rows;
-  // console.log(accounts);
-  res.status(200).json(accounts);
+  res.json(profiles);
+  return;
 });
 
 /**
  * DOES NOT LOG NEW USER IN
  * expects username, email, password, and address fields in req
  * address should have fields address1, city, province, postalCode, and optional fields address2, address3
- * validates data
- * if valid, creates account and creates session for user
- * if invalid, sets field invalidFIELD to true where FIELD is username, password, email, address1,
- * city, province, or postalCode. also sets usernameTaken and emailTaken to true if username/email taken
  */
 router.post("/", async (req, res, next) => {
   const { profile, email, password, address } = req.body;
-  const { username, bio = "", circle } = profile;
+  const { username, circle } = profile;
   const radius = circle.radius;
   const { address1, address2, address3, city, province, postalCode } = address;
   const gmapsUrl = addressToGmapsUrl(address);
@@ -305,25 +166,18 @@ router.post("/", async (req, res, next) => {
       [circleCentre.latitude, circleCentre.longitude, radius]
     )
   ).rows[0];
-  const allAccountsRes = camelize(
+  const accountRes = camelize(
     await pool
       .query(
-        `INSERT INTO account (username, bio, circle_uid, email, passhash, address_uid)
-          VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-        [
-          username,
-          bio,
-          circleRes.circleUid,
-          email,
-          passhash,
-          addressRes.addressUid,
-        ]
+        `INSERT INTO account (username, circle_uid, email, passhash, address_uid)
+          VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+        [username, circleRes.circleUid, email, passhash, addressRes.addressUid]
       )
       .catch((e) => {
         switch (e.constraint) {
           case "account_username_key":
             next({
-              staus: 409,
+              status: 409,
               message: "invalid username",
               detail: "username already exists",
             });
@@ -336,6 +190,7 @@ router.post("/", async (req, res, next) => {
             });
             return;
           default:
+            console.log(e);
             next({});
             return;
         }
@@ -345,71 +200,67 @@ router.post("/", async (req, res, next) => {
   delete addressRes.addressUid;
   delete circleRes.circleUid;
   stripNulls(addressRes, ["address2", "address3"]);
-  const accountRes = allAccountsRes ? allAccountsRes.rows[0] : null;
-  if (accountRes) {
-    await pool.query("COMMIT");
-    const resBody = {
-      profile: {
-        accountUid: accountRes.accountUid,
-        username: accountRes.username,
-        createTime: accountRes.createTime,
-        updateTime: accountRes.updateTime,
-        bio: accountRes.bio,
-        numRatings: accountRes.numRatings,
-        circle: circleRes,
-        images: [],
-        cuisinePreferences: [],
-        cuisineSpecialities: [],
-      },
-      email: accountRes.email,
-      address: addressRes,
-    };
-    console.log(resBody);
-    res.status(201).json(resBody);
+  //DB error caught above - end function
+  if (!accountRes) {
     return;
   }
-  //should not happen
-  next({});
+  const account = accountRes.rows[0];
+  await pool.query("COMMIT");
+  const resBody = {
+    profile: {
+      accountUid: account.accountUid,
+      username: account.username,
+      createTime: account.createTime,
+      updateTime: account.updateTime,
+      bio: account.bio,
+      numRatings: account.numRatings,
+      circle: circleRes,
+      images: [],
+      cuisinePreferences: [],
+      cuisineSpecialities: [],
+    },
+    email: account.email,
+    address: addressRes,
+  };
+  console.log(resBody);
+  res.status(201).json(resBody);
+  return;
 });
 
 /**
- * if signed authenticated with requested account, return all data about account
+ * if authenticated with requested account, return all account data
  * otherwise, return only profile data
  */
 router.get("/:accountUid", async (req, res, next) => {
   const accountUid = req.params.accountUid;
-  const includeDistanceFrom = req.query.includeDistanceFrom;
-  //return all data
-  if (req.session.accountUid === accountUid) {
-    const account = camelize(
-      await pool.query(
-        `${accountQuery(includeDistanceFrom)} WHERE account.account_uid=$1`,
-        [accountUid]
-      )
+  //authenticated with target account - return all account data
+  if (accountUid === req.session.accountUid) {
+    const accountRes = camelize(
+      await pool.query(`SELECT * FROM get_single_account($1)`, [accountUid])
     ).rows[0];
-    //no account matching accountUid
-    if (!account) {
+    //could happen if account deleted but record still in session table
+    if (!accountRes) {
       next(accountNotFound);
       return;
     }
-    res.status(200).json(account);
-  } else {
-    //return only profile data
-    const account = camelize(
-      await pool.query(
-        `${accountProfileQuery(
-          includeDistanceFrom
-        )} WHERE account.account_uid=$1`,
-        [accountUid]
-      )
-    ).rows[0];
-    //no account that accountUid
-    if (!account) {
-      next(accountNotFound);
-      return;
-    }
-    res.status(200).json(account);
+    res.json(accountRes);
+    return;
   }
+  //not authenticated with target account - return only profile data
+  const includeDistanceFrom = req.query.includeDistanceFrom;
+  const profileRes = camelize(
+    await pool.query(`SELECT * FROM get_single_profile($1, $2, $3)`, [
+      accountUid,
+      includeDistanceFrom.latitude,
+      includeDistanceFrom.longitude,
+    ])
+  ).rows[0];
+  if (!profileRes) {
+    next(accountNotFound);
+    return;
+  }
+  res.json(profileRes);
+  return;
 });
 
 /**
@@ -865,14 +716,14 @@ router.post(
           switch (e.constraint) {
             case "user_cuisine_preference_pkey":
               next({
-                staus: 409,
+                status: 409,
                 message: "preference already set",
                 detail: "account already has specified cuisine preference",
               });
               return;
             case "cuisine_preference_preference_num_check":
               next({
-                staus: 409,
+                status: 409,
                 message: "max cuisine preferences",
                 detail: "maximum number of cuisine preferences already reached",
               });
@@ -986,14 +837,14 @@ router.post(
           switch (e.constraint) {
             case "user_cuisine_speciality_pkey":
               next({
-                staus: 409,
+                status: 409,
                 message: "speciality already set",
                 detail: "account already has specified cuisine speciality",
               });
               return;
             case "cuisine_speciality_speciality_num_check":
               next({
-                staus: 409,
+                status: 409,
                 message: "max cuisine specialities",
                 detail:
                   "maximum number of cuisine specialities already reached",
@@ -1114,7 +965,7 @@ async function setSingleFieldInAccount(req, res, next, field) {
         switch (e.constraint) {
           case "account_username_key":
             next({
-              staus: 409,
+              status: 409,
               message: "invalid username",
               detail: "username already exists",
             });
@@ -1152,66 +1003,3 @@ function generateCircleCentre(latitude, longitude, radius) {
     Math.random() * 360
   );
 }
-
-// /**
-//  * replaces accountUid with slug adds and formats images, cuisine spec/pref, addressUid with slug
-//  * if part of account, circleUid to slug, sets circle to null if fields don't exist
-//  */
-// async function formatAccountData(account) {
-//   //replace accountUid with slug
-//   const accountUid = account.profile.accountUid;
-//   delete account.profile.accountUid;
-//   account.profile.accountSlug = slugid.encode(accountUid);
-//   //generate gcs link from file name
-//   if (account.profile.pfpName) {
-//     account.profile.pfpLink = generateImageLink(account.profile.pfpName);
-//     delete account.profile.pfpLink;
-//   }
-//   const images = camelize(
-//     await pool.query(
-//       `SELECT *
-//         FROM image
-//         WHERE account_uid=$1`,
-//       [accountUid]
-//     )
-//   ).rows;
-//   //replace imageName with imageLink and imageUid with slug
-//   Object.keys(images).forEach((key) => {
-//     images[key].imageLink = generateImageLink(images[key].imageName);
-//     delete images[key].imageName;
-//     images[key].imageSlug = slugid.encode(images[key].imageUid);
-//     delete images[key].imageUid;
-//   });
-//   account.profile.images = images;
-//   if (!account.profile.circle.circleUid) {
-//     account.profile.circle = null;
-//   } else {
-//     account.profile.circle.circleSlug = slugid.encode(
-//       account.profile.circle.circleUid
-//     );
-//     delete account.profile.circle.circleUid;
-//   }
-//   const cuisinePreferences = camelize(
-//     await pool.query(
-//       `SELECT preference
-//         FROM cuisine_preference
-//         WHERE account_uid=$1`,
-//       [accountUid]
-//     )
-//   ).rows.map((pref) => pref.preference);
-//   const cuisineSpecialities = camelize(
-//     await pool.query(
-//       `SELECT speciality
-//         FROM cuisine_speciality
-//         WHERE account_uid=$1`,
-//       [accountUid]
-//     )
-//   ).rows.map((spec) => spec.speciality);
-//   account.profile.cuisinePreferences = cuisinePreferences;
-//   account.profile.cuisineSpecialities = cuisineSpecialities;
-//   if (account.address) {
-//     const addressUid = account.address.addressUid;
-//     account.address.slug = slugid.encode(addressUid);
-//     delete account.address.addressUid;
-//   }
-// }
