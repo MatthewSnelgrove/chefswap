@@ -357,6 +357,7 @@ router.put("/:accountUid/address", checkAuth, async (req, res, next) => {
   const { address1, address2, address3, city, province, postalCode } = req.body;
   const gmapsRes = await fetch(addressToGmapsUrl(req.body));
   const location = (await gmapsRes.json()).results[0].geometry.location;
+  await pool.query(`BEGIN`);
   const address = camelize(
     await pool.query(
       `UPDATE address 
@@ -389,6 +390,34 @@ router.put("/:accountUid/address", checkAuth, async (req, res, next) => {
     next(accountNotFound);
     return;
   }
+  //get current circle
+  const currentCircle = camelize(
+    await pool.query(
+      `SELECT radius, circle_uid FROM circle
+      JOIN account USING (circle_uid)
+      WHERE account_uid=$1 `,
+      [accountUid]
+    )
+  ).rows[0];
+  const radius = currentCircle.radius;
+  const circleUid = currentCircle.circleUid;
+  //generate new circle centre
+  const circleCentre = generateCircleCentre(
+    address.latitude,
+    address.longitude,
+    radius
+  );
+  //update circle. don't change radius
+  const circle = camelize(
+    await pool.query(
+      `UPDATE circle 
+        SET latitude=$1, longitude=$2
+        WHERE circle_uid=$3
+        RETURNING *`,
+      [circleCentre.latitude, circleCentre.longitude, circleUid]
+    )
+  ).rows[0];
+  await pool.query(`COMMIT`);
   //Don't want to include addressUid or null addressLines in response
   delete address.addressUid;
   stripNulls(address, ["address2", "address3"]);
