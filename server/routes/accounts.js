@@ -46,6 +46,7 @@ router.get("/", async (req, res, next) => {
     maxRating,
     cuisinePreferences,
     cuisineSpecialities,
+    matchableWith,
     orderBy,
     key = {
       accountUid: "00000000-0000-0000-0000-000000000000",
@@ -100,7 +101,7 @@ router.get("/", async (req, res, next) => {
 
   const profiles = camelize(
     await pool.query(
-      `SELECT get_profiles($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) AS profile`,
+      `SELECT get_profiles($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) AS profile`,
       [
         username,
         includeDistanceFrom.latitude,
@@ -110,6 +111,7 @@ router.get("/", async (req, res, next) => {
         maxRating,
         cuisinePreferences,
         cuisineSpecialities,
+        matchableWith,
         orderBy,
         key.accountUid,
         key.distance,
