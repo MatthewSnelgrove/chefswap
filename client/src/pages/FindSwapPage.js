@@ -10,11 +10,10 @@ import { getAllUsers, fetchSpecific } from "../utils/fetchFunctions";
 // avg_rating: user.profile.avgRating
 function filterForDisplay(users) {
   return users.map((user) => {
-  
     return {
       avg_rating: 3,
       cuisineSpecialities: user.profile.cuisineSpecialities,
-      distance: (1283 / 1000).toFixed(1),
+      distance: (user.profile.distance / 1000).toFixed(1),
       pfpLink: user.profile.pfpLink,
       username: user.profile.username,
       accountUid: user.profile.accountUid
@@ -34,6 +33,7 @@ export default function FindSwapPage(props) {
   const [rating, setRating] = useState(1);
   const [distance, setDistance] = useState(100);
   const [users, setUsers] = useState([]);
+  const [userAddress, setUserAddress] = useState(null);
 
   useEffect(() => {
     document.title = "Chefswap | Find swaps";
@@ -42,11 +42,12 @@ export default function FindSwapPage(props) {
   useEffect(() => {
     if (user == loading) {return}
     fetchSpecific(user.accountUid, "address").then((address) => {
-      getAllUsers(address.latitude, address.longitude, setUsers)
+      setUserAddress(address)
+      getAllUsers(address.latitude, address.longitude, user.accountUid, null, setUsers)
     })
   }, [user])
 
-  if (user == loading ){ return (<></>) }
+  if (user == loading){ return (<></>) }
 
   function handleTypedChange(cuisineText) {
     setCuisineTyped(cuisineText);
@@ -69,14 +70,17 @@ export default function FindSwapPage(props) {
     }
 
     setCuisineChecked(newCuisineCheckedList);
+    getAllUsers(userAddress.latitude, userAddress.longitude, user.accountUid, `&cuisineSpeciality=${newCuisineCheckedList}`, setUsers)
   }
 
   function handleRatingChange(minRating) {
     setRating(minRating);
+    getAllUsers(userAddress.latitude, userAddress.longitude, user.accountUid, `&minRating=${minRating}`, setUsers)
   }
 
   function handleDistanceChange(maxDist) {
     setDistance(maxDist);
+    getAllUsers(userAddress.latitude, userAddress.longitude, user.accountUid, `&maxDistance=${maxDist * 1000}`, setUsers)
   }
 
   return (
@@ -98,6 +102,7 @@ export default function FindSwapPage(props) {
             rating={rating}
             distance={distance}
             users={filterForDisplay(users)}
+            setUsers={setUsers}
             user={user}
           />
         </div>

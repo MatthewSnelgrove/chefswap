@@ -150,8 +150,8 @@ export async function newSwapRequest(accountUid, requesteeUid) {
   .catch((reason) => console.log(reason));
 }
 
-export async function changeSwapStatus(accountUid, swapperUid, requestTimestamp, newStatus) {
-  await fetch(`http://localhost:3001/api/v1/swaps/${accountUid}/${swapperUid}/${requestTimestamp}/status`, {
+export async function changeSwapStatus(accountUid, requesteeUid, requestTimestamp, newStatus) {
+  await fetch(`http://localhost:3001/api/v1/swaps/${accountUid}/${requesteeUid}/${requestTimestamp}/status`, {
     method: "PUT",
     body: JSON.stringify({ status: newStatus }),
     credentials: "include",

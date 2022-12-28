@@ -19,9 +19,9 @@ export default class SwapResultsContainer extends Component {
     const cuisineChecked = this.props.cuisineChecked;
     const minRating = this.props.rating;
     const maxDist = this.props.distance;
+    const setUsers = this.props.setUsers;
     let users = this.props.users;
-
-
+    
     // Returns if subarr is subarray of arr
     const isSubArray = (arr, subarr) => {
       let isSub = true;
@@ -113,12 +113,12 @@ export default class SwapResultsContainer extends Component {
         finalColJsx={
           <>
             <button style={{border: "0px"}} onClick={(e) => {
-              this.createNewSwapRequest(this.props.user, user.accountUid)
+              this.createNewSwapRequest(this.props.user, user.accountUid, setUsers)
             }}>
               <img className="small-swap-button" src="./swap.svg" style={{height: "80px"}}></img>
             </button>
             <button className="swap-button" onClick={(e) => {
-              this.createNewSwapRequest(this.props.user, user.accountUid)
+              this.createNewSwapRequest(this.props.user, user.accountUid, setUsers)
             }}>
               <span className="swap-text">Send Swap Request</span>
             </button>
@@ -130,8 +130,9 @@ export default class SwapResultsContainer extends Component {
     return <div className="swap-results-container">{exUserJSX}</div>;
   }
 
-  createNewSwapRequest(user, requesteeUid) {
+  createNewSwapRequest(user, requesteeUid, setUsers) {
     newSwapRequest(user.accountUid, requesteeUid)
+    setUsers((curUsers) => curUsers.filter((filterUser) => filterUser.accountUid != requesteeUid))
   }
 }
 

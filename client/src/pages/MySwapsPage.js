@@ -67,7 +67,6 @@ function MySwapsPage() {
             marginTop: "23px",
           }}
         >
-          {/* <MessageSwapSwitch current={0} /> */}
           <div>
             <SwapListPending swapListPending={swapListPending} setSwapListPending={setSwapListPending} setSwapListOngoing={setSwapListOngoing} user={user} />
           </div>

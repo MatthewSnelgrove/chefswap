@@ -20,6 +20,7 @@ function UserInfoPage() {
         console.log(response.status);
       } else {
         const json = await response.json();
+        console.log(json)
         setUser(json[0].profile);
       }
     };
