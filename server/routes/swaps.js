@@ -59,8 +59,8 @@ router.post("/:accountUid", checkAuth, async (req, res, next) => {
   const newSwapRes = camelize(
     await pool
       .query(
-        `INSERT INTO swap (requester_uid, requestee_uid)
-        VALUES ($1, $2) 
+        `INSERT INTO swap (requester_uid, requestee_uid, request_timestamp)
+        VALUES ($1, $2, NOW()) 
         RETURNING 
           requester_uid, 
           requestee_uid,
@@ -70,6 +70,7 @@ router.post("/:accountUid", checkAuth, async (req, res, next) => {
         [requesterUid, requesteeUid]
       )
       .catch((e) => {
+        console.log(e);
         switch (e.constraint) {
           //should only happen if identical req sent multiple times because of some network quirk
           case "swap_pkey":
@@ -87,15 +88,16 @@ router.post("/:accountUid", checkAuth, async (req, res, next) => {
               detail: "you cannot swap with yourself",
             });
           //catch all normal existing swaps
-          case "unique_swap_constraint":
+          case "swap_end_timestamp_lo_uid_hi_uid_key":
             next({
               status: 409,
               message: "invalid swap",
-              detail: "swap already exists",
+              detail: "cannot have multiple ongoing swaps with same user",
             });
             return;
           //should not happen
           default:
+            console.log(e.constraint);
             next({});
             return;
         }
@@ -256,6 +258,7 @@ router.put(
       });
       return;
     }
+    await pool.query("COMMIT");
     formatSwap(swap);
     //swap successfully updated
     res.json(swap);

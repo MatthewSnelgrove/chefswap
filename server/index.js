@@ -95,23 +95,23 @@ app.use("/api/v1/swaps", swapsRouter);
 app.use((err, req, res, next) => {
   //if multiple errors (from openapi validator) return those errors.
   //if one error (my custom errors) return array with just that error
-  // console.log(err);
+  console.log(err);
   const errors = err.errors
     ? err.errors.map((error) => ({
-      path: req.originalUrl,
-      message: `${error.path} not valid`,
-      detail: `${error.message}`,
-    }))
-    : [
-      {
         path: req.originalUrl,
-        message: err.message || "unknown server error",
-        detail:
-          err.detail ||
-          err.message ||
-          "request caused an unknown error on the server",
-      },
-    ];
+        message: `${error.path} not valid`,
+        detail: `${error.message}`,
+      }))
+    : [
+        {
+          path: req.originalUrl,
+          message: err.message || "unknown server error",
+          detail:
+            err.detail ||
+            err.message ||
+            "request caused an unknown error on the server",
+        },
+      ];
   res.status(err.status || 500).json(errors);
 });
 
