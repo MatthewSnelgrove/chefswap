@@ -190,6 +190,7 @@ router.put(
         return;
     }
     let err = false;
+    await pool.query("BEGIN");
     const swapQuery = camelize(
       await pool
         .query(
@@ -239,11 +240,20 @@ router.put(
       return;
     }
     const swap = swapQuery.rows[0];
-    console.log(swapQuery);
-    console.log(swap);
     //swap doesn't exist
     if (!swap) {
       next(swapNotFound);
+      return;
+    }
+    console.log(swap);
+    //trying to accept own swap
+    if (swap.requesterUid === accountUid && status === "ongoing") {
+      await pool.query(`ABORT`);
+      next({
+        status: 409,
+        message: "cannot accept own swap",
+        detail: "cannot accept own swap",
+      });
       return;
     }
     formatSwap(swap);
