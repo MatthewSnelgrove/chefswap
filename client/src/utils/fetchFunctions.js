@@ -113,8 +113,12 @@ export async function fetchUser() {
 }
 
 
-export async function getAllUsers(latitude, longitude, usersSetFunc) {
-  const response = await fetch(`http://localhost:3001/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}`, {
+export async function getAllUsers(latitude, longitude, accountUid, filter, setFunc) {
+  if (filter == null) {
+    filter = ""
+  }
+  
+  const response = await fetch(`http://localhost:3001/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}&matchableWith=${accountUid}${filter}`, {
     method: "GET"
   })
 
@@ -124,7 +128,7 @@ export async function getAllUsers(latitude, longitude, usersSetFunc) {
 
   const json = await response.json()
 
-  usersSetFunc(json)
+  setFunc(json)
 }
 
 export async function getUsersOfSwapStatus(user, status, setFunc) {
