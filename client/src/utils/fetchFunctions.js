@@ -136,7 +136,11 @@ export async function getUsersOfSwapStatus(user, status, setFunc) {
   const address = await fetchSpecific(accountUid, "address")
   const userSwaps = await getAllSwapsOfStatus(accountUid, status)
   const userPromise = await userSwaps.map(async (userSwap) => {
-    return  {profileData: await fetchUserFromUidWithDistance(userSwap.requesteeUid, address.longitude, address.latitude), requestTimestamp: userSwap.requestTimestamp}
+    console.log(userSwap.requesteeUid, userSwap.requesterUid)
+    if (userSwap.requesteeUid == accountUid) {
+      return {profileData: await fetchUserFromUidWithDistance(userSwap.requesterUid, address.longitude, address.latitude), requestTimestamp: userSwap.requestTimestamp, requesterUid: userSwap.requesterUid}
+    }
+    return  {profileData: await fetchUserFromUidWithDistance(userSwap.requesteeUid, address.longitude, address.latitude), requestTimestamp: userSwap.requestTimestamp, requesterUid: userSwap.requesterUid}
   })
   const userData = await Promise.all(userPromise)
   setFunc(userData)

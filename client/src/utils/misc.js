@@ -11,6 +11,7 @@ export function setUsersForSwapList(users) {
         rating: profile.avgRating,
         accountUid: profile.accountUid,
         requestTimestamp: user.requestTimestamp,
+        requesterUid: user.requesterUid
       }
     })
 }
