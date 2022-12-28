@@ -1,14 +1,26 @@
-import React, { useEffect } from "react";
-import SwapList from "../components/SwapList";
+import React, { useEffect, useState } from "react";
 import "./styles/MySwapsPage.css";
-import MessageSwapSwitch from "../components/MessageSwapSwitch";
 import OnlyLoggedIn from "../components/OnlyLoggedIn";
 import SwapSwitch from "../components/SwapSwitch";
+import { useUser } from "../components/useUser";
+import { useSwapType } from "../components/useSwapType";
+import SwapListPending from "../components/SwapListPending";
+import SwapListOngoing from "../components/SwapListOngoing";
+import SwapListPast from "../components/SwapListPast";
+
 
 function MySwapsPage() {
+  const user = useUser()
+  const loading = global.config.userStates.loading
+  const [swapListPending, setSwapListPending] = useSwapType({ status: "pending" })
+  const [swapListPast, setSwapListPast] = useSwapType({ status: "ended" })
+  const [swapListOngoing, setSwapListOngoing] = useSwapType({ status: "ongoing" })
+
   useEffect(() => {
     document.title = "Chefswap | My swaps";
   }, []);
+
+  if (user == loading || swapListPending == loading || swapListPast == loading || swapListOngoing == loading) {return (<></>)}
 
   const people = [];
 
@@ -20,7 +32,6 @@ function MySwapsPage() {
     bio: "Hey guys XDDDas;d;oasndlasnaskldkasnldkansdlkasnkldnaslkdn askldnkasndklasndlkdm;awkdmaslkdmalksmdlkasmdlkasmdkladlksndlasndlasnldnasljdnalsjdnlajsndlaslndn",
     distance: "4",
     rating: "4.1",
-    date: "10/20/2003",
     id: 1,
   };
 
@@ -32,13 +43,13 @@ function MySwapsPage() {
     bio: "Hey guys XDDDas;d;oasndlasnaskldkasnldkansdlkasnkldnaslkdn askldnkasndklasndlkdm;awkdmaslkdmalksmdlkasmdlkasmdkladlksndlasndlasnldnasljdnalsjdnlajsndlaslndn",
     distance: "4",
     rating: "4.1",
-    date: "10/20/2003",
     id: 2,
   };
 
+  
+
   return (
     <OnlyLoggedIn >
-      
       <div className="navbar-margin">
         <div className="swap-container">
           <h1 className="px-5 swap-text">Swaps</h1>
@@ -58,43 +69,18 @@ function MySwapsPage() {
         >
           {/* <MessageSwapSwitch current={0} /> */}
           <div>
-            <SwapList data={people} type={"Pending"} finalColJsx={<PendingButtons />} />
+            <SwapListPending swapListPending={swapListPending} setSwapListPending={setSwapListPending} setSwapListOngoing={setSwapListOngoing} user={user} />
           </div>
           <div>
-            <SwapList data={people} type={"Ongoing"} finalColJsx={<EndSwap />} />
+            <SwapListOngoing swapListOngoing={swapListOngoing} setSwapListPast={setSwapListPast} setSwapListOngoing={setSwapListOngoing} user={user}  />
           </div>
           <div>
-            <SwapList data={people} type={"Past"} finalColJsx={<></>} />
+            <SwapListPast swapListPast={swapListPast} user={user} />
           </div>
         </div>
       </div>
     </OnlyLoggedIn>
   );
 }
-
-function PendingButtons(props) {
-  return (
-    <div className="button-wrapper">
-      <button className="accept-button" title="Accept swap request">
-        <span class="material-icons-round accept-image">done</span>
-      </button>
-      <button className="decline-button" title="Reject swap request">
-        <span class="material-icons-round decline-image">close</span>
-      </button>
-    </div>
-  )
-}
-
-function EndSwap(props) {
-  return (
-    <div className="button-wrapper">
-      <button className="end-swap-button" title="End swap with user">
-        <span class="material-icons-round end-swap-image">exit_to_app</span>
-      </button>
-    </div>
-  )
-}
-
-
 
 export default MySwapsPage;

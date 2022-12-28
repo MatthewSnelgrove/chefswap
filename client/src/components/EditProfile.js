@@ -1,7 +1,7 @@
 import { React } from "react";
 import "./styles/EditProfile.css"
 import TagEdit from "./TagEdit";
-import { changeBio, deletePrefrence, addPrefrence, addSpeciality, deleteSpeciality, changeUserProfile } from "../pages/changeFunctions";
+import { changeBio, deletePrefrence, addPrefrence, addSpeciality, deleteSpeciality, changeUserProfile } from "../utils/changeFunctions";
 import { useUser } from "./useUser";
 import ProfilePicture from "./ProfilePicture";
 
@@ -37,7 +37,7 @@ function EditProfile(props) {
           <label>Bio</label>
         </div>
         <div style={{ display: "flex", flexDirection: "column"}}>
-          <textarea id="bio " defaultValue={user.bio}></textarea>
+          <textarea id="bio" defaultValue={user.bio}></textarea>
           <button className="change-bio-button base-btn-lightblue" onClick={(e) => {
             changeBio(user.accountUid, document.getElementById("bio").value)
             window.location = curLocation

@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from "react"
-import { fetchSpecific } from '../pages/fetchFunctions';
-import { changeAddress, changeEmail } from '../pages/changeFunctions';
+import { fetchSpecific } from '../utils/fetchFunctions';
+import { changeAddress, changeEmail } from '../utils/changeFunctions';
 import { useUser } from "./useUser";
 import ProfilePicture from "./ProfilePicture";
 

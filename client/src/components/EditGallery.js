@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
 import "./styles/EditGallery.css";
-import { addNewPhoto, deletePhoto } from "../pages/changeFunctions"
+import { addNewPhoto, deletePhoto } from "../utils/changeFunctions"
 import { useUser } from "./useUser";
 
 const imgLength = "300px"

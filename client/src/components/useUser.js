@@ -1,5 +1,5 @@
 import { useQuery } from "react-query"
-import { fetchUser } from "../pages/fetchFunctions";
+import { fetchUser } from "../utils/fetchFunctions";
 
 export function useUser() {
     const {data, status} = useQuery("user", fetchUser)
