@@ -1,6 +1,7 @@
 import React from "react";
 import "./styles/SwapListing.css";
 import Tag from "./Tag";
+import ProfilePicture from "./ProfilePicture";
 
 /**
  * Models a single swap result listed in /find-swap
@@ -12,11 +13,12 @@ function SwapListing(props) {
       <div className="main-container">
         <div className="info-container">
           <div className="image-container">
-            <img
+            {/* <img
               alt="User profile"
               src="../profile.png"
               style={{ height: 55, width: 55, borderRadius: 30 }}
-            />
+            /> */}
+            <ProfilePicture style={{height: 55, width: 55, borderRadius: 30}} pfpLink={props.pfpLink} />
           </div>
           <div className="user-tag">
             {/* <div className="username">X-09sk</div> */}

@@ -138,3 +138,34 @@ export async function changePassword(Uid, password) {
     .then((response) => console.log(response))
     .catch((reason) => console.log(reason));
 }
+
+export async function newSwapRequest(accountUid, requesteeUid) {
+  await fetch(`http://localhost:3001/api/v1/swaps/${accountUid}`, {
+    method: "POST",
+    body: JSON.stringify({ requesteeUid: requesteeUid }),
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+  })
+  .then((response) => console.log(response))
+  .catch((reason) => console.log(reason));
+}
+
+export async function changeSwapStatus(accountUid, swapperUid, requestTimestamp, newStatus) {
+  await fetch(`http://localhost:3001/api/v1/swaps/${accountUid}/${swapperUid}/${requestTimestamp}/status`, {
+    method: "PUT",
+    body: JSON.stringify({ status: newStatus }),
+    credentials: "include",
+    headers: { "Content-Type": "application/json" }
+  })
+  .then((response) => console.log(response))
+  .catch((reason) => console.log(reason));
+}
+
+export async function cancelSwapRequest(accountUid, swapperUid, requestTimestamp) {
+  await fetch(`http://localhost:3001/api/v1/swaps/${accountUid}/${swapperUid}/${requestTimestamp}`, {
+    method: "DELETE",
+    credentials: "include"
+  })
+  .then((response) => console.log(response))
+  .catch((reason) => console.log(reason));
+}

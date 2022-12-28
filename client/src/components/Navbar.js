@@ -1,5 +1,5 @@
-import { React, useState, useEffect } from "react";
-import { signoutUser } from "../pages/fetchFunctions"
+import { React } from "react";
+import { signoutUser } from "../utils/fetchFunctions"
 import Logo from './Homepage/Logo';
 import StyledBtn from './Homepage/StyledBtn';
 import "./styles/Navbar.scss";

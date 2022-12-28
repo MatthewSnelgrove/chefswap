@@ -3,19 +3,50 @@ import FilterForm from "../components/FilterForm";
 import OnlyLoggedIn from "../components/OnlyLoggedIn";
 import SwapResultsContainer from "../components/SwapResultsContainer";
 import "./styles/FindSwapPage.scss";
+import { useUser } from "../components/useUser"
+import { getAllUsers, fetchSpecific } from "../utils/fetchFunctions";
+
+// distance: (user.profile.distance / 1000).toFixed(1),
+// avg_rating: user.profile.avgRating
+function filterForDisplay(users) {
+  return users.map((user) => {
+  
+    return {
+      avg_rating: 3,
+      cuisineSpecialities: user.profile.cuisineSpecialities,
+      distance: (1283 / 1000).toFixed(1),
+      pfpLink: user.profile.pfpLink,
+      username: user.profile.username,
+      accountUid: user.profile.accountUid
+    }
+  })
+}
+
 /**
  * /find-swaps page
  * @use Navbar, FilterForm, SwapsResultsContainer
  */
-export default function FindSwapPage() {
-  useEffect(() => {
-    document.title = "Chefswap | Find swaps";
-  }, []);
-
+export default function FindSwapPage(props) {
+  const user = useUser();
+  const loading = global.config.userStates.loading
   const [cuisineTyped, setCuisineTyped] = useState("");
   const [cuisineChecked, setCuisineChecked] = useState([]);
   const [rating, setRating] = useState(1);
   const [distance, setDistance] = useState(100);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    document.title = "Chefswap | Find swaps";
+  }, []);
+
+  useEffect(() => {
+    if (user == loading) {return}
+    fetchSpecific(user.accountUid, "address").then((address) => {
+      getAllUsers(address.latitude, address.longitude, setUsers)
+    })
+  }, [user])
+
+  if (user == loading ){ return (<></>) }
 
   function handleTypedChange(cuisineText) {
     setCuisineTyped(cuisineText);
@@ -66,6 +97,8 @@ export default function FindSwapPage() {
             cuisineChecked={cuisineChecked}
             rating={rating}
             distance={distance}
+            users={filterForDisplay(users)}
+            user={user}
           />
         </div>
       </div>

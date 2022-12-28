@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import SwapListing from "./SwapListing";
 import "./styles/SwapResultsContainer.scss";
+import { newSwapRequest, sendSwapRequest } from "../utils/changeFunctions";
 
 /**
  * Container component for all swap results on /find-swap
@@ -10,11 +11,16 @@ import "./styles/SwapResultsContainer.scss";
  * @param rating Min rating from 1-5
  * @param distance Max distance from 5-100 (may change)
  */
+
+
+
 export default class SwapResultsContainer extends Component {
   render() {
     const cuisineChecked = this.props.cuisineChecked;
     const minRating = this.props.rating;
     const maxDist = this.props.distance;
+    let users = this.props.users;
+
 
     // Returns if subarr is subarray of arr
     const isSubArray = (arr, subarr) => {
@@ -32,7 +38,7 @@ export default class SwapResultsContainer extends Component {
       let pass = true;
 
       // Check cuisine name
-      if (!isSubArray(user.cuisineSpecialties, cuisineChecked)) pass = false;
+      if (!isSubArray(user.cuisineSpecialities, cuisineChecked)) pass = false;
       // Check min ratings
       else if (user.avg_rating < minRating) pass = false;
 
@@ -88,23 +94,32 @@ export default class SwapResultsContainer extends Component {
     };
 
     // Array of user objs
-    let exUserArr = Object.keys(exUsers).map((userKey) => exUsers[userKey]);
+    // let exUserArr = Object.keys(exUsers).map((userKey) => exUsers[userKey]);
+
 
     // Filter by all filters
-    exUserArr = exUserArr.filter((user) => passesFilters(user));
+    // exUserArr = exUserArr.filter((user) => passesFilters(user));
+    users = users.filter((user) => passesFilters(user))
 
     // Map filtered array to JSX
-    const exUserJSX = exUserArr.map((user) => (
+    const exUserJSX = users.map((user) => (
       <SwapListing
+        pfpLink={user.pfpLink}
         username={user.username}
         distance={user.distance}
         rating={user.avg_rating}
-        cuisineSpecialities={user.cuisineSpecialties}
+        cuisineSpecialities={user.cuisineSpecialities}
         key={user.username}
         finalColJsx={
           <>
-            <img className="small-swap-button" src="./swap.svg" style={{height: "80px"}}></img>
-            <button className="swap-button">
+            <button style={{border: "0px"}} onClick={(e) => {
+              this.createNewSwapRequest(this.props.user, user.accountUid)
+            }}>
+              <img className="small-swap-button" src="./swap.svg" style={{height: "80px"}}></img>
+            </button>
+            <button className="swap-button" onClick={(e) => {
+              this.createNewSwapRequest(this.props.user, user.accountUid)
+            }}>
               <span className="swap-text">Send Swap Request</span>
             </button>
           </>
@@ -113,6 +128,10 @@ export default class SwapResultsContainer extends Component {
     ));
 
     return <div className="swap-results-container">{exUserJSX}</div>;
+  }
+
+  createNewSwapRequest(user, requesteeUid) {
+    newSwapRequest(user.accountUid, requesteeUid)
   }
 }
 

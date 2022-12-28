@@ -24,10 +24,6 @@ function UserProfileContainer(props) {
     }
   }
 
-  function linkToEditType() {
-    window.location = globalVars.pages.editProfile
-  }
-
   return (
     <div className="user-container full-contain">
       <div className="profile-header">

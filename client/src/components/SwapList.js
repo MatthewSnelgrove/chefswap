@@ -1,8 +1,6 @@
 import React from "react";
 import SwapListing from "./SwapListing";
-import "./styles/SwapList.css";
-
-//type: tpy
+import "./styles/SwapListBlueprint.css"
 
 function SwapList(props) {
   return (
@@ -15,19 +13,20 @@ function SwapList(props) {
 
     
       <div className="list-container">
-        {props.data.map((person) => (
+        {props.data.map((person, index) => (
           //console.log(person.id)
           <SwapListing
-            key={person.id}
+            key={index}
             cuisineSpecialities={person.cuisineSpecialities}
             distance={person.distance}
             date={person.date}
             username={person.username}
-            img={person.img}
+            pfpLink={person.img}
             rating={person.rating}
             finalColJsx = {props.finalColJsx}
           />
-        ))}
+         ))}
+        <span className="no-type-text">{props.data.length == 0 ? `No users of type ${props.type.toLowerCase()}`: ""}</span>
       </div>
     </div>
   );

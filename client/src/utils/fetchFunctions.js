@@ -22,6 +22,13 @@ export async function fetchUserFromUid(Uid) {
   return json;
 }
 
+export async function fetchUserFromUidWithDistance(Uid, longitude, latitude) {
+  const response = await fetch(`http://localhost:3001/api/v1/accounts/${Uid}?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}`);
+  const json = await response.json();
+
+  return json;
+}
+
 export async function fetchSpecific(Uid, specific) {
   const response = await fetch(
     `http://localhost:3001/api/v1/accounts/${Uid}/${specific}`,
@@ -104,3 +111,50 @@ export async function fetchUser() {
 
   return fetchUserFromUid(json.accountUid);
 }
+
+
+export async function getAllUsers(latitude, longitude, usersSetFunc) {
+  const response = await fetch(`http://localhost:3001/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}`, {
+    method: "GET"
+  })
+
+  if (!response.ok) {
+    return response;
+  }
+
+  const json = await response.json()
+
+  usersSetFunc(json)
+}
+
+export async function getUsersOfSwapStatus(user, status, setFunc) {
+  const accountUid = user.accountUid
+  const address = await fetchSpecific(accountUid, "address")
+  const userSwaps = await getAllSwapsOfStatus(accountUid, status)
+  const userPromise = await userSwaps.map(async (userSwap) => {
+    return  {profileData: await fetchUserFromUidWithDistance(userSwap.requesteeUid, address.longitude, address.latitude), requestTimestamp: userSwap.requestTimestamp}
+  })
+  const userData = await Promise.all(userPromise)
+  setFunc(userData)
+}
+
+async function getAllSwapsOfStatus(accountUid, status, orderBy) {
+  if (orderBy == null) {
+    orderBy = "timeDesc"
+  }
+
+  const response = await fetch(`http://localhost:3001/api/v1/swaps/${accountUid}?status=${status}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  })
+
+  if (!response.ok) {
+    return response;
+  }
+
+  const json = await response.json()
+  
+  return json
+}
+

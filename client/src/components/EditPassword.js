@@ -1,6 +1,6 @@
-import { React, useEffect, useState } from "react"
+import { React } from "react"
 import "./styles/EditPassword.css"
-import { changePassword } from "../pages/changeFunctions"
+import { changePassword } from "../utils/changeFunctions"
 import { useUser } from "./useUser"
 import ProfilePicture from "./ProfilePicture"
 
