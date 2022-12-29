@@ -3,13 +3,13 @@ import "./styles/ImageGallery.css";
 
 function ImageGallery(props) {
 
-    if (props.images.length == 1) {
-        return (
-            <div>
-                <img style={props.imgStyle} src={props.images[0].imageLink} class="d-block w-100" />
-            </div>
-        )
-    }
+    // if (props.images.length == 1) {
+    //     return (
+    //         <div>
+    //             <img style={props.imgStyle} src={props.images[0].imageLink} class="d-block w-100" />
+    //         </div>
+    //     )
+    // }
 
     return (
         <div id="carouselExampleIndicators" class="carousel slide h-50" data-bs-ride="carousel">

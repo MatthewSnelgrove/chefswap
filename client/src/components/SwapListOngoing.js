@@ -33,7 +33,7 @@ function EndSwap(props) {
   return (
     <div className="button-wrapper">
       <button className="end-swap-button" title="End swap with user" onClick={(e) => {
-        changeSwapStatus(user.accountUid, person.accountUid, person.requestTimestamp, "ended")
+        changeSwapStatus(user.accountUid, person.accountUid, person.username, person.requestTimestamp, "ended")
         props.setSwapListOngoing((curSwapListOngoing) => curSwapListOngoing.filter((userFilter) => userFilter.username != person.username))
         props.setSwapListPast((curSwapListPast) => [...curSwapListPast, person])
 
