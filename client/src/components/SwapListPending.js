@@ -32,8 +32,7 @@ function PendingButtons(props) {
     <div className="button-wrapper">
       {props.isRequestee ? <button className="accept-button" title="Accept swap request" onClick={(e) => 
         {
-          console.log(user.accountUid, person.accountUid)
-          changeSwapStatus(user.accountUid, person.accountUid, person.requestTimestamp, "ongoing")
+          changeSwapStatus(user.accountUid, person.accountUid, person.username, person.requestTimestamp, "ongoing")
           props.setSwapListPending((curSwapListPending) => curSwapListPending.filter((userFilter) => userFilter.username != person.username))
           props.setSwapListOngoing((curSwapListOngoing) => [...curSwapListOngoing, person])
         }}>
@@ -43,7 +42,7 @@ function PendingButtons(props) {
       }
       <button className="decline-button" title="Reject swap request" onClick={(e) => 
       {
-          cancelSwapRequest(user.accountUid, person.accountUid, person.requestTimestamp)
+          cancelSwapRequest(user.accountUid, person.accountUid, person.username, person.requestTimestamp)
           props.setSwapListPending((curSwapListPending) => curSwapListPending.filter((userFilter) => userFilter.username != person.username))
       }}>
         <span class="material-icons-round decline-image">close</span>

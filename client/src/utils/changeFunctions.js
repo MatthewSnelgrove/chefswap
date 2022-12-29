@@ -1,4 +1,3 @@
-import { AstPath } from "prettier"
 import { toast } from "react-toastify"
 
 export async function addNewPhoto(Uid, formData, linkToGo) {
@@ -61,12 +60,12 @@ export async function addPrefrence(Uid, prefrence) {
     body: JSON.stringify({ cuisinePreference: prefrence }),
     headers: { "Content-Type": "application/json" },
   })
-    .then((response) => {
-      toast.success(`Successfully added ${prefrence} from your preferences`, {
-        position: toast.POSITION.TOP_RIGHT
-      });
-    })
-    .catch((reason) => console.log(reason))
+  .then((response) => {
+    toast.success(`Successfully added ${prefrence} from your preferences`, {
+      position: toast.POSITION.TOP_RIGHT
+    });
+  })
+  .catch((reason) => console.log(reason))
 }
 
 export async function deletePrefrence(Uid, prefrence) {
@@ -121,10 +120,6 @@ export async function changeUserProfile(Uid, profileForm, curLocation) {
   })
     .catch((reason) => console.log(reason))
 
-  // toast.success(`Successfully changed profile`, {
-  //   position: toast.POSITION.TOP_RIGHT
-  // });
-
   window.location = curLocation
 }
 
@@ -139,33 +134,44 @@ export async function changePassword(Uid, password) {
     .catch((reason) => console.log(reason));
 }
 
-export async function newSwapRequest(accountUid, requesteeUid) {
+export async function newSwapRequest(accountUid, requesteeUid, requesteeUsername) {
   await fetch(`http://localhost:3001/api/v1/swaps/${accountUid}`, {
     method: "POST",
     body: JSON.stringify({ requesteeUid: requesteeUid }),
     credentials: "include",
     headers: { "Content-Type": "application/json" },
   })
-  .then((response) => console.log(response))
-  .catch((reason) => console.log(reason));
+  .then((response) => 
+   toast.success(`Successfully sent a swap request to ${requesteeUsername}`, {
+    position: toast.POSITION.TOP_RIGHT
+   }))
+  .catch((reason) => console.log(reason))
 }
 
-export async function changeSwapStatus(accountUid, requesteeUid, requestTimestamp, newStatus) {
+export async function changeSwapStatus(accountUid, requesteeUid, requesteeUsername, requestTimestamp, newStatus) {
   await fetch(`http://localhost:3001/api/v1/swaps/${accountUid}/${requesteeUid}/${requestTimestamp}/status`, {
     method: "PUT",
     body: JSON.stringify({ status: newStatus }),
     credentials: "include",
     headers: { "Content-Type": "application/json" }
   })
-  .then((response) => console.log(response))
+  .then((response) => 
+    toast.success(`Successfully changed ${requesteeUsername}'s swap status to ${newStatus}`, {
+      position: toast.POSITION.TOP_RIGHT
+    })
+  )
   .catch((reason) => console.log(reason));
 }
 
-export async function cancelSwapRequest(accountUid, swapperUid, requestTimestamp) {
+export async function cancelSwapRequest(accountUid, swapperUid, requesteeUsername, requestTimestamp) {
   await fetch(`http://localhost:3001/api/v1/swaps/${accountUid}/${swapperUid}/${requestTimestamp}`, {
     method: "DELETE",
     credentials: "include"
   })
-  .then((response) => console.log(response))
+  .then((response) =>     
+    toast.success(`Successfully rejected ${requesteeUsername}'s swap request`, {
+      position: toast.POSITION.TOP_RIGHT
+    })
+  )
   .catch((reason) => console.log(reason));
 }

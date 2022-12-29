@@ -11,7 +11,7 @@ import { getAllUsers, fetchSpecific } from "../utils/fetchFunctions";
 function filterForDisplay(users) {
   return users.map((user) => {
     return {
-      avg_rating: 3,
+      avg_rating: user.profile.avgRating,
       cuisineSpecialities: user.profile.cuisineSpecialities,
       distance: (user.profile.distance / 1000).toFixed(1),
       pfpLink: user.profile.pfpLink,
@@ -39,6 +39,7 @@ export default function FindSwapPage(props) {
     document.title = "Chefswap | Find swaps";
   }, []);
 
+  //TODO: set default values
   useEffect(() => {
     if (user == loading) {return}
     fetchSpecific(user.accountUid, "address").then((address) => {
@@ -47,7 +48,14 @@ export default function FindSwapPage(props) {
     })
   }, [user])
 
+  useEffect(() => {
+    if (user == loading || userAddress == null) {return}
+    getAllUsers(userAddress.latitude, userAddress.longitude, user.accountUid, `&maxDistance=${distance * 1000}&minRating=${rating}${cuisineChecked.map(e => "&cuisineSpeciality=" + e).join("")}`, setUsers)
+  }, [cuisineChecked, distance, rating])
+
+
   if (user == loading){ return (<></>) }
+
 
   function handleTypedChange(cuisineText) {
     setCuisineTyped(cuisineText);
@@ -70,17 +78,14 @@ export default function FindSwapPage(props) {
     }
 
     setCuisineChecked(newCuisineCheckedList);
-    getAllUsers(userAddress.latitude, userAddress.longitude, user.accountUid, `&cuisineSpeciality=${newCuisineCheckedList}`, setUsers)
   }
 
   function handleRatingChange(minRating) {
     setRating(minRating);
-    getAllUsers(userAddress.latitude, userAddress.longitude, user.accountUid, `&minRating=${minRating}`, setUsers)
   }
 
   function handleDistanceChange(maxDist) {
     setDistance(maxDist);
-    getAllUsers(userAddress.latitude, userAddress.longitude, user.accountUid, `&maxDistance=${maxDist * 1000}`, setUsers)
   }
 
   return (
