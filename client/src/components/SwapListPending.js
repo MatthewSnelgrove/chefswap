@@ -52,4 +52,3 @@ function PendingButtons(props) {
 }
 
 export default SwapListPending;
-export default SwapListPending;

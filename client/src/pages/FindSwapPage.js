@@ -28,9 +28,6 @@ function filterForDisplay(users) {
 export default function FindSwapPage(props) {
   const user = useUser();
   const loading = global.config.userStates.loading
-export default function FindSwapPage(props) {
-  const user = useUser();
-  const loading = global.config.userStates.loading
   const [cuisineTyped, setCuisineTyped] = useState("");
   const [cuisineChecked, setCuisineChecked] = useState([]);
   const [rating, setRating] = useState(1);
@@ -89,10 +86,6 @@ export default function FindSwapPage(props) {
 
   function handleDistanceChange(maxDist) {
     setDistance(maxDist);
-  }
-
-  function sendAllChange() {
-    
   }
 
   return (

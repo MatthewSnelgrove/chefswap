@@ -107,14 +107,11 @@ export default class SwapResultsContainer extends Component {
 
     // Map filtered array to JSX
     const exUserJSX = users.map((user) => (
-    const exUserJSX = users.map((user) => (
       <SwapListing
-        pfpLink={user.pfpLink}
         pfpLink={user.pfpLink}
         username={user.username}
         distance={user.distance}
         rating={user.avg_rating}
-        cuisineSpecialities={user.cuisineSpecialities}
         cuisineSpecialities={user.cuisineSpecialities}
         key={user.username}
         finalColJsx={
