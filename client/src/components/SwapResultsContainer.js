@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import SwapListing from "./SwapListing";
 import "./styles/SwapResultsContainer.scss";
 import { newSwapRequest, sendSwapRequest } from "../utils/changeFunctions";
-import { newSwapRequest, sendSwapRequest } from "../utils/changeFunctions";
 
 /**
  * Container component for all swap results on /find-swap
