@@ -29,13 +29,6 @@ export async function fetchUserFromUidWithDistance(Uid, longitude, latitude) {
   return json;
 }
 
-export async function fetchUserFromUidWithDistance(Uid, longitude, latitude) {
-  const response = await fetch(`http://localhost:3001/api/v1/accounts/${Uid}?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}`);
-  const json = await response.json();
-
-  return json;
-}
-
 export async function fetchSpecific(Uid, specific) {
   const response = await fetch(
     `http://localhost:3001/api/v1/accounts/${Uid}/${specific}`,
