@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import SwapListing from "./SwapListing";
 import "./styles/SwapResultsContainer.scss";
 import { newSwapRequest, sendSwapRequest } from "../utils/changeFunctions";
+import { newSwapRequest, sendSwapRequest } from "../utils/changeFunctions";
 
 /**
  * Container component for all swap results on /find-swap
@@ -11,6 +12,9 @@ import { newSwapRequest, sendSwapRequest } from "../utils/changeFunctions";
  * @param rating Min rating from 1-5
  * @param distance Max distance from 5-100 (may change)
  */
+
+
+
 
 
 
@@ -103,11 +107,14 @@ export default class SwapResultsContainer extends Component {
 
     // Map filtered array to JSX
     const exUserJSX = users.map((user) => (
+    const exUserJSX = users.map((user) => (
       <SwapListing
+        pfpLink={user.pfpLink}
         pfpLink={user.pfpLink}
         username={user.username}
         distance={user.distance}
         rating={user.avg_rating}
+        cuisineSpecialities={user.cuisineSpecialities}
         cuisineSpecialities={user.cuisineSpecialities}
         key={user.username}
         finalColJsx={
