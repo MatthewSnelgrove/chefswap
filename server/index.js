@@ -12,6 +12,7 @@ import { swaggerSpecs } from "./configServices/swaggerConfig.js";
 import http from "http";
 import { Server } from "socket.io";
 import * as OpenApiValidator from "express-openapi-validator";
+import stripNulls from "./utils/stripNulls.js";
 import slugid from "slugid";
 // import * as iii from "./openapi.yaml";
 
@@ -89,8 +90,9 @@ app.use("/api/v1/session", sessionRouter);
 import { router as accountsRouter } from "./routes/accounts.js";
 app.use("/api/v1/accounts", accountsRouter);
 import { router as swapsRouter } from "./routes/swaps.js";
-import stripNulls from "./utils/stripNulls.js";
 app.use("/api/v1/swaps", swapsRouter);
+import { router as ratingsRouter } from "./routes/rating.js";
+app.use("/api/v1/rating", ratingsRouter);
 
 app.use((err, req, res, next) => {
   //if multiple errors (from openapi validator) return those errors.
