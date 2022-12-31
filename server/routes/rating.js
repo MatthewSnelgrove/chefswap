@@ -14,13 +14,15 @@ export const router = express.Router();
 //create rating
 router.put("/:accountUid/:swapperUid", async (req, res, next) => {
   const { accountUid, swapperUid } = req.params;
-  const rating = camelize(
+  const { rating } = req.body;
+  const ratingQ = camelize(
     await pool.query(
       `INSERT INTO rating (account_uid, swapper_uid, rating)
     VALUES($1, $2, $3)) 
     ON CONFLICT ON CONSTRAINT rating_pkey 
-    DO UPDATE SET rating = $3`
-    )
+    DO UPDATE SET rating = $3`,
+      [accountUid, swapperUid, rating]
+    ).rows[0]
   );
-  res.status(200).json(rating);
+  res.status(200).json(ratingQ);
 });

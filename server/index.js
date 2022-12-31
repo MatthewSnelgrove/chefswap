@@ -69,7 +69,7 @@ app.use(
 app.use(
   OpenApiValidator.middleware({
     apiSpec: "./server/openapi.yaml",
-    validateRequests: true, // (default)
+    // validateRequests: true, // (default)
     validateResponses: false, // false by default
   })
 );
@@ -92,7 +92,7 @@ app.use("/api/v1/accounts", accountsRouter);
 import { router as swapsRouter } from "./routes/swaps.js";
 app.use("/api/v1/swaps", swapsRouter);
 import { router as ratingsRouter } from "./routes/rating.js";
-app.use("/api/v1/rating", ratingsRouter);
+app.use("/api/v1/ratings", ratingsRouter);
 
 app.use((err, req, res, next) => {
   //if multiple errors (from openapi validator) return those errors.
