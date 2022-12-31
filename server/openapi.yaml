@@ -750,7 +750,9 @@ paths:
                   - numRatings
                 properties:
                   avgRating:
-                    $ref: "#/components/schemas/AvgRating"
+                    nullable: true
+                    allOf:
+                      - $ref: "#/components/schemas/AvgRating"
                   numRatings:
                     $ref: "#/components/schemas/NumRatings"
         400:
@@ -1159,6 +1161,11 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
+  /api/v1/ratings/{accountUid}/{swapperUid}:
+    put:
+      responses:
+        200:
+          description: The new rating of the swapper.
   /api/v1/session:
     get:
       summary: Get the current session details.
@@ -1282,6 +1289,7 @@ components:
           $ref: "#/components/schemas/ImageLink"
         avgRating:
           readOnly: true
+          nullable: true
           allOf:
             - $ref: "#/components/schemas/AvgRating"
         numRatings:
