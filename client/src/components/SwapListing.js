@@ -13,15 +13,9 @@ function SwapListing(props) {
       <div className="main-container">
         <div className="info-container">
           <div className="image-container">
-            {/* <img
-              alt="User profile"
-              src="../profile.png"
-              style={{ height: 55, width: 55, borderRadius: 30 }}
-            /> */}
             <ProfilePicture style={{height: 55, width: 55, borderRadius: 30}} pfpLink={props.pfpLink} />
           </div>
           <div className="user-tag">
-            {/* <div className="username">X-09sk</div> */}
             <div className="username">{props.username}</div>
           </div>
 

@@ -14,6 +14,19 @@
   background-color: var(--cs-lightblue-1);
 }
 
+.swap-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  font-size: 30px;
+}
+
+.swap-option {
+  margin-left: 7px;
+  font-size: 30px;
+  border-radius: 10px;
+}
+
 .swap-text {
   font-weight: var(--font-bold-1);
   color: var(--cs-white-1);
@@ -31,5 +44,13 @@
 
   .small-swap-button {
     display: block;
+  }
+
+  .swap-header {
+    font-size: 22px;
+  }
+
+  .swap-option {
+    font-size: 22px;
   }
 }

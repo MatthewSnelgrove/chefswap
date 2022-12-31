@@ -1,4 +1,16 @@
 import { toast } from "react-toastify"
+const homepage = "http://localhost:3000/";
+
+//TODO: make a errorMessage for each function that uses makeChangeRequestWithToast
+async function makeChangeRequestWithToast(url, params, acceptMessage, errorMessage) {
+  await fetch(url, params)
+  .then((response) => {
+    toast.success(acceptMessage, {position: toast.POSITION.TOP_RIGHT})
+  })
+  .catch((error) => {
+    console.error(error)
+  })
+}
 
 export async function addNewPhoto(Uid, formData, linkToGo) {
   await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/images`, {
@@ -6,23 +18,19 @@ export async function addNewPhoto(Uid, formData, linkToGo) {
     body: formData,
     credentials: "include"
   })
-
-  if (linkToGo) {
+  .then((response) => {
     window.location = linkToGo
-  }
+  })
+  .catch((reason) => {
+    console.error(reason)
+  })
 }
 
 export async function deletePhoto(Uid, imgUid) {
-  await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/images/${imgUid}`, {
+  await makeChangeRequestWithToast(`http://localhost:3001/api/v1/accounts/${Uid}/images/${imgUid}`, {
     method: "DELETE",
     credentials: "include"
-  })
-    .then((response) => {
-      toast.success(`Successfully removed photo`, {
-        position: toast.POSITION.TOP_RIGHT
-      });
-    })
-    .catch((reason) => console.log(reason))
+  }, `Successfully removed photo`)
 }
 
 export async function changeAddress(Uid, addressInfo) {
@@ -32,7 +40,7 @@ export async function changeAddress(Uid, addressInfo) {
     body: JSON.stringify(addressInfo),
     headers: { "Content-Type": "application/json" },
   })
-    .catch((reason) => console.log(reason))
+  .catch((reason) => console.error(reason))
 }
 
 export async function changeEmail(Uid, emailInfo) {
@@ -41,7 +49,20 @@ export async function changeEmail(Uid, emailInfo) {
     method: "PUT",
     body: JSON.stringify(emailInfo),
     headers: { "Content-Type": "application/json" },
-  }).catch((reason) => console.log(reason));
+  })
+  .catch((reason) => console.error(reason));
+}
+
+export async function signoutUser() {
+  const response = await fetch(`http://localhost:3001/api/v1/session`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
+
+  if (response.ok) {
+    window.location = homepage;
+  }
 }
 
 export async function changeBio(Uid, bio) {
@@ -50,77 +71,52 @@ export async function changeBio(Uid, bio) {
     method: "PUT",
     body: JSON.stringify({ bio: bio }),
     headers: { "Content-Type": "application/json" },
-  }).catch((reason) => console.log(reason));
+  })
+  .catch((reason) => console.error(reason));
 }
 
 export async function addPrefrence(Uid, prefrence) {
-  await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/cuisinePreferences`, {
+  await makeChangeRequestWithToast(`http://localhost:3001/api/v1/accounts/${Uid}/cuisinePreferences`, {
     credentials: "include",
     method: "POST",
     body: JSON.stringify({ cuisinePreference: prefrence }),
     headers: { "Content-Type": "application/json" },
-  })
-  .then((response) => {
-    toast.success(`Successfully added ${prefrence} from your preferences`, {
-      position: toast.POSITION.TOP_RIGHT
-    });
-  })
-  .catch((reason) => console.log(reason))
+  }, `Successfully added ${prefrence} from your preferences`)
 }
 
 export async function deletePrefrence(Uid, prefrence) {
-  await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/cuisinePreferences/${prefrence}`, {
+  await makeChangeRequestWithToast(`http://localhost:3001/api/v1/accounts/${Uid}/cuisinePreferences/${prefrence}`, {
     credentials: "include",
     method: "DELETE",
     headers: { "Content-Type": "application/json" }
-  })
-    .catch((reason) => console.log(reason))
-
-  toast.success(`Successfully removed ${prefrence} from your preferences`, {
-    position: toast.POSITION.TOP_RIGHT
-  });
+  }, `Successfully removed ${prefrence} from your preferences`)
 }
 
 export async function addSpeciality(Uid, speciality) {
-  await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/cuisineSpecialities`, {
+  await makeChangeRequestWithToast(`http://localhost:3001/api/v1/accounts/${Uid}/cuisineSpecialities`,{
     credentials: "include",
     method: "POST",
     body: JSON.stringify({ cuisineSpeciality: speciality }),
-    headers: { "Content-Type": "application/json" },
-  })
-    .then((response) => {
-      toast.success(`Successfully added ${speciality} from your specialities`, {
-        position: toast.POSITION.TOP_RIGHT
-      });
-    })
-    .catch((reason) => console.log(reason))
+    headers: { "Content-Type": "application/json" }
+  }, `Successfully added ${speciality} from your specialities`)
 }
 
 export async function deleteSpeciality(Uid, speciality) {
-  await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/cuisineSpecialities/${speciality}`, {
+  await makeChangeRequestWithToast(`http://localhost:3001/api/v1/accounts/${Uid}/cuisineSpecialities/${speciality}`, {
     credentials: "include",
     method: "DELETE",
     headers: { "Content-Type": "application/json" }
-  })
-    .then((response) => {
-      toast.success(`Successfully removed ${speciality} from your specialities`, {
-        position: toast.POSITION.TOP_RIGHT
-      });
-    })
-    .catch((reason) => console.log(reason))
+  }, `Successfully removed ${speciality} from your specialities`)
 }
 
 export async function changeUserProfile(Uid, profileForm, curLocation) {
-  console.log(profileForm)
-  
   await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/pfp`, {
     method: "PUT",
     body: profileForm,
     credentials: "include"
   })
-    .catch((reason) => console.log(reason))
-
-  window.location = curLocation
+  .then((response) => window.location = curLocation)
+  .catch((reason) => console.error(reason))
 }
 
 export async function changePassword(Uid, password) {
@@ -130,48 +126,31 @@ export async function changePassword(Uid, password) {
     credentials: "include",
     headers: { "Content-Type": "application/json" },
   })
-    .then((response) => console.log(response))
-    .catch((reason) => console.log(reason));
+  .then((response) => console.log(response))
+  .catch((reason) => console.error(reason));
 }
 
 export async function newSwapRequest(accountUid, requesteeUid, requesteeUsername) {
-  await fetch(`http://localhost:3001/api/v1/swaps/${accountUid}`, {
+  await makeChangeRequestWithToast(`http://localhost:3001/api/v1/swaps/${accountUid}`, {
     method: "POST",
     body: JSON.stringify({ requesteeUid: requesteeUid }),
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-  })
-  .then((response) => 
-   toast.success(`Successfully sent a swap request to ${requesteeUsername}`, {
-    position: toast.POSITION.TOP_RIGHT
-   }))
-  .catch((reason) => console.log(reason))
+  }, `Successfully sent a swap request to ${requesteeUsername}`)
 }
 
 export async function changeSwapStatus(accountUid, requesteeUid, requesteeUsername, requestTimestamp, newStatus) {
-  await fetch(`http://localhost:3001/api/v1/swaps/${accountUid}/${requesteeUid}/${requestTimestamp}/status`, {
+  await makeChangeRequestWithToast(`http://localhost:3001/api/v1/swaps/${accountUid}/${requesteeUid}/${requestTimestamp}/status`, {
     method: "PUT",
     body: JSON.stringify({ status: newStatus }),
     credentials: "include",
     headers: { "Content-Type": "application/json" }
-  })
-  .then((response) => 
-    toast.success(`Successfully changed ${requesteeUsername}'s swap status to ${newStatus}`, {
-      position: toast.POSITION.TOP_RIGHT
-    })
-  )
-  .catch((reason) => console.log(reason));
+  }, `Successfully changed ${requesteeUsername}'s swap status to ${newStatus}`)
 }
 
 export async function cancelSwapRequest(accountUid, swapperUid, requesteeUsername, requestTimestamp) {
-  await fetch(`http://localhost:3001/api/v1/swaps/${accountUid}/${swapperUid}/${requestTimestamp}`, {
+  await makeChangeRequestWithToast(`http://localhost:3001/api/v1/swaps/${accountUid}/${swapperUid}/${requestTimestamp}`, {
     method: "DELETE",
     credentials: "include"
-  })
-  .then((response) =>     
-    toast.success(`Successfully rejected ${requesteeUsername}'s swap request`, {
-      position: toast.POSITION.TOP_RIGHT
-    })
-  )
-  .catch((reason) => console.log(reason));
+  }, `Successfully rejected ${requesteeUsername}'s swap request`)
 }

@@ -53,9 +53,6 @@ function MySwapsPage() {
       <div className="navbar-margin">
         <div className="swap-container">
           <h1 className="px-5 swap-text">Swaps</h1>
-          {/* <div >
-            <MySwapSwitch hl={"swaps"} />
-          </div> */}
         </div>
         <SwapSwitch current={0} />
         <div

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import SwapListing from "./SwapListing";
 import "./styles/SwapResultsContainer.scss";
-import { newSwapRequest, sendSwapRequest } from "../utils/changeFunctions";
+import { newSwapRequest } from "../utils/changeFunctions";
 
 /**
  * Container component for all swap results on /find-swap
@@ -17,6 +17,7 @@ export default class SwapResultsContainer extends Component {
     const minRating = this.props.rating;
     const maxDist = this.props.distance;
     const setUsers = this.props.setUsers;
+    const setOrderBy = this.props.setOrderBy;
     let users = this.props.users;
     
     // Returns if subarr is subarray of arr
@@ -124,7 +125,22 @@ export default class SwapResultsContainer extends Component {
       />
     ));
 
-    return <div className="swap-results-container">{exUserJSX}</div>;
+    return (
+      <div className="swap-results-container">
+        <div className="swap-header">
+          Sort By:
+          <select className="swap-option" onChange={(e) => {
+            setOrderBy(e.target.value)
+          }}>
+            <option value="distanceAsc">Distance - Low to High</option>
+            <option value="distanceDesc">Distance - High to Low</option>
+            <option value="avgRatingAsc">Rating - Low to High</option>
+            <option value="avgRatingDesc">Rating - High to Low</option>
+          </select>
+        </div>
+        {exUserJSX}
+      </div>
+    );
   }
 
   createNewSwapRequest(user, requesteeUid, requesteeUsername, setUsers) {

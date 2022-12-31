@@ -1,6 +1,8 @@
 export function setUsersForSwapList(users) {
+
     return users.map((user) => {
       const profile = user.profileData.profile
+      console.log(profile)
       return {
         img: profile.pfpLink,
         username: profile.username,
