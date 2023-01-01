@@ -116,9 +116,23 @@ export async function getAllUsers(latitude, longitude, accountUid, filter, setFu
   }
 
   try {
-    const response = await fetch(`http://localhost:3001/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}&matchableWith=${accountUid}${filter}`);
+    let uidString
+    if (accountUid != null) {
+      uidString = `&matchableWith=${accountUid}`
+    }
+    else {
+      uidString = ""
+    }
+
+    console.log(`http://localhost:3001/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${uidString}${filter}`)
+    const response = await fetch(`http://localhost:3001/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${uidString}${filter}`);
     const json = await response.json();
-    setFunc(json)
+    if (setFunc) {
+      setFunc(json)
+    }
+    else {
+      return json
+    }
   }
   catch(error) {
     console.error(error)
@@ -137,7 +151,12 @@ export async function getUsersOfSwapStatus(user, status, setFunc) {
       return  {profileData: await fetchUserFromUidWithDistance(userSwap.requesteeUid, address.longitude, address.latitude), requestTimestamp: userSwap.requestTimestamp, requesterUid: userSwap.requesterUid}
     })
     const userData = await Promise.all(userPromise)
-    setFunc(userData)
+    if (setFunc) {
+      setFunc(userData)
+    }
+    else {
+      return userData
+    }
   }
   catch(error) {
     console.error(error)
