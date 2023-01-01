@@ -105,6 +105,8 @@ paths:
             oneOf:
               - type: object #no ordering (just order by uuidAsc)
                 additionalProperties: false
+                required:
+                  - accountUid
                 properties:
                   accountUid:
                     type: string
@@ -112,17 +114,21 @@ paths:
                     default: 00000000-0000-0000-0000-000000000000
               - type: object #ordering by distance
                 additionalProperties: false
+                required:
+                  - accountUid
+                  - distance
                 properties:
                   accountUid:
                     type: string
                     format: uuid
                     default: 00000000-0000-0000-0000-000000000000
                   distance:
-                    oneOf:
-                      - type: integer
-                        format: int32
+                    type: number
               - type: object #ordering by rating
                 additionalProperties: false
+                required:
+                  - accountUid
+                  - avgRating
                 properties:
                   accountUid:
                     type: string
@@ -750,7 +756,9 @@ paths:
                   - numRatings
                 properties:
                   avgRating:
-                    $ref: "#/components/schemas/AvgRating"
+                    nullable: true
+                    allOf:
+                      - $ref: "#/components/schemas/AvgRating"
                   numRatings:
                     $ref: "#/components/schemas/NumRatings"
         400:
@@ -976,7 +984,7 @@ paths:
               - timeDesc
         - in: query
           name: key
-          description: All swaps in response will be occur after a swap that has the specified properties according to the ordering set by orderBy. If ordering by time, key must include field "time". In all cases, field accountUid may optionally be provided.
+          description: All swaps in response will be occur after a swap that has the specified properties according to the ordering set by orderBy. If ordering by requestTimestamp, key must include field "requestTimestamp". In all cases, field accountUid may optionally be provided.
           explode: true
           style: deepObject
           schema:
@@ -988,16 +996,16 @@ paths:
                     type: string
                     format: uuid
                     default: 00000000-0000-0000-0000-000000000000
-              - type: object #ordering by time
+              - type: object #ordering by request-timestamp
                 additionalProperties: false
                 properties:
                   accountUid:
                     type: string
                     format: uuid
                     default: 00000000-0000-0000-0000-000000000000
-                  time:
-                    type: integer
-                    format: int64
+                  requestTimestamp:
+                    type: string
+                    format: date-ime
         - in: query
           name: limit
           description: Response will include up to limit swaps.
@@ -1159,6 +1167,11 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
+  /api/v1/ratings/{accountUid}/{swapperUid}:
+    put:
+      responses:
+        200:
+          description: The new rating of the swapper.
   /api/v1/session:
     get:
       summary: Get the current session details.
@@ -1282,6 +1295,7 @@ components:
           $ref: "#/components/schemas/ImageLink"
         avgRating:
           readOnly: true
+          nullable: true
           allOf:
             - $ref: "#/components/schemas/AvgRating"
         numRatings:
