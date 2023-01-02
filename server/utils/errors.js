@@ -27,9 +27,3 @@ export const swapNotFound = {
   message: "swap not found",
   detail: "specified swap does not exist",
 };
-
-export const ratingNotFound = {
-  status: 404,
-  message: "rating not found",
-  detail: "rating with specified accountUid and swapperUid not found",
-};
