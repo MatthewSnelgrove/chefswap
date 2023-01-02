@@ -4,8 +4,6 @@ import camelize from "camelize";
 import checkAuth from "../middlewares/checkAuth.js";
 export const router = express.Router();
 import { swapperNotFound, ratingNotFound } from "../utils/errors.js";
-import stripNulls from "../utils/stripNulls.js";
-import e from "express";
 
 router.get("/:accountUid/:swapperUid", checkAuth, async (req, res, next) => {
   const { accountUid, swapperUid } = req.params;
