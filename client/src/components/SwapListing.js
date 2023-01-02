@@ -15,8 +15,6 @@ function SwapListing(props) {
       accountUid: props.accountUid,
       distance: props.distance
     }
-
-    console.log(props)
   }
   
   return (

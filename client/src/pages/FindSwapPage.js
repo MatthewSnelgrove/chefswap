@@ -37,7 +37,7 @@ export default function FindSwapPage(props) {
   const [userAddress, setUserAddress] = useState(null);
   const [orderBy, setOrderBy] = useState("distanceAsc")
   const [userObserver, setUserObserver] = useState(null)
-  const [searchState, searchDispatch, isLoading] = useSwapSearch(userObserver, setUserObserver, user, userAddress, {distance: distance, rating: rating, cuisineChecked: cuisineChecked, orderBy: orderBy})
+  const [searchState, searchDispatch, isLoading] = useSwapSearch(userObserver,  user, userAddress, {distance: distance, rating: rating, cuisineChecked: cuisineChecked, orderBy: orderBy})
   const observer = useRef()
   const innerRefData = useRef()
   const lastUser = useCallback((node) => {
