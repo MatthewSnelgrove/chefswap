@@ -33,7 +33,7 @@ function SwapListing(props) {
               style={{ height: 33, width: 33 }}
               src="../location.png"
             ></img>
-            <span className="distance-display">{props.distance}km</span>
+            <span className="distance-display">{props.distance.toFixed(1)}km</span>
           </div>
           <div className="rating-tag">
             <img
@@ -41,7 +41,7 @@ function SwapListing(props) {
               style={{ height: 33, width: 33 }}
               src="../star.png"
             ></img>
-            <div>{props.rating}</div>
+            <div>{props.rating == null ? "": props.rating}</div>
           </div>
         </div>
         <div className="tags">

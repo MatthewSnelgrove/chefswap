@@ -7,7 +7,7 @@ function searchReducer(state, action) {
             return state.filter((filterUser) => filterUser.profile.accountUid != action.payload)
         }
         case "user-scroll": {
-            return [...state, ...action.payload.slice(1, action.payload.length + 1)]
+            return [...state, ...action.payload]
         }
         case "change-query": {
             return action.payload
@@ -54,15 +54,16 @@ export function useSwapSearch(lastUser, user, userAddress, queryValues) {
                 setLastUser(false)
             }
         })
-    }, [...Object.values(queryValues)])
+    }, Object.values(queryValues))
 
     useEffect(() => {
         if (user == global.config.userStates.loading || userAddress == null || isLastUser) {return}
         setLoading(true)
-        getAllUsers(userAddress.latitude, userAddress.longitude, null,  `${queryValues.cuisineChecked.map(e => "&cuisineSpeciality=" + e).join("")}&orderBy=${queryValues.orderBy}${getOrderByString(queryValues.orderBy, lastUser.distance, lastUser.rating, lastUser.accountUid)}&limit=8`,
+        getAllUsers(userAddress.latitude, userAddress.longitude, user.accountUid,  `${queryValues.cuisineChecked.map(e => "&cuisineSpeciality=" + e).join("")}&orderBy=${queryValues.orderBy}${getOrderByString(queryValues.orderBy, lastUser.distance, lastUser.rating, lastUser.accountUid)}&limit=8`,
         (data) => {
+            console.log(data)
             loadedData(setLoading, dispatch, data, "user-scroll")
-            if (data && data.length == 0) {
+            if (data && (data.length == 0)) {
                 setLastUser(true)
             }    
         })

@@ -32,9 +32,10 @@ function PendingButtons(props) {
     <div className="button-wrapper">
       {props.isRequestee ? <button className="accept-button" title="Accept swap request" onClick={(e) => 
         {
-          changeSwapStatus(user.accountUid, person.accountUid, person.username, person.requestTimestamp, "ongoing")
-          props.setSwapListPending((curSwapListPending) => curSwapListPending.filter((userFilter) => userFilter.username != person.username))
-          props.setSwapListOngoing((curSwapListOngoing) => [...curSwapListOngoing, person])
+          changeSwapStatus(user.accountUid, person.accountUid, person.username, person.requestTimestamp, "ongoing").then(() => {
+            props.setSwapListPending((curSwapListPending) => curSwapListPending.filter((userFilter) => userFilter.username != person.username))
+            props.setSwapListOngoing((curSwapListOngoing) => [...curSwapListOngoing, person])
+          })
         }}>
         <span class="material-icons-round accept-image">done</span>
       </button>:
@@ -42,8 +43,9 @@ function PendingButtons(props) {
       }
       <button className="decline-button" title="Reject swap request" onClick={(e) => 
       {
-          cancelSwapRequest(user.accountUid, person.accountUid, person.username, person.requestTimestamp)
-          props.setSwapListPending((curSwapListPending) => curSwapListPending.filter((userFilter) => userFilter.username != person.username))
+          cancelSwapRequest(user.accountUid, person.accountUid, person.username, person.requestTimestamp).then(() => {
+            props.setSwapListPending((curSwapListPending) => curSwapListPending.filter((userFilter) => userFilter.username != person.username))
+          })
       }}>
         <span class="material-icons-round decline-image">close</span>
       </button>
