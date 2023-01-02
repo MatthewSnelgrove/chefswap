@@ -7,6 +7,7 @@ import { useUser } from "../components/useUser"
 import { fetchSpecific } from "../utils/fetchFunctions";
 import { useSwapSearch } from "../components/useSwapSearch";
 
+
 // distance: (user.profile.distance / 1000).toFixed(1),
 // avg_rating: user.profile.avgRating
 function filterForDisplay(users) {
@@ -58,6 +59,7 @@ export default function FindSwapPage(props) {
   // TODO: set default values
   useEffect(() => {
     if (user == loading) {return}
+    fetchSpecific(user.accountUid, "address", setUserAddress)
     fetchSpecific(user.accountUid, "address", setUserAddress)
   }, [user])
 
