@@ -7,7 +7,7 @@ function searchReducer(state, action) {
             return state.filter((filterUser) => filterUser.profile.accountUid != action.payload)
         }
         case "user-scroll": {
-            return [...state, ...action.payload.slice(1, action.payload.length + 1)]
+            return [...state, ...action.payload]
         }
         case "change-query": {
             return action.payload
@@ -19,16 +19,6 @@ function loadedData(setLoading, loadingDispatch, newData, type) {
     loadingDispatch({type: type, payload: newData})
     setLoading(false)
     console.log("getting new users")
-}
-
-//This violates open/close principle not really sure how to fix ths
-function getOrderByString(orderBy, distance, rating, accountUid) {
-    if (orderBy == "distanceAsc" || orderBy == "distanceDesc") {
-        return `&key[accountUid]=${accountUid}&key[distance]=${distance * 1000}`
-    }
-    else {
-        return `&key[accountUid]=${accountUid}}&key[avgRating]=${rating}`
-    }
 }
 
 //This violates open/close principle not really sure how to fix ths
@@ -69,7 +59,7 @@ export function useSwapSearch(lastUser, user, userAddress, queryValues) {
     useEffect(() => {
         if (user == global.config.userStates.loading || userAddress == null || isLastUser) {return}
         setLoading(true)
-        getAllUsers(userAddress.latitude, userAddress.longitude, null,  `${queryValues.cuisineChecked.map(e => "&cuisineSpeciality=" + e).join("")}&orderBy=${queryValues.orderBy}${getOrderByString(queryValues.orderBy, lastUser.distance, lastUser.rating, lastUser.accountUid)}&limit=8`,
+        getAllUsers(userAddress.latitude, userAddress.longitude, user.accountUid,  `${queryValues.cuisineChecked.map(e => "&cuisineSpeciality=" + e).join("")}&orderBy=${queryValues.orderBy}${getOrderByString(queryValues.orderBy, lastUser.distance, lastUser.rating, lastUser.accountUid)}&limit=8`,
         (data) => {
             console.log(data)
             loadedData(setLoading, dispatch, data, "user-scroll")

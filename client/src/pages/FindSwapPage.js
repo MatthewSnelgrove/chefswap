@@ -59,7 +59,6 @@ export default function FindSwapPage(props) {
   useEffect(() => {
     if (user == loading) {return}
     fetchSpecific(user.accountUid, "address", setUserAddress)
-    fetchSpecific(user.accountUid, "address", setUserAddress)
   }, [user])
 
   if (user == loading || userAddress == null){ return (<></>) }
