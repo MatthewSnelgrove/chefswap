@@ -2,7 +2,6 @@ import React from "react";
 import "./styles/SwapListing.css";
 import Tag from "./Tag";
 import ProfilePicture from "./ProfilePicture";
-import { compareSync } from "bcryptjs";
 
 /**
  * Models a single swap result listed in /find-swap
@@ -15,8 +14,6 @@ function SwapListing(props) {
       accountUid: props.accountUid,
       distance: props.distance
     }
-
-    console.log(props)
   }
   
   return (
