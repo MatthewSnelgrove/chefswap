@@ -4,6 +4,12 @@ export const accountNotFound = {
   detail: "account with specified accountUid not found",
 };
 
+export const swapperNotFound = {
+  status: 404,
+  message: "swapper not found",
+  detail: "swapper with specified swapperUid not found",
+};
+
 export const sessionNotFound = {
   status: 404,
   message: "session not found",
