@@ -89,8 +89,9 @@ app.use("/api/v1/session", sessionRouter);
 import { router as accountsRouter } from "./routes/accounts.js";
 app.use("/api/v1/accounts", accountsRouter);
 import { router as swapsRouter } from "./routes/swaps.js";
-import stripNulls from "./utils/stripNulls.js";
 app.use("/api/v1/swaps", swapsRouter);
+import { router as ratingsRouter } from "./routes/ratings.js";
+app.use("/api/v1/ratings", ratingsRouter);
 
 app.use((err, req, res, next) => {
   //if multiple errors (from openapi validator) return those errors.

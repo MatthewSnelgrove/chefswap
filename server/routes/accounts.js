@@ -3,34 +3,14 @@ import { pool } from "../configServices/dbConfig.js";
 import camelize from "camelize";
 import bcrypt from "bcryptjs";
 import { generateImageLink } from "../utils/imageHelpers.js";
-import validateRegistrationData from "../middlewares/validateRegistrationData.js";
 import fetch from "node-fetch";
-import {
-  validateUsername,
-  validateEmail,
-  validatePassword,
-  validateAddress,
-  validateBio,
-  validateImageName,
-  validateCircleRadius,
-} from "../utils/dataValidation.js";
-import slugid from "slugid";
 import addressToGmapsUrl from "../utils/addressToGmapsUrl.js";
 import checkAuth from "../middlewares/checkAuth.js";
-import slugToUuid from "../utils/slugToUuid.js";
 import { uploadHandler } from "../utils/imageHelpers.js";
 import uuid4 from "uuid4";
 import { bucket } from "../configServices/cloudStorageConfig.js";
-import { computeDestinationPoint, getBoundsOfDistance } from "geolib";
+import { computeDestinationPoint } from "geolib";
 export const router = express.Router();
-import {
-  NoAccountError,
-  InvalidSlugError,
-  MissingRequiredFieldError,
-} from "../error.js";
-import { validateUsername2 } from "../middlewares/dataValidation.js";
-import { NotFound } from "express-openapi-validator/dist/openapi.validator.js";
-import { accountProfileQuery, accountQuery } from "../utils/queryHelpers.js";
 import snakeize from "snakeize";
 import { accountNotFound } from "../utils/errors.js";
 import stripNulls from "../utils/stripNulls.js";
@@ -120,6 +100,9 @@ router.get("/", async (req, res, next) => {
       ]
     )
   ).rows;
+  for (const profile of profiles) {
+    stripNulls(profile.profile, ["distance"]);
+  }
   res.json(profiles);
   return;
 });

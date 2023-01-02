@@ -734,7 +734,7 @@ paths:
           $ref: "#/components/responses/NotFound"
         500:
           $ref: "#/components/responses/InternalServerError"
-  /api/v1/accounts/{accountUid}/rating:
+  /api/v1/accounts/{accountUid}/ratingInfo:
     parameters:
       - name: accountUid
         description: The uuid of an account
@@ -744,15 +744,16 @@ paths:
           type: string
           format: uuid
     get:
-      summary: Read the rating of an account.
+      summary: Read the average rating and number of ratings of an account.
       responses:
         200:
-          description: The rating of the account corresponding to the provided uid.
+          description: The average rating and number of ratings of the account corresponding to the provided uid.
           content:
             application/json:
               schema:
                 type: object
                 required:
+                  - avgRating
                   - numRatings
                 properties:
                   avgRating:
@@ -1067,13 +1068,7 @@ paths:
   /api/v1/swaps/{accountUid}/{swapperUid}/{requestTimestamp}:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
-      - name: swapperUid
-        description: The uuid of an the swapper's account.
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/SwapperUid"
       - name: requestTimestamp
         description: Url encoded timestamp of corresponding to time the swap was requested.
         in: path
@@ -1118,13 +1113,7 @@ paths:
   /api/v1/swaps/{accountUid}/{swapperUid}/{requestTimestamp}/status:
     parameters:
       - $ref: "#/components/parameters/AccountUid"
-      - name: swapperUid
-        description: The uuid of an the swapper's account
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
+      - $ref: "#/components/parameters/SwapperUid"
       - name: requestTimestamp
         description: Url encoded timestamp of corresponding to time the swap was requested.
         in: path
@@ -1168,10 +1157,52 @@ paths:
         500:
           $ref: "#/components/responses/InternalServerError"
   /api/v1/ratings/{accountUid}/{swapperUid}:
-    put:
+    parameters:
+      - $ref: "#/components/parameters/AccountUid"
+      - $ref: "#/components/parameters/SwapperUid"
+    get:
+      summary: Get the rating given by account with accountUid to account with accountUid swapperUid. Must be signed in with specified account.
       responses:
         200:
-          description: The new rating of the swapper.
+          description: The rating given by account with accountUid to account with accountUid swapperUid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Rating"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      summary: Change the rating given by account with accountUid to account with accountUid swapperUid. Must be signed in with specified account.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Rating"
+      responses:
+        200:
+          description: The new/updated rating given by account with accountUid to account with accountUid swapperUid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Rating"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        403:
+          $ref: "#/components/responses/Forbidden"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
   /api/v1/session:
     get:
       summary: Get the current session details.
@@ -1292,12 +1323,21 @@ components:
         circle:
           $ref: "#/components/schemas/Circle"
         pfpLink:
-          $ref: "#/components/schemas/ImageLink"
+          readOnly: true
+          oneOf:
+            - $ref: "#/components/schemas/ImageLink"
+            - type: integer
+              minimum: 1
+              maximum: 0
+              nullable: true
         avgRating:
           readOnly: true
-          nullable: true
-          allOf:
+          oneOf:
             - $ref: "#/components/schemas/AvgRating"
+            - type: string
+              maxLength: 0
+              minLength: 1
+              nullable: true
         numRatings:
           readOnly: true
           allOf:
@@ -1504,6 +1544,30 @@ components:
           readOnly: true
           allOf:
             - $ref: "#/components/schemas/SwapStatus"
+    Rating:
+      type: object
+      required:
+        - accountUid
+        - swapperUid
+        - rating
+        - updateTimestamp
+      properties:
+        accountUid:
+          readOnly: true
+          type: string
+          format: uuid
+        swapperUid:
+          readOnly: true
+          type: string
+          format: uuid
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        updateTimestamp:
+          readOnly: true
+          type: string
+          format: date-time
     Errors:
       type: array
       items:
@@ -1573,6 +1637,14 @@ components:
     AccountUid:
       name: accountUid
       description: The uuid of an account
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    SwapperUid:
+      name: swapperUid
+      description: The uuid of a swapper
       in: path
       required: true
       schema:
