@@ -26,13 +26,13 @@ router.get("/", async (req, res, next) => {
     maxRating,
     cuisinePreference,
     cuisineSpeciality,
-    matchableWith,
     orderBy,
     key = {
       accountUid: "00000000-0000-0000-0000-000000000000",
     },
     limit = 20,
   } = req.query;
+  const matchableWith = req.session.accountUid;
   //validation too complicated for openapi spec
   if (
     //includeDistanceFrom.lat/lng will only be valid numbers or undefined due to openapi validation
