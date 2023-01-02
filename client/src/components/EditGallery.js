@@ -86,10 +86,11 @@ function ConfirmModal(props) {
 
 
 function deleteImg(setImages, deleteImg) {
-  deletePhoto(deleteImg.accountUid, deleteImg.imageUid)
-  setImages((curImages) => curImages.filter((curImage) => {
-    return curImage.imageUid != deleteImg.imageUid
-  }))
+  deletePhoto(deleteImg.accountUid, deleteImg.imageUid).then(() => {
+    setImages((curImages) => curImages.filter((curImage) => {
+      return curImage.imageUid != deleteImg.imageUid
+    }))
+  })
 }
 
 // async function getNewImages(images, setImages) {

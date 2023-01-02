@@ -16,7 +16,7 @@ function filterForDisplay(users) {
     return {
       avg_rating: user.profile.avgRating,
       cuisineSpecialities: user.profile.cuisineSpecialities,
-      distance: (user.profile.distance / 1000).toFixed(1),
+      distance: (user.profile.distance / 1000),
       pfpLink: user.profile.pfpLink,
       username: user.profile.username,
       accountUid: user.profile.accountUid
@@ -56,10 +56,8 @@ export default function FindSwapPage(props) {
     document.title = "Chefswap | Find swaps";
   }, []);
 
-  // TODO: set default values
   useEffect(() => {
     if (user == loading) {return}
-    fetchSpecific(user.accountUid, "address", setUserAddress)
     fetchSpecific(user.accountUid, "address", setUserAddress)
   }, [user])
 

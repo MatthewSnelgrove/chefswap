@@ -1006,7 +1006,7 @@ paths:
                     default: 00000000-0000-0000-0000-000000000000
                   requestTimestamp:
                     type: string
-                    format: date-ime
+                    format: date-time
         - in: query
           name: limit
           description: Response will include up to limit swaps.

@@ -33,10 +33,10 @@ function EndSwap(props) {
   return (
     <div className="button-wrapper">
       <button className="end-swap-button" title="End swap with user" onClick={(e) => {
-        changeSwapStatus(user.accountUid, person.accountUid, person.username, person.requestTimestamp, "ended")
-        props.setSwapListOngoing((curSwapListOngoing) => curSwapListOngoing.filter((userFilter) => userFilter.username != person.username))
-        props.setSwapListPast((curSwapListPast) => [...curSwapListPast, person])
-
+        changeSwapStatus(user.accountUid, person.accountUid, person.username, person.requestTimestamp, "ended").then(() => {
+          props.setSwapListOngoing((curSwapListOngoing) => curSwapListOngoing.filter((userFilter) => userFilter.username != person.username))
+          props.setSwapListPast((curSwapListPast) => [...curSwapListPast, person])
+        })
       }}>
         <span class="material-icons-round end-swap-image">exit_to_app</span>
       </button>

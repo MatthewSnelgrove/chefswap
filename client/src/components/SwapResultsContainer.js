@@ -13,9 +13,9 @@ import { newSwapRequest } from "../utils/changeFunctions";
  */
 export default class SwapResultsContainer extends Component {
   render() {
-    const searchDispatch = this.props.searchDispatch;
-    const setOrderBy = this.props.setOrderBy;
-    const searchState = this.props.searchState;
+    const searchDispatch = this.props.searchDispatch
+    const setOrderBy = this.props.setOrderBy
+    const searchState = this.props.searchState
     const lastUser = this.props.lastUser
     const numLoadedUsers = this.props.numLoadedUsers
     const innerRefData = this.props.innerRefData
