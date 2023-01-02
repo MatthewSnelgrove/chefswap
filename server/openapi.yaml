@@ -81,12 +81,6 @@ paths:
             minimum: 50
             maximum: 2000000000
         - in: query
-          name: matchableWith
-          description: Only accounts that do not have a pending or accepted swap with the specified account will be returned.
-          schema:
-            type: string
-            format: uuid
-        - in: query
           name: orderBy
           description: Specifies the first field to be used for ordering results. Second field (or only field if this param is not specified) is always accountUid. Ordering by distance is only valid if includeDistanceFrom is also specified.
           schema:
@@ -135,7 +129,11 @@ paths:
                     format: uuid
                     default: 00000000-0000-0000-0000-000000000000
                   avgRating:
-                    $ref: "#/components/schemas/AvgRating"
+                    nullable: true
+                    type: number
+                    minimum: 1
+                    maximum: 5
+                    # $ref: "#/components/schemas/AvgRating"
         - in: query
           name: limit
           description: Response will include up to limit accounts.
@@ -1480,6 +1478,7 @@ components:
       type: string
       maxLength: 500
     AvgRating:
+      nullable: true
       type: number
       minimum: 1
       maximum: 5
