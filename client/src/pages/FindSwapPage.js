@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import FilterForm from "../components/FilterForm";
 import OnlyLoggedIn from "../components/OnlyLoggedIn";
 import SwapResultsContainer from "../components/SwapResultsContainer";
 import "./styles/FindSwapPage.scss";
 import { useUser } from "../components/useUser"
-import { getAllUsers, fetchSpecific } from "../utils/fetchFunctions";
+import { fetchSpecific } from "../utils/fetchFunctions";
+import { useSwapSearch } from "../components/useSwapSearch";
 
 // distance: (user.profile.distance / 1000).toFixed(1),
 // avg_rating: user.profile.avgRating
 function filterForDisplay(users) {
+
   return users.map((user) => {
     return {
       avg_rating: user.profile.avgRating,
@@ -32,27 +34,32 @@ export default function FindSwapPage(props) {
   const [cuisineChecked, setCuisineChecked] = useState([]);
   const [rating, setRating] = useState(1);
   const [distance, setDistance] = useState(100);
-  const [users, setUsers] = useState([]);
   const [userAddress, setUserAddress] = useState(null);
   const [orderBy, setOrderBy] = useState("distanceAsc")
+  const [userObserver, setUserObserver] = useState(null)
+  const [searchState, searchDispatch, isLoading] = useSwapSearch(userObserver, setUserObserver, user, userAddress, {distance: distance, rating: rating, cuisineChecked: cuisineChecked, orderBy: orderBy})
+  const observer = useRef()
+  const innerRefData = useRef()
+  const lastUser = useCallback((node) => {
+    if (isLoading) {return}
+    if (observer.current) {observer.current.disconnect()}
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setUserObserver(innerRefData.current)
+      }
+    })
+    if (node) {observer.current.observe(node)}
+  }, [isLoading])
 
   useEffect(() => {
     document.title = "Chefswap | Find swaps";
   }, []);
 
-  //TODO: set default values
+  // TODO: set default values
   useEffect(() => {
     if (user == loading) {return}
-    fetchSpecific(user.accountUid, "address", setUserAddress).then((address) => {
-      getAllUsers(address.latitude, address.longitude, user.accountUid, null, setUsers)
-    })
+    fetchSpecific(user.accountUid, "address", setUserAddress)
   }, [user])
-
-  useEffect(() => {
-    if (user == loading || userAddress == null) {return}
-    getAllUsers(userAddress.latitude, userAddress.longitude, user.accountUid, `&maxDistance=${distance * 1000}&minRating=${rating}${cuisineChecked.map(e => "&cuisineSpeciality=" + e).join("")}&orderBy=${orderBy}`, setUsers)
-  }, [cuisineChecked, distance, rating, orderBy])
-
 
   if (user == loading || userAddress == null){ return (<></>) }
 
@@ -104,14 +111,14 @@ export default function FindSwapPage(props) {
           />
 
           <SwapResultsContainer
-            cuisineChecked={cuisineChecked}
-            rating={rating}
-            distance={distance}
-            users={filterForDisplay(users)}
-            setUsers={setUsers}
+            searchState={filterForDisplay(searchState)}
+            searchDispatch={searchDispatch}
             setOrderBy={setOrderBy}
             user={user}
-          />
+            lastUser={lastUser}
+            numLoadedUsers={searchState.length}
+            innerRefData={innerRefData}
+          />        
         </div>
       </div>
     </OnlyLoggedIn>

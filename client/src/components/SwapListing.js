@@ -2,14 +2,25 @@ import React from "react";
 import "./styles/SwapListing.css";
 import Tag from "./Tag";
 import ProfilePicture from "./ProfilePicture";
+import { compareSync } from "bcryptjs";
 
 /**
  * Models a single swap result listed in /find-swap
  * @param {object} props Contains username, distance, rating, cuisineSpecialties (obj?)
  */
 function SwapListing(props) {
+  if (props.innerRef) {
+    props.innerRefData.current = {
+      rating: props.rating,
+      accountUid: props.accountUid,
+      distance: props.distance
+    }
+
+    console.log(props)
+  }
+  
   return (
-    <div>
+    <div ref={props.innerRef}>
       <div className="main-container">
         <div className="info-container">
           <div className="image-container">
