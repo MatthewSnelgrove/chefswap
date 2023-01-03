@@ -305,7 +305,7 @@ router.put("/:accountUid/password", checkAuth, async (req, res, next) => {
  */
 router.get("/:accountUid/address", checkAuth, async (req, res, next) => {
   const accountUid = req.params.accountUid;
-  const address = (
+  const address = camelize(
     await pool.query(
       `SELECT 
         json_strip_nulls(
