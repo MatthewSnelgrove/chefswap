@@ -27,21 +27,26 @@ export async function deletePhoto(Uid, imgUid) {
 }
 
 export async function changeAddress(Uid, addressInfo) {
-  await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/address`, {
+  console.log(addressInfo);
+  return await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/address`, {
     credentials: "include",
     method: "PUT",
     body: JSON.stringify(addressInfo),
     headers: { "Content-Type": "application/json" },
-  }).catch((reason) => console.log(reason));
+  });
 }
 
 export async function changeEmail(Uid, emailInfo) {
-  await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/email`, {
-    credentials: "include",
-    method: "PUT",
-    body: JSON.stringify(emailInfo),
-    headers: { "Content-Type": "application/json" },
-  }).catch((reason) => console.log(reason));
+  const response = await fetch(
+    `http://localhost:3001/api/v1/accounts/${Uid}/email`,
+    {
+      credentials: "include",
+      method: "PUT",
+      body: JSON.stringify(emailInfo),
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+  return response;
 }
 
 export async function changeBio(Uid, bio) {

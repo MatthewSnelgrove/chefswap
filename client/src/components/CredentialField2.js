@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./styles/CredentialField.scss";
 
 /**
@@ -21,12 +21,22 @@ function CredentialField2({
   size,
   value,
   onChange,
-  onBlur = () => { },
-  onFocus = () => { },
+  onBlur = () => {},
+  onFocus = () => {},
   clicked,
   error,
   required = false,
 }) {
+  // State holding label styles
+  const [labelStyles, setLabelStyles] = useState({
+    top: "10px",
+    fontSize: "1em",
+  });
+
+  useEffect(() => {
+    if (value) animateLabelUp();
+  }, [value]);
+
   // Logic for handling error message styles
   let fieldBorder = "3px solid gray";
   let errorVisibility = "hidden";
@@ -43,15 +53,17 @@ function CredentialField2({
 
   // Functions for animating label up and down
   function animateLabelUp() {
-    let label = document.querySelector(`#${id}-label`);
-    label.style.top = "-12px";
-    label.style.fontSize = "0.85em";
+    setLabelStyles({
+      top: "-12px",
+      fontSize: "0.85em",
+    });
   }
 
   function animateLabelDown() {
-    let label = document.querySelector(`#${id}-label`);
-    label.style.top = "10px";
-    label.style.fontSize = "1em";
+    setLabelStyles({
+      top: "10px",
+      fontSize: "1em",
+    });
   }
 
   // Animate label up when focused
@@ -98,11 +110,14 @@ function CredentialField2({
         onFocus={handleFocus}
         onBlur={handleBlur}
         style={{ borderBottom: fieldBorder }}
-        required={required} />
+        required={required}
+      />
       <label
         htmlFor={id}
         className="input-label"
-        id={id + "-label"}>
+        id={id + "-label"}
+        style={labelStyles}
+      >
         {label}
       </label>
 

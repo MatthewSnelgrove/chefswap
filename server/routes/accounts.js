@@ -126,18 +126,22 @@ router.get("/", async (req, res, next) => {
           numParams += 2;
           paramArray.push(key.distance, key.accountUid);
           filterString += filterString
-            ? ` AND (distance > $${numParams - 1} OR (distance = $${numParams - 1
-            } AND account_uid > $${numParams}))`
-            : ` WHERE (distance > $${numParams - 1} OR (distance = $${numParams - 1
-            } AND account_uid > $${numParams}))`;
+            ? ` AND (distance > $${numParams - 1} OR (distance = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`
+            : ` WHERE (distance > $${numParams - 1} OR (distance = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`;
         case "distanceDesc":
           numParams += 2;
           paramArray.push(key.distance, key.accountUid);
           filterString += filterString
-            ? ` AND (distance < $${numParams - 1} OR (distance = $${numParams - 1
-            } AND account_uid > $${numParams}))`
-            : ` WHERE (distance < $${numParams - 1} OR (distance = $${numParams - 1
-            } AND account_uid > $${numParams}))`;
+            ? ` AND (distance < $${numParams - 1} OR (distance = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`
+            : ` WHERE (distance < $${numParams - 1} OR (distance = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`;
         default:
           next({
             status: 400,
@@ -153,18 +157,22 @@ router.get("/", async (req, res, next) => {
           numParams += 2;
           paramArray.push(key.rating, key.accountUid);
           filterString += filterString
-            ? ` AND (avg_rating > $${numParams - 1} OR (avg_rating = $${numParams - 1
-            } AND account_uid > $${numParams}))`
-            : ` WHERE (avg_rating > $${numParams - 1} OR (avg_rating = $${numParams - 1
-            } AND account_uid > $${numParams}))`;
+            ? ` AND (avg_rating > $${numParams - 1} OR (avg_rating = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`
+            : ` WHERE (avg_rating > $${numParams - 1} OR (avg_rating = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`;
         case "avgRatingDesc":
           numParams += 2;
           paramArray.push(key.rating, key.accountUid);
           filterString += filterString
-            ? ` AND (avg_rating < $${numParams - 1} OR (avg_rating = $${numParams - 1
-            } AND account_uid > $${numParams}))`
-            : ` WHERE (avg_rating < $${numParams - 1} OR (avg_rating = $${numParams - 1
-            } AND account_uid > $${numParams}))`;
+            ? ` AND (avg_rating < $${numParams - 1} OR (avg_rating = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`
+            : ` WHERE (avg_rating < $${numParams - 1} OR (avg_rating = $${
+                numParams - 1
+              } AND account_uid > $${numParams}))`;
         default:
           next({
             status: 400,
@@ -325,7 +333,7 @@ router.post("/", async (req, res, next) => {
             });
             return;
           default:
-            console.log(e)
+            console.log(e);
             next();
             return;
         }
@@ -460,7 +468,7 @@ router.put("/:accountUid/password", checkAuth, async (req, res, next) => {
  */
 router.get("/:accountUid/address", checkAuth, async (req, res, next) => {
   const accountUid = req.params.accountUid;
-  const address = (
+  const address = camelize(
     await pool.query(
       `SELECT 
         json_strip_nulls(
