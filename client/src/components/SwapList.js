@@ -1,30 +1,32 @@
 import React from "react";
-import SwapInfo from "./SwapInfo";
-import "./styles/SwapList.css";
+import SwapListing from "./SwapListing";
+import "./styles/SwapListBlueprint.css"
 
-//type: tpy
 function SwapList(props) {
   return (
     <div className="container">
-      <div className="type-container">
+      <div className="swap-type-container">
         <div>
           <h2>{props.type}</h2>
         </div>
       </div>
 
+    
       <div className="list-container">
-        {props.data.map((person) => (
+        {props.data.map((person, index) => (
           //console.log(person.id)
-          <SwapInfo
-            key={person.id}
-            cuisineSpecialties={person.cuisineSpecialties}
+          <SwapListing
+            key={index}
+            cuisineSpecialities={person.cuisineSpecialities}
             distance={person.distance}
             date={person.date}
             username={person.username}
-            img={person.img}
+            pfpLink={person.img}
             rating={person.rating}
+            finalColJsx = {props.finalColJsx}
           />
-        ))}
+         ))}
+        <span className="no-type-text">{props.data.length == 0 ? `No users of type ${props.type.toLowerCase()}`: ""}</span>
       </div>
     </div>
   );

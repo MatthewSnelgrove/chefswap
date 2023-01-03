@@ -24,16 +24,12 @@ function UserProfileContainer(props) {
     }
   }
 
-  function linkToEditType() {
-    window.location = globalVars.pages.editProfile
-  }
-
   return (
     <div className="user-container full-contain">
       <div className="profile-header">
         <div className="profile">
           <ProfilePicture pfpLink={user.pfpLink} class="large-profile-pic border-profile" />
-          <span className="username">{user.username}</span>
+          <span className="username-tag">{user.username}</span>
         </div>
         <div className="edit-button-container">
           <span className="edit-profile-text">Edit Profile</span>
@@ -45,17 +41,17 @@ function UserProfileContainer(props) {
       <div className="user-data">
         <div style={{marginTop: "8px"}} class="add-tags">
           <span className="type-text">Cuisine Preferences</span> 
-          {isUser ? <button className="type-route-button" onClick={linkToEditType}><img className="type-edit" style={{width: "25px"}} src="edit3.svg"></img></button>:<img className="type-edit" style={{width: "35px"}} src="navigate.svg"></img>} 
+          <img className="type-edit" style={{width: "35px"}} src="navigate.svg"></img>
           {user.cuisinePreferences.length == 0 ? <span style={{ fontStyle: "italic" }}>{isUser ? "You have no preferences" : "This user has no preferences"}</span>
           : user.cuisinePreferences.map((cuisine, index) =>
             <Tag key={index} cuisine={cuisine} />
           )}
         </div>
         <div style={{marginTop: "8px"}} className="add-tags">
-          <span className="type-text">Cuisine Specialties</span>  
-          {isUser ? <button className="type-route-button" onClick={linkToEditType}><img className="type-edit" style={{width: "25px"}} src="edit3.svg"></img></button>:<img className="type-edit" style={{width: "35px"}} src="navigate.svg"></img>}    
+          <span className="type-text">Cuisine Specialities</span>  
+          <img className="type-edit" style={{width: "35px"}} src="navigate.svg"></img>
           {user.cuisineSpecialities.length == 0 ?
-          <span style={{ fontStyle: "italic" }}>{isUser ? "You have no specialties" : "This user has no specialties"}</span>
+          <span style={{ fontStyle: "italic" }}>{isUser ? "You have no specialities" : "This user has no specialities"}</span>
           : user.cuisineSpecialities.map((cuisine, index) =>
             <Tag key={index} cuisine={cuisine} />
           )}

@@ -6,7 +6,7 @@ import "./styles/Navbar.scss";
 function ProfilePicture(props) {
     return (
         <>
-            <img src={props.pfpLink ? props.pfpLink: "../corn.jpg"} id="profile-pic"  className={props.class == null ? "profile-pic": props.class}></img>
+            <img src={props.pfpLink ? props.pfpLink: "../corn.jpg"} id="profile-pic" style={props.style == null ? {}: props.style}  className={props.class == null ? "profile-pic": props.class}></img>
         </>
     )
 }

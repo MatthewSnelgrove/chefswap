@@ -1,20 +1,21 @@
-import slugToUuid from "../utils/slugToUuid.js";
-export default function checkAuth(req, res, next) {
+import { pool } from "../configServices/dbConfig.js";
+import { accountNotFound, forbidden, unauthorized } from "../utils/errors.js";
+export default async function checkAuth(req, res, next) {
   const accountUid = req.params.accountUid;
   if (accountUid !== req.session.accountUid) {
-    if (req.session.accountUid) {
-      next({
-        status: 403,
-        message: "not authenticated with targeted account",
-        detail: "this action requires authentication with targeted account",
-      });
+    const accExists = await pool.query(
+      `SELECT account_uid FROM account WHERE account_uid = $1`,
+      [accountUid]
+    );
+    if (!accExists.rows[0]) {
+      next(accountNotFound);
       return;
     }
-    next({
-      status: 401,
-      message: "not authenticated",
-      detail: "this action requires authentication with targeted account",
-    });
+    if (req.session.accountUid) {
+      next(forbidden);
+      return;
+    }
+    next(unauthorized);
     return;
   }
   next();

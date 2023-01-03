@@ -1,25 +1,30 @@
 .main-container {
     display: grid;
     background-color:rgb(240, 240, 240);
-    grid-template-columns: 1fr 1.5fr 1fr;
+    grid-template-columns: 270px 1fr 1fr;
     align-items: center;
     border-radius: 25px;
-    column-gap: 4px;
+    column-gap: 10px;
     min-width: fit-content;
     justify-content: center;
     padding: 9px;
 }
 
+.distance-display {
+    width: 100px;
+    overflow: hidden;
+}
+
 .main-container * {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     font-size: 22px;
 }
 
 .info-container {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: 0.3fr 0.3fr;
-    column-gap: 8px;
+    grid-template-rows: 1fr 1fr;
+    column-gap: 0px;
+    margin-right: 20px;
 }
 
 .bg-info {
@@ -30,6 +35,7 @@
     grid-row: 1 / 3;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .user-tag {
@@ -54,9 +60,28 @@
 }
 
 .rating-tag {
-    grid-column: 4 / 6;
+    grid-column: 5 / 6;
     min-width: fit-content;
     display: flex;
     align-items: center;
 }
 
+.finalCol-container {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+@media (max-width: 700px) {
+    .main-container {
+        grid-template-columns: 245px 1fr;
+    }
+
+    .finalCol-container {
+        order: -1;
+    }
+
+    .info-container {
+        order: -2;
+    }
+
+}

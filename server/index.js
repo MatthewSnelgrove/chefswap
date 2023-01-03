@@ -89,8 +89,9 @@ app.use("/api/v1/session", sessionRouter);
 import { router as accountsRouter } from "./routes/accounts.js";
 app.use("/api/v1/accounts", accountsRouter);
 import { router as swapsRouter } from "./routes/swaps.js";
-
 app.use("/api/v1/swaps", swapsRouter);
+import { router as ratingsRouter } from "./routes/ratings.js";
+app.use("/api/v1/ratings", ratingsRouter);
 
 app.use((err, req, res, next) => {
   //if multiple errors (from openapi validator) return those errors.
@@ -98,20 +99,20 @@ app.use((err, req, res, next) => {
   console.log(err);
   const errors = err.errors
     ? err.errors.map((error) => ({
-      path: req.originalUrl,
-      message: `${error.path} not valid`,
-      detail: `${error.message}`,
-    }))
-    : [
-      {
         path: req.originalUrl,
-        message: err.message || "unknown server error",
-        detail:
-          err.detail ||
-          err.message ||
-          "request caused an unknown error on the server",
-      },
-    ];
+        message: `${error.path} not valid`,
+        detail: `${error.message}`,
+      }))
+    : [
+        {
+          path: req.originalUrl,
+          message: err.message || "unknown server error",
+          detail:
+            err.detail ||
+            err.message ||
+            "request caused an unknown error on the server",
+        },
+      ];
   res.status(err.status || 500).json(errors);
 });
 

@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
 import "./styles/EditPassword.scss";
-import { changePassword } from "../pages/changeFunctions";
+import { changePassword } from "../utils/changeFunctions";
 import { useUser } from "./useUser";
 import ProfilePicture from "./ProfilePicture";
 import CredentialField from "../components/CredentialField2";

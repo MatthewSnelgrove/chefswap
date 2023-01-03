@@ -1,9 +1,9 @@
 import { React, useEffect, useState } from "react";
 import "./styles/EditGallery.css";
-import { addNewPhoto, deletePhoto } from "../pages/changeFunctions"
+import { addNewPhoto, deletePhoto } from "../utils/changeFunctions"
 import { useUser } from "./useUser";
 
-const imgLength = "200px"
+const imgLength = "300px"
 
 function EditGallery() {
   const [images, setImages] = useState([])
@@ -23,9 +23,9 @@ function EditGallery() {
   return (
     <div className="gallery-container">
       <div className="header">
-        <span style={{ fontWeight: 600, fontSize: "22px" }}>Gallery</span>
+        <span className="gallery-text">Gallery</span>
         <form id="image-form">
-          <label className="addBtn" onSubmit={(e) => { e.preventDefault() }}>
+          <label className="base-btn add-photo-text" onSubmit={(e) => { e.preventDefault() }}>
             Upload new Photo
             <input type="file" id="file" accept="image/png, image/jpeg" onChange={(e) => {
               if (e.target.value == "") { return }
@@ -48,15 +48,15 @@ function EditGallery() {
 
 function GalleryImg(props) {
   return (
-    <div style={{ width: imgLength, height: imgLength, position: "relative" }}>
-      <img src={props.imgJSON.imageLink} style={{ width: imgLength, height: imgLength }}></img>
-      <a className="drag-button"></a>
-      <button data-bs-toggle="modal" type="button" data-bs-target="#ConfirmModal"
+    <div className="gallery-img-dim gallery-img-container">
+      <img src={props.imgJSON.imageLink} className="gallery-img"></img>
+      <button className="delete-button" data-bs-toggle="modal" type="button" data-bs-target="#ConfirmModal"
         onClick={(e) => {
           props.setDeleteImg({ accountUid: props.imgJSON.accountUid, imageUid: props.imgJSON.imageUid })
         }}
-        className="delete-button">
-        <img src="../remove.PNG"></img>
+        >
+        <span style={{fontSize: "30px", marginTop: "5px"}} class="material-symbols-outlined">delete</span>
+        {/* <i className="material-icons" style={{fontSize: "30px", color: "white", marginTop: "5px"}}>delete</i> */}
       </button>
     </div>
   )
@@ -86,10 +86,11 @@ function ConfirmModal(props) {
 
 
 function deleteImg(setImages, deleteImg) {
-  deletePhoto(deleteImg.accountUid, deleteImg.imageUid)
-  setImages((curImages) => curImages.filter((curImage) => {
-    return curImage.imageUid != deleteImg.imageUid
-  }))
+  deletePhoto(deleteImg.accountUid, deleteImg.imageUid).then(() => {
+    setImages((curImages) => curImages.filter((curImage) => {
+      return curImage.imageUid != deleteImg.imageUid
+    }))
+  })
 }
 
 // async function getNewImages(images, setImages) {

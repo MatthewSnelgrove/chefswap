@@ -21,6 +21,7 @@ export default class CuisineSearchList extends Component {
       "Italian",
       "Vietnamese",
       "Cereal",
+      "BBQ"
     ];
     const cuisineChecked = this.props.cuisineChecked;
     const cuisineTyped = this.props.cuisineTyped;

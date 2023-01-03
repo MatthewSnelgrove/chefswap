@@ -1,7 +1,56 @@
 .swap-results-container {
   margin-left: 22%;
+  padding-top: var(--navbar-height);
 
   .main-container {
     margin-bottom: 25px;
+  }
+}
+
+.swap-button {
+  border: 0px;
+  white-space: nowrap;
+  border-radius: 10px;
+  background-color: var(--cs-lightblue-1);
+}
+
+.swap-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  font-size: 30px;
+}
+
+.swap-option {
+  margin-left: 7px;
+  font-size: 30px;
+  border-radius: 10px;
+}
+
+.swap-text {
+  font-weight: var(--font-bold-1);
+  color: var(--cs-white-1);
+  font-size: 26px;
+}
+
+.small-swap-button {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .swap-button {
+    display: none;
+  }
+
+  .small-swap-button {
+    display: block;
+  }
+
+  .swap-header {
+    font-size: 22px;
+  }
+
+  .swap-option {
+    font-size: 22px;
   }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CredentialField from "../components/CredentialField2";
 import Modal from "../components/Modal";
-import { signupUser } from "./fetchFunctions";
+import { signupUser } from "../utils/fetchFunctions";
 import {
   validateEmail,
   dummyValidatePassword,

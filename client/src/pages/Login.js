@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchLogin } from "./fetchFunctions";
+import { fetchLogin } from "../utils/fetchFunctions";
 import Modal from "../components/Modal";
 import CredentialField from "../components/CredentialField2";
 import OnlyLoggedOut from "../components/OnlyLoggedOut";

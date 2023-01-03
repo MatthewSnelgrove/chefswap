@@ -11,9 +11,10 @@ function EditListLink(props) {
                 if (curSelected == listType) {return}
                 window.location = props.link
             }}/>
-            <div style={curSelected == listType ? {fontWeight: "600"}: {}}>
+            <div className="text-display-big" style={curSelected == listType ? {fontWeight: "600"}: {}}>
             {props.display}
             </div>
+            <img className="display-img-small" src={props.smallImg}></img>
         </li>
     )
 }
