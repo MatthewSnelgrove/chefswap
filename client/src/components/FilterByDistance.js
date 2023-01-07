@@ -1,53 +1,39 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React from "react";
 import "./styles/FilterByDistance.scss";
 import "../general.scss";
+import { Slider } from "@mui/material";
 
 /**
  * Container component for filtering swap results by distance
  * @param distance Max distance from 5-100 (may change)
  * @param fcns... for handling onchange
  */
-export default class FilterByDistance extends Component {
-  constructor(props) {
-    super(props);
-    this.handleDistanceChange = this.handleDistanceChange.bind(this);
+export default function FilterByDistance(props) {
+  if (!props.distance || !props.onDistanceChange) {
+    console.error("Missing function props in FilterByDistance");
+    return null;
   }
 
-  handleDistanceChange(e) {
-    let slider = document.querySelector(".slider-output");
-    slider.innerHTML = e.target.value + " km";
-    this.props.onDistanceChange(Number(e.target.value));
-  }
-
-  render() {
-    const distance = this.props.distance;
-
-    return (
-      <fieldset className="filter-fieldset-section">
-        <legend>Filter by Distance</legend>
-
-        <div className="filter-distance-container filter-container">
-          <label htmlFor="distance-slider" className="label-gray">
-            Max Distance
-          </label>
-          <input
-            type="range"
-            name="maxDistance"
-            className="distance-slider"
-            min="5"
-            max="100"
-            value={distance}
-            onChange={this.handleDistanceChange}
-          />
-          <output className="slider-output">100 km</output>
-        </div>
-      </fieldset>
-    );
-  }
+  return (
+    <div>
+      <Slider
+        defaultValue={100}
+        aria-label="Distance slider"
+        valueLabelDisplay="auto"
+        valueLabelFormat={(value) => {
+          return value !== 100 ? `${value} km` : "Unlimited";
+        }}
+        onChange={(event, value) => {
+          props.onDistanceChange(value);
+        }}
+        min={5}
+        value={props.distance}
+      />
+    </div>
+  );
 }
 
-FilterByDistance.propTypes = {
-  distance: PropTypes.number.isRequired,
-  onDistanceChange: PropTypes.func.isRequired,
-};
+// FilterByDistance.propTypes = {
+//   distance: PropTypes.number.isRequired,
+//   onDistanceChange: PropTypes.func.isRequired,
+// };
