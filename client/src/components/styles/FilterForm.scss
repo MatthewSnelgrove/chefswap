@@ -1,14 +1,49 @@
+@import "../../variables";
+
 .filter-form-container {
   position: fixed;
-  top: 60px;   // matches navbar
+  top: 50px;   // matches navbar
   bottom: 0;
+  overflow-x: hidden;
   overflow-y: auto;
+
+  width: 300px;
+  padding: 20px 30px;
+
+  background-color: $cs-light-gray;
+
+  // Cuisine chips
+  .MuiAutocomplete-tag {
+    background-color: $cs-orange-4;
+    // color: white;
+    font-weight: 500;
+  }
+
+  // Distance slider color
+  .MuiSlider-colorPrimary, .MuiSlider-thumbColorPrimary {
+    color: $cs-orange-5;
+  }
 
   .filter-fieldset-section {
     margin-bottom: 10px;
   }
 
-  legend {
-    font-size: 1.2em;
+  .filter-form-header {
+    font-size: 1.5em;
+    margin-top: 25px;
+    margin-bottom: 15px;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  .filter-form-tooltip {
+    width: 17px;
+    height: 17px;
+    padding: 4px;
+    border-radius: 999px;
+    filter: invert(100%);
+    background-color: gray;
   }
 }
