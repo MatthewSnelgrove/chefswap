@@ -28,6 +28,7 @@ export default class FilterForm extends Component {
           <FilterByRating
             rating={this.props.rating}
             onRatingChange={this.props.onRatingChange}
+            ratingText={true}
           />
           <FilterByDistance
             distance={this.props.distance}

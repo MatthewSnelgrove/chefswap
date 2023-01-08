@@ -45,7 +45,7 @@ export default class FilterByRating extends Component {
 
     return (
       <fieldset className="filter-fieldset-section">
-        <legend>Filter by Rating</legend>
+        {this.props.ratingText ? <legend>Filter by Rating</legend>: <></>}
 
         <div className="filter-rating-container filter-container">
           {starButtons}

@@ -19,7 +19,8 @@ function filterForDisplay(users) {
       distance: (user.profile.distance / 1000),
       pfpLink: user.profile.pfpLink,
       username: user.profile.username,
-      accountUid: user.profile.accountUid
+      accountUid: user.profile.accountUid,
+      numRatings: user.profile.numRatings
     }
   })
 }

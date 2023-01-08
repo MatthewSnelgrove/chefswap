@@ -31,6 +31,7 @@ export default class SwapResultsContainer extends Component {
         cuisineSpecialities={user.cuisineSpecialities}
         key={user.username}
         accountUid={user.accountUid}
+        numRatings={user.numRatings}
         finalColJsx={
           <>
             <button style={{border: "0px"}} onClick={(e) => {
@@ -67,7 +68,8 @@ export default class SwapResultsContainer extends Component {
   }
 
   createNewSwapRequest(user, requesteeUid, requesteeUsername, searchDispatch) {
-    newSwapRequest(user.accountUid, requesteeUid, requesteeUsername)
-    searchDispatch({ type: "new-swap", payload: requesteeUid })
+    newSwapRequest(user.accountUid, requesteeUid, requesteeUsername).then(() => {
+      searchDispatch({ type: "new-swap", payload: requesteeUid })
+    })
   }
 }

@@ -40,6 +40,7 @@ code {
   background-color: var(--cs-lightblue-1);
   border-radius: 10px;
   color: var(--cs-white-1);
+  border: 0px;
 }
 
 .base-btn {

@@ -154,3 +154,12 @@ export async function cancelSwapRequest(accountUid, swapperUid, requesteeUsernam
     credentials: "include"
   }, `Successfully rejected ${requesteeUsername}'s swap request`)
 }
+
+export async function changeAvgRating(accountUid, swapperUid, rating, requesteeUsername) {
+  await makeChangeRequestWithToast(`http://localhost:3001/api/v1/ratings/${accountUid}/${swapperUid}`, {
+    method: "PUT",
+    body: JSON.stringify({ rating: rating }),
+    credentials: "include",
+    headers: { "Content-Type": "application/json" }
+  }, `Successfully rated swap with ${requesteeUsername}`)
+}

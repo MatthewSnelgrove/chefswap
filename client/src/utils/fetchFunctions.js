@@ -97,7 +97,7 @@ async function makeRequest(url, params) {
   const response = await fetch(url, params)
 
   if (!response.ok) {
-    throw new Error(JSON.stringify(response))
+    throw new Error(JSON.stringify(response), { cause: response.status })
   }
 
   return response
@@ -163,15 +163,34 @@ export async function getUsersOfSwapStatus(user, status, setFunc) {
   }
 }
 
-async function getAllSwapsOfStatus(accountUid, status, orderBy) {
+export async function getAllSwapsOfStatus(accountUid, status, orderBy) {
   if (orderBy == null) {
     orderBy = ""
   }
   
-  return await makeRequestWithJSON(`http://localhost:3001/api/v1/swaps/${accountUid}?status=${status}`, {
+  return await makeRequestWithJSON(`http://localhost:3001/api/v1/swaps/${accountUid}?status=${status}&orderBy=timeDesc`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   })
+}
+
+export async function getRatings(accountUid, swapperUid) {
+  return await makeRequestWithJSON(`http://localhost:3001/api/v1/ratings/${accountUid}/${swapperUid}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  })
+}
+
+export async function getMultipleRatings(userDateList, user, setFunc) {
+  const userRatingsPromises = await Object.entries(userDateList).map(async (swapData) => {
+    const userRating = await getRatings(user.accountUid, swapData[1][0].accountUid)
+    .catch((err) => {})
+    return [swapData[1][0].username, userRating]
+  })
+
+  const userRatings = await Promise.all(userRatingsPromises)
+  setFunc(Object.fromEntries(userRatings))
 }
 
