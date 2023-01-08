@@ -2,6 +2,7 @@ import React from "react";
 import "./styles/FilterByDistance.scss";
 import "../general.scss";
 import { Slider } from "@mui/material";
+import { Tooltip } from "@mui/material";
 
 /**
  * Container component for filtering swap results by distance
@@ -15,7 +16,24 @@ export default function FilterByDistance(props) {
   }
 
   return (
-    <div>
+    <>
+      <div
+        className="filter-form-header"
+        style={{ display: "flex", alignItems: "center", gap: 15 }}
+      >
+        <h2>Where?</h2>
+        <Tooltip
+          title="Filter by where your swap partner is located."
+          arrow
+          placement="right"
+        >
+          <img
+            src="/info.svg"
+            alt="Tooltip for cuisine filter"
+            className="filter-form-tooltip"
+          />
+        </Tooltip>
+      </div>
       <Slider
         defaultValue={100}
         aria-label="Distance slider"
@@ -28,8 +46,14 @@ export default function FilterByDistance(props) {
         }}
         min={5}
         value={props.distance}
+        color="primary"
       />
-    </div>
+      <p style={{ textAlign: "center" }}>
+        {props.distance !== 100
+          ? `Under ${props.distance} km away`
+          : "No distance limit"}
+      </p>
+    </>
   );
 }
 

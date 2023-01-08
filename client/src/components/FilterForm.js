@@ -2,6 +2,7 @@ import React from "react";
 import FilterByCuisineSection from "./FilterByCuisineSection";
 import FilterByRating from "./FilterByRating";
 import FilterByDistance from "./FilterByDistance";
+import FilterByUsername from "./FilterByUsername";
 import "./styles/FilterForm.scss";
 
 /**
@@ -42,6 +43,10 @@ export default function FilterForm(props) {
         <FilterByDistance
           distance={props.distance}
           onDistanceChange={props.onDistanceChange}
+        />
+        <FilterByUsername
+          username={props.username}
+          onUsernameChange={props.onUsernameChange}
         />
       </form>
     </div>

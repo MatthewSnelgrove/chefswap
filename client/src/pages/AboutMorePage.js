@@ -5,8 +5,9 @@ import FilterForm from "../components/FilterForm";
 function AboutUsPage() {
   // Note: Cuisine text state removed
   const [cuisineChecked, setCuisineChecked] = useState([]);
-  const [rating, setRating] = useState(1);
+  const [rating, setRating] = useState(0);
   const [distance, setDistance] = useState(100);
+  const [username, setUsername] = useState("");
 
   function handleTickedChange(value) {
     console.log(`Cuisine ticked off: ${value}`);
@@ -23,6 +24,11 @@ function AboutUsPage() {
     setDistance(value);
   }
 
+  function handleUsernameChange(value) {
+    console.log(`Username changed to ${value}`);
+    setUsername(value);
+  }
+
   return (
     <>
       <FilterForm
@@ -34,6 +40,8 @@ function AboutUsPage() {
         onTickedChange={handleTickedChange}
         onRatingChange={handleRatingChange}
         onDistanceChange={handleDistanceChange}
+        username={username}
+        onUsernameChange={handleUsernameChange}
       />
     </>
   );

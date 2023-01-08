@@ -5,6 +5,7 @@ import React from "react";
 import "../general.scss";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import { Tooltip } from "@mui/material";
 
 /**
  * Container component for filtering swap results by cuisine name
@@ -46,6 +47,23 @@ export default function FilterByCuisineSection(props) {
 
   return (
     <>
+      <div
+        className="filter-form-header"
+        style={{ display: "flex", alignItems: "center", gap: 15 }}
+      >
+        <h2>What?</h2>
+        <Tooltip
+          title="Filter by what cuisine specialties you want your swap partner to have."
+          arrow
+          placement="right"
+        >
+          <img
+            src="/info.svg"
+            alt="Tooltip for cuisine filter"
+            className="filter-form-tooltip"
+          />
+        </Tooltip>
+      </div>
       <Autocomplete
         multiple
         id="tags-outlined"
@@ -55,6 +73,7 @@ export default function FilterByCuisineSection(props) {
         renderInput={(params) => (
           <TextField
             {...params}
+            variant="outlined"
             label="Cuisine Specialties"
             placeholder="Cuisines"
           />
