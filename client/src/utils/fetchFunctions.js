@@ -110,22 +110,13 @@ async function makeRequestWithJSON(url, params) {
   return json
 }
 
-export async function getAllUsers(latitude, longitude, accountUid, filter, setFunc) {
+export async function getAllUsers(latitude, longitude, filter, setFunc) {
   if (filter == null) {
     filter = ""
   }
 
   try {
-    let uidString
-    if (accountUid != null) {
-      uidString = `&matchableWith=${accountUid}`
-    }
-    else {
-      uidString = ""
-    }
-
-    console.log(`http://localhost:3001/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${uidString}${filter}`)
-    const response = await fetch(`http://localhost:3001/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${uidString}${filter}`);
+    const response = await fetch(`http://localhost:3001/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`);
     const json = await response.json();
     if (setFunc) {
       setFunc(json)

@@ -11,7 +11,7 @@ import { useSwapSearch } from "../components/useSwapSearch";
 // distance: (user.profile.distance / 1000).toFixed(1),
 // avg_rating: user.profile.avgRating
 function filterForDisplay(users) {
-
+  console.log(users)
   return users.map((user) => {
     return {
       avg_rating: user.profile.avgRating,
