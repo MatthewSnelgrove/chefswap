@@ -11,6 +11,8 @@ export function setUsersForSwapList(users) {
         distance: (profile.distance / 1000),
         rating: profile.avgRating,
         accountUid: profile.accountUid,
+        numRatings: profile.numRatings,
+        pfpLink: profile.pfpLink,
         requestTimestamp: user.requestTimestamp,
         requesterUid: user.requesterUid
       }

@@ -10,6 +10,33 @@
     --image-colour: rgba(71, 71, 71, 0.783);
 }
 
+.MuiAccordion-region {
+    background-color: rgb(225,227,229);
+}
+
+.MuiPaper-root > div {
+    background-color: var(--cs-grey-1);
+}
+
+
+.MuiPaper-root {
+    margin-bottom: 10px;
+}
+
+.typography-text-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.MuiAccordion-region * {
+    font-size: 22px;
+}
+
+.MuiAccordion-region span {
+    
+    font-weight: 500;
+}
+
 .swap-text {
     font-size: 40px;
 }

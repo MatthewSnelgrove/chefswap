@@ -18,8 +18,9 @@ function filterForDisplay(users) {
       pfpLink: user.profile.pfpLink,
       username: user.profile.username,
       accountUid: user.profile.accountUid,
-    };
-  });
+      numRatings: user.profile.numRatings
+    }
+  })
 }
 
 /**
