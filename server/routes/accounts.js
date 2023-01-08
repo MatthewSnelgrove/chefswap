@@ -78,32 +78,67 @@ router.get("/", async (req, res, next) => {
     });
     return;
   }
-
-  const profiles = camelize(
-    await pool.query(
-      `SELECT get_profiles($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) AS profile`,
-      [
-        username,
-        includeDistanceFrom.latitude,
-        includeDistanceFrom.longitude,
-        maxDistance,
-        minRating,
-        maxRating,
-        cuisinePreference,
-        cuisineSpeciality,
-        matchableWith,
-        orderBy,
-        key.accountUid,
-        key.distance,
-        key.avgRating,
-        limit,
-      ]
-    )
-  ).rows;
-  for (const profile of profiles) {
+  if (key.avgRating === "null") {
+    key.avgRating = orderBy === "avgRatingAsc" ? 6 : 0;
+  }
+  if (
+    username &&
+    (maxDistance ||
+      minRating ||
+      maxRating ||
+      cuisinePreference ||
+      cuisineSpeciality ||
+      orderBy ||
+      key.distance ||
+      key.avgRating)
+  ) {
+    next({
+      status: 400,
+      message: "invalid query params",
+      detail: `query param username cannot be specified with any of maxDistance, minRating, maxRating, cuisinePreference, cuisineSpeciality, orderBy, key.distance, or key.avgRating`,
+    });
+  }
+  const { rows } = username
+    ? //if username specfied, search by username
+      camelize(
+        await pool.query(
+          `SELECT get_profiles_by_username($1, $2, $3, $4, $5, $6, $7) AS profile`,
+          [
+            username,
+            includeDistanceFrom.latitude,
+            includeDistanceFrom.longitude,
+            matchableWith,
+            key.accountUid,
+            key.similarity,
+            limit,
+          ]
+        )
+      )
+    : //else search by all other params
+      camelize(
+        await pool.query(
+          `SELECT get_profiles($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) AS profile`,
+          [
+            includeDistanceFrom.latitude,
+            includeDistanceFrom.longitude,
+            maxDistance,
+            minRating,
+            maxRating,
+            cuisinePreference,
+            cuisineSpeciality,
+            matchableWith,
+            orderBy,
+            key.accountUid,
+            key.distance,
+            key.avgRating,
+            limit,
+          ]
+        )
+      );
+  for (const profile of rows) {
     stripNulls(profile.profile, ["distance"]);
   }
-  res.json(profiles);
+  res.json(rows);
   return;
 });
 
