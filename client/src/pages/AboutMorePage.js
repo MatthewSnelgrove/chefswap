@@ -5,9 +5,9 @@ import FilterForm from "../components/FilterForm";
 function AboutUsPage() {
   // Note: Cuisine text state removed
   const [cuisineChecked, setCuisineChecked] = useState([]);
-  const [rating, setRating] = useState(0);
-  const [distance, setDistance] = useState(100);
-  const [username, setUsername] = useState("");
+  const [rating, setRating] = useState(null);
+  const [distance, setDistance] = useState(null);
+  const [username, setUsername] = useState(null);
 
   function handleTickedChange(value) {
     console.log(`Cuisine ticked off: ${value}`);

@@ -1,7 +1,12 @@
 import React from "react";
 import { TextField, Tooltip } from "@mui/material";
 
-export default function FilterByUsername() {
+export default function FilterByUsername(props) {
+  if (props.username === undefined || !props.onUsernameChange) {
+    console.error("Missing function props in FilterByUsername");
+    return null;
+  }
+
   return (
     <>
       <div
@@ -21,7 +26,17 @@ export default function FilterByUsername() {
           />
         </Tooltip>
       </div>
-      <TextField id="outlined-basic" label="Username" variant="outlined" />
+      <TextField
+        id="outlined-basic"
+        label="Username"
+        variant="outlined"
+        value={props.username || ""}
+        onChange={(event) => {
+          props.onUsernameChange(
+            !event.target.value ? null : event.target.value
+          );
+        }}
+      />
     </>
   );
 }
