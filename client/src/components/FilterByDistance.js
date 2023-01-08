@@ -10,7 +10,7 @@ import { Tooltip } from "@mui/material";
  * @param fcns... for handling onchange
  */
 export default function FilterByDistance(props) {
-  if (!props.distance || !props.onDistanceChange) {
+  if (props.distance === undefined || !props.onDistanceChange) {
     console.error("Missing function props in FilterByDistance");
     return null;
   }
@@ -42,14 +42,14 @@ export default function FilterByDistance(props) {
           return value !== 100 ? `${value} km` : "Unlimited";
         }}
         onChange={(event, value) => {
-          props.onDistanceChange(value);
+          props.onDistanceChange(value === 100 ? null : value);
         }}
         min={5}
-        value={props.distance}
+        value={props.distance || 100}
         color="primary"
       />
       <p style={{ textAlign: "center" }}>
-        {props.distance !== 100
+        {props.distance
           ? `Under ${props.distance} km away`
           : "No distance limit"}
       </p>

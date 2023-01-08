@@ -16,12 +16,14 @@ import "./styles/FilterForm.scss";
  */
 export default function FilterForm(props) {
   if (
-    !props.cuisineChecked ||
+    props.cuisineChecked === undefined ||
+    props.rating === undefined ||
+    props.distance === undefined ||
+    // props.username === undefined ||
     !props.onTickedChange ||
-    // !props.rating ||
-    !props.distance ||
     !props.onRatingChange ||
     !props.onDistanceChange
+    // !props.onUsernameChange
   ) {
     console.error("Missing function props in FilterForm");
     return null;
@@ -44,10 +46,10 @@ export default function FilterForm(props) {
           distance={props.distance}
           onDistanceChange={props.onDistanceChange}
         />
-        <FilterByUsername
+        {/* <FilterByUsername
           username={props.username}
           onUsernameChange={props.onUsernameChange}
-        />
+        /> */}
       </form>
     </div>
   );

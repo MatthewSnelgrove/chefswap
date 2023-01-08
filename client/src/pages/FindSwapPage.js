@@ -10,7 +10,7 @@ import { useSwapSearch } from "../components/useSwapSearch";
 // distance: (user.profile.distance / 1000).toFixed(1),
 // avg_rating: user.profile.avgRating
 function filterForDisplay(users) {
-  console.log(users)
+  console.log(users);
   return users.map((user) => {
     return {
       avg_rating: user.profile.avgRating,
@@ -19,9 +19,9 @@ function filterForDisplay(users) {
       pfpLink: user.profile.pfpLink,
       username: user.profile.username,
       accountUid: user.profile.accountUid,
-      numRatings: user.profile.numRatings
-    }
-  })
+      numRatings: user.profile.numRatings,
+    };
+  });
 }
 
 /**
@@ -34,9 +34,9 @@ export default function FindSwapPage(props) {
 
   // State for filter form
   const [cuisineChecked, setCuisineChecked] = useState([]);
-  const [rating, setRating] = useState(1);
-  const [distance, setDistance] = useState(100);
-  const [username, setUsername] = useState("");
+  const [rating, setRating] = useState(null);
+  const [distance, setDistance] = useState(null);
+  // const [username, setUsername] = useState(null);
 
   const [userAddress, setUserAddress] = useState(null);
   const [orderBy, setOrderBy] = useState("distanceAsc");
@@ -105,10 +105,10 @@ export default function FindSwapPage(props) {
     setDistance(value);
   }
 
-  function handleUsernameChange(value) {
-    console.log(`Username changed to ${value}`);
-    setUsername(value);
-  }
+  // function handleUsernameChange(value) {
+  //   console.log(`Username changed to ${value}`);
+  //   setUsername(value);
+  // }
 
   return (
     <OnlyLoggedIn>
@@ -116,16 +116,14 @@ export default function FindSwapPage(props) {
         <div className="find-swap-content">
           {/* New FilterForm */}
           <FilterForm
-            // cuisineTyped={cuisineTyped}
             cuisineChecked={cuisineChecked}
             rating={rating}
             distance={distance}
-            // onTypedChange={handleTypedChange}
+            // username={username}
             onTickedChange={handleTickedChange}
             onRatingChange={handleRatingChange}
             onDistanceChange={handleDistanceChange}
-            username={username}
-            onUsernameChange={handleUsernameChange}
+            // onUsernameChange={handleUsernameChange}
           />
 
           <SwapResultsContainer

@@ -10,11 +10,7 @@ import { Tooltip } from "@mui/material";
  * @param fcn... for handling form change
  */
 export default function FilterByRating(props) {
-  if (
-    props.rating === undefined ||
-    props.rating === null ||
-    !props.onRatingChange
-  ) {
+  if (props.rating === undefined || !props.onRatingChange) {
     console.error("Missing function props in FilterByRating");
     return null;
   }
@@ -42,10 +38,9 @@ export default function FilterByRating(props) {
         {/* fix for rating spacing */}
         <Rating
           name="rating"
-          value={props.rating}
+          value={props.rating || 0}
           precision={0.5}
           onChange={(event, newValue) => {
-            if (newValue === null) newValue = 0; // fix for empty rating
             props.onRatingChange(newValue);
           }}
           size="large"

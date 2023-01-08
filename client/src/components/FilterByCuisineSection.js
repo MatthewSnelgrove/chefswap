@@ -15,7 +15,7 @@ import { Tooltip } from "@mui/material";
  * @param fcns... For handling onchange
  */
 export default function FilterByCuisineSection(props) {
-  if (!props.cuisineChecked || !props.onTickedChange) {
+  if (props.cuisineChecked === undefined || !props.onTickedChange) {
     console.error("Missing function props in FilterByCuisineSection");
     return null;
   }
