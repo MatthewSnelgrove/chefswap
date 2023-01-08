@@ -15,7 +15,8 @@ function SwapListing(props) {
       distance: props.distance
     }
   }
-  
+
+  console.log(props)
   return (
     <div ref={props.innerRef}>
       <div className="main-container">
@@ -36,12 +37,10 @@ function SwapListing(props) {
             <span className="distance-display">{props.distance.toFixed(1)}km</span>
           </div>
           <div className="rating-tag">
-            <img
-              alt="star icon"
-              style={{ height: 33, width: 33 }}
-              src="../star.png"
-            ></img>
-            <div>{props.rating == null ? "": props.rating}</div>
+            <div class="star-ratings-sprite">
+              <span style={props.rating ? {width: `${props.rating * 20}%`}: {width: "0%"}} class="star-ratings-sprite-rating"></span>
+            </div>
+            <span style={{marginLeft: "4px"}}>({props.numRatings})</span>
           </div>
         </div>
         <div className="tags">

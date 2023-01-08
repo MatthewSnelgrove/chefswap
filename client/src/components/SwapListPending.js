@@ -17,6 +17,7 @@ function SwapListPending(props) {
             username={person.username}
             pfpLink={person.img}
             rating={person.rating}
+            numRatings={person.numRatings}
             finalColJsx = {<PendingButtons person={person} user={props.user} isRequestee={props.user.accountUid != person.requesterUid} setSwapListPending={props.setSwapListPending} setSwapListOngoing={props.setSwapListOngoing} />}
             />
          ))}

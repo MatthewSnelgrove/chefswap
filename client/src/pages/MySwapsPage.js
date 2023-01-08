@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "./styles/MySwapsPage.css";
 import OnlyLoggedIn from "../components/OnlyLoggedIn";
 import SwapSwitch from "../components/SwapSwitch";
@@ -15,38 +15,12 @@ function MySwapsPage() {
   const [swapListPending, setSwapListPending] = useSwapType({ status: "pending" })
   const [swapListPast, setSwapListPast] = useSwapType({ status: "ended" })
   const [swapListOngoing, setSwapListOngoing] = useSwapType({ status: "ongoing" })
-
+  
   useEffect(() => {
     document.title = "Chefswap | My swaps";
   }, []);
 
-  if (user == loading || swapListPending == loading || swapListPast == loading || swapListOngoing == loading) {return (<></>)}
-
-  const people = [];
-
-  people[0] = {
-    img: "corn.jpg",
-    username: "XD Man",
-    cuisinePrefrences: ["Indian", "Italian"],
-    cuisineSpecialities: ["Indian", "Italian"],
-    bio: "Hey guys XDDDas;d;oasndlasnaskldkasnldkansdlkasnkldnaslkdn askldnkasndklasndlkdm;awkdmaslkdmalksmdlkasmdlkasmdkladlksndlasndlasnldnasljdnalsjdnlajsndlaslndn",
-    distance: "4",
-    rating: "4.1",
-    id: 1,
-  };
-
-  people[1] = {
-    img: "corn.jpg",
-    username: "XD Man312389012390120983812903019283812890319038109823",
-    cuisinePrefrences: ["Indian", "Italian"],
-    cuisineSpecialities: ["Indian", "Italian"],
-    bio: "Hey guys XDDDas;d;oasndlasnaskldkasnldkansdlkasnkldnaslkdn askldnkasndklasndlkdm;awkdmaslkdmalksmdlkasmdlkasmdkladlksndlasndlasnldnasljdnalsjdnlajsndlaslndn",
-    distance: "4",
-    rating: "4.1",
-    id: 2,
-  };
-
-  
+  if (user == loading || swapListPending == loading || swapListPast == loading || swapListOngoing == loading) {return (<></>)}  
 
   return (
     <OnlyLoggedIn >
