@@ -1,60 +1,61 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React from "react";
 import "../general.scss";
 import "./styles/FilterByRating.scss";
+import Rating from "@mui/material/Rating";
+import { Tooltip } from "@mui/material";
 
 /**
  * Container component for filtering swap results by rating
  * @param rating Min review filter from 1-5
  * @param fcn... for handling form change
  */
-export default class FilterByRating extends Component {
-  constructor(props) {
-    super(props);
-    this.handleRatingChange = this.handleRatingChange.bind(this);
+export default function FilterByRating(props) {
+  if (
+    props.rating === undefined ||
+    props.rating === null ||
+    !props.onRatingChange
+  ) {
+    console.error("Missing function props in FilterByRating");
+    return null;
   }
 
-  handleRatingChange(i) {
-    this.props.onRatingChange(i);
-    console.log(i);
-  }
-
-  render() {
-    const rating = this.props.rating;
-
-    // Array of star buttons in JSX
-    let starButtons = [];
-
-    for (let i = 0; i < 5; i++) {
-      let starClassString =
-        i < rating
-          ? "material-symbols-rounded symbol-fill"
-          : "material-symbols-rounded";
-
-      starButtons.push(
-        <button
-          type="button"
-          className="star-rating-buttons"
-          key={i}
-          onClick={() => this.handleRatingChange(i + 1)}
+  return (
+    <>
+      <div
+        className="filter-form-header"
+        style={{ display: "flex", alignItems: "center", gap: 15 }}
+      >
+        <h2>How?</h2>
+        <Tooltip
+          title="Filter by how experienced your swap partner is."
+          arrow
+          placement="right"
         >
-          <span className={starClassString}>star</span>
-        </button>
-      );
-    }
-
-    return (
-      <fieldset className="filter-fieldset-section">
-        {this.props.ratingText ? <legend>Filter by Rating</legend>: <></>}
-
-        <div className="filter-rating-container filter-container">
-          {starButtons}
-        </div>
-      </fieldset>
-    );
-  }
+          <img
+            src="/info.svg"
+            alt="Tooltip for rating filter"
+            className="filter-form-tooltip"
+          />
+        </Tooltip>
+      </div>
+      <div style={{ lineHeight: 1, display: "flex", alignItems: "center" }}>
+        {/* fix for rating spacing */}
+        <Rating
+          name="rating"
+          value={props.rating}
+          precision={0.5}
+          onChange={(event, newValue) => {
+            if (newValue === null) newValue = 0; // fix for empty rating
+            props.onRatingChange(newValue);
+          }}
+          size="large"
+        />
+        <span style={{ marginLeft: 10 }}>and up</span>
+      </div>
+    </>
+  );
 }
 
-FilterByRating.propTypes = {
-  rating: PropTypes.number.isRequired,
-};
+// FilterByRating.propTypes = {
+//   rating: PropTypes.number.isRequired,
+// };

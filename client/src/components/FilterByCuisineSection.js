@@ -1,8 +1,11 @@
-import React, { Component } from "react";
-import CuisineSearch from "./CuisineSearch";
-import CuisineSearchList from "./CuisineSearchList";
-import PropTypes from "prop-types";
+import React from "react";
+// import CuisineSearch from "./CuisineSearch";
+// import CuisineSearchList from "./CuisineSearchList";
+// import PropTypes from "prop-types";
 import "../general.scss";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import { Tooltip } from "@mui/material";
 
 /**
  * Container component for filtering swap results by cuisine name
@@ -11,30 +14,73 @@ import "../general.scss";
  * @param cuisineChecked Array of cuisine names ticked off by user
  * @param fcns... For handling onchange
  */
-export default class FilterByCuisineSection extends Component {
-  render() {
-    return (
-      <fieldset className="filter-fieldset-section">
-        <legend>Filter by Cuisine</legend>
-        <div className="filter-by-cuisine-section filter-container">
-          <CuisineSearch
-            cuisineTyped={this.props.cuisineTyped}
-            onTypedChange={this.props.onTypedChange}
-          />
-          <CuisineSearchList
-            cuisineTyped={this.props.cuisineTyped}
-            cuisineChecked={this.props.cuisineChecked}
-            onTickedChange={this.props.onTickedChange}
-          />
-        </div>
-      </fieldset>
-    );
+export default function FilterByCuisineSection(props) {
+  if (!props.cuisineChecked || !props.onTickedChange) {
+    console.error("Missing function props in FilterByCuisineSection");
+    return null;
   }
-}
 
-FilterByCuisineSection.propTypes = {
-  cuisineTyped: PropTypes.string.isRequired,
-  cuisineChecked: PropTypes.array.isRequired,
-  onTypedChange: PropTypes.func.isRequired,
-  onTickedChange: PropTypes.func.isRequired,
-};
+  // Example tag data
+  // TODO: Replace with actual tags
+  const tags = [
+    { title: "American" },
+    { title: "Chinese" },
+    { title: "French" },
+    { title: "Greek" },
+    { title: "Indian" },
+    { title: "Italian" },
+    { title: "Japanese" },
+    { title: "Korean" },
+    { title: "Mediterranean" },
+    { title: "Mexican" },
+    { title: "Middle Eastern" },
+    { title: "Thai" },
+    { title: "Vietnamese" },
+    { title: "Other" },
+  ];
+
+  // Handles the onChange event for the Autocomplete component
+  function handleTagSelection(event, value) {
+    const newTags = value.map((tag) => tag.title);
+    props.onTickedChange(newTags);
+  }
+
+  return (
+    <>
+      <div
+        className="filter-form-header"
+        style={{ display: "flex", alignItems: "center", gap: 15 }}
+      >
+        <h2>What?</h2>
+        <Tooltip
+          title="Filter by what cuisine specialties you want your swap partner to have."
+          arrow
+          placement="right"
+        >
+          <img
+            src="/info.svg"
+            alt="Tooltip for cuisine filter"
+            className="filter-form-tooltip"
+          />
+        </Tooltip>
+      </div>
+      <Autocomplete
+        multiple
+        id="tags-outlined"
+        options={tags}
+        getOptionLabel={(option) => option.title}
+        filterSelectedOptions
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label="Cuisine Specialties"
+            placeholder="Cuisines"
+          />
+        )}
+        onChange={handleTagSelection}
+        isOptionEqualToValue={(option, value) => option.title === value.title}
+      />
+    </>
+  );
+}
