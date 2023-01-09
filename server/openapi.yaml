@@ -16,7 +16,7 @@ paths:
       parameters:
         - in: query
           name: username
-          description: The username of an account.
+          description: The username of an account. If specified, only key, includeDistanceFrom, and limit can be used. Only accounts with usernames that are similar to the specified username will be returned. Resultes will be ordered by similarity to the specified username.
           schema:
             type: string
             minLength: 3
@@ -48,7 +48,7 @@ paths:
           schema:
             type: number
             format: float
-            minimum: 1
+            minimum: 0.5
             maximum: 5
         - in: query
           name: maxRating
@@ -129,11 +129,28 @@ paths:
                     format: uuid
                     default: 00000000-0000-0000-0000-000000000000
                   avgRating:
-                    nullable: true
+                    # can't parse null from url so pass 0(desc) or 6(asc) to indicate null
+                    oneOf:
+                      - type: number
+                        minimum: 0.5
+                        maximum: 5
+                      - type: string
+                        enum:
+                          - "null"
+              - type: object #ordering by similarity to provided username
+                additionalProperties: false
+                required:
+                  - accountUid
+                  - similarity
+                properties:
+                  accountUid:
+                    type: string
+                    format: uuid
+                    default: 00000000-0000-0000-0000-000000000000
+                  similarity:
                     type: number
-                    minimum: 1
-                    maximum: 5
-                    # $ref: "#/components/schemas/AvgRating"
+                    minimum: 0
+                    maximum: 1
         - in: query
           name: limit
           description: Response will include up to limit accounts.
@@ -156,6 +173,8 @@ paths:
                   properties:
                     profile:
                       $ref: "#/components/schemas/AccountProfile"
+        400:
+          $ref: "#/components/responses/BadRequest"
         500:
           $ref: "#/components/responses/InternalServerError"
     post:
@@ -1273,6 +1292,7 @@ components:
           type: string
           format: date-time
     ImageLink:
+      nullable: true
       type: string
       description: link to image in google cloud storage
       pattern: '^https:\/\/storage\.googleapis\.com\/.+$'
@@ -1322,20 +1342,12 @@ components:
           $ref: "#/components/schemas/Circle"
         pfpLink:
           readOnly: true
-          oneOf:
+          allOf:
             - $ref: "#/components/schemas/ImageLink"
-            - type: integer
-              minimum: 1
-              maximum: 0
-              nullable: true
         avgRating:
           readOnly: true
-          oneOf:
+          allOf:
             - $ref: "#/components/schemas/AvgRating"
-            - type: string
-              maxLength: 0
-              minLength: 1
-              nullable: true
         numRatings:
           readOnly: true
           allOf:
@@ -1363,6 +1375,13 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/CuisineType"
+        similarity:
+          description: Similarity score used for pagination when seraching for accounts by username.
+          readOnly: true
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
     Account:
       type: object
       description: All data associated with an account.
@@ -1480,7 +1499,7 @@ components:
     AvgRating:
       nullable: true
       type: number
-      minimum: 1
+      minimum: 0.5
       maximum: 5
     NumRatings:
       type: integer
