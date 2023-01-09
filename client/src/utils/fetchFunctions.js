@@ -81,6 +81,8 @@ export async function fetchUser() {
     credentials: "include",
   })
 
+  console.log(response)
+
   if (response.status == 404) {
     return response
   }
