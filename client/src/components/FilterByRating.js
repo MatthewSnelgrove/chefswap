@@ -20,19 +20,23 @@ export default function FilterByRating(props) {
       <div
         className="filter-form-header"
         style={{ display: "flex", alignItems: "center", gap: 15 }}
-      >
-        <h2>How?</h2>
-        <Tooltip
-          title="Filter by how experienced your swap partner is."
-          arrow
-          placement="right"
-        >
-          <img
-            src="/info.svg"
-            alt="Tooltip for rating filter"
-            className="filter-form-tooltip"
-          />
-        </Tooltip>
+      > 
+        {props.disableText ? <></>:
+          <>
+            <h2>How?</h2>
+            <Tooltip
+              title="Filter by how experienced your swap partner is."
+              arrow
+              placement="right"
+            >
+              <img
+                src="/info.svg"
+                alt="Tooltip for rating filter"
+                className="filter-form-tooltip"
+              />
+            </Tooltip>
+          </>
+        }
       </div>
       <div style={{ lineHeight: 1, display: "flex", alignItems: "center" }}>
         {/* fix for rating spacing */}
@@ -45,7 +49,9 @@ export default function FilterByRating(props) {
           }}
           size="large"
         />
+        {props.disableText ? <></> : 
         <span style={{ marginLeft: 10 }}>and up</span>
+        }
       </div>
     </>
   );

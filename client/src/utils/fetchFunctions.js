@@ -118,6 +118,7 @@ export async function getAllUsers(latitude, longitude, filter, setFunc) {
   }
 
   try {
+    console.log(`http://localhost:3001/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`)
     const response = await fetch(`http://localhost:3001/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`);
     const json = await response.json();
     if (setFunc) {

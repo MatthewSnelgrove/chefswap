@@ -120,7 +120,7 @@ function RatingModal(props) {
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <FilterByRating rating={rating} onRatingChange={setRating} ratingText={false}></FilterByRating>
+            <FilterByRating rating={rating} onRatingChange={setRating} disableText={true}></FilterByRating>
           </div>
           <div class="modal-footer">
             <button class="btn btn-primary"  data-bs-toggle="modal"  data-bs-dismiss="modal" onClick={(e) => {
