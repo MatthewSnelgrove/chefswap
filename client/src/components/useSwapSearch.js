@@ -15,6 +15,13 @@ function searchReducer(state, action) {
     }
 }
 
+function returnEmptyIfNull(string, value) {
+    if (value != null) {
+        return string
+    }
+    return ""
+}
+
 function loadedData(setLoading, loadingDispatch, newData, type) {
     loadingDispatch({type: type, payload: newData})
     setLoading(false)
@@ -38,7 +45,7 @@ export function useSwapSearch(lastUser, user, userAddress, queryValues) {
 
     useEffect(() => {
         if (user == global.config.userStates.loading || userAddress == null) {return}
-        getAllUsers(userAddress.latitude, userAddress.longitude, `${queryValues.cuisineChecked.map(e => "&cuisineSpeciality=" + e).join("")}&orderBy=${queryValues.orderBy}&minRating=${queryValues.rating}&maxDistance=${queryValues.distance * 1000}&limit=8`,
+        getAllUsers(userAddress.latitude, userAddress.longitude, `${queryValues.cuisineChecked.map(e => "&cuisineSpeciality=" + e).join("")}&orderBy=${queryValues.orderBy}${returnEmptyIfNull(`&minRating=${queryValues.rating}`, queryValues.rating)}${returnEmptyIfNull(`&maxDistance=${queryValues.distance * 1000}`, queryValues.distance)}&limit=8`,
         (data) => loadedData(setLoading, dispatch, data, "change-query"))
     }, [userAddress])
 
@@ -47,7 +54,7 @@ export function useSwapSearch(lastUser, user, userAddress, queryValues) {
     //TODO: fix setLastUser(false) based off of error data
     useEffect(() => {
         if (user == global.config.userStates.loading || userAddress == null || loading) {return}
-        getAllUsers(userAddress.latitude, userAddress.longitude, `${queryValues.cuisineChecked.map(e => "&cuisineSpeciality=" + e).join("")}&orderBy=${queryValues.orderBy}&minRating=${queryValues.rating}&maxDistance=${queryValues.distance * 1000}&limit=8`,
+        getAllUsers(userAddress.latitude, userAddress.longitude, `${queryValues.cuisineChecked.map(e => "&cuisineSpeciality=" + e).join("")}&orderBy=${queryValues.orderBy}${returnEmptyIfNull(`&minRating=${queryValues.rating}`, queryValues.rating)}${returnEmptyIfNull(`&maxDistance=${queryValues.distance * 1000}`, queryValues.distance)}&limit=8`,
         (data) => {
             loadedData(setLoading, dispatch, data, "change-query")
             if (data) {
@@ -59,7 +66,7 @@ export function useSwapSearch(lastUser, user, userAddress, queryValues) {
     useEffect(() => {
         if (user == global.config.userStates.loading || userAddress == null || isLastUser) {return}
         setLoading(true)
-        getAllUsers(userAddress.latitude, userAddress.longitude, `${queryValues.cuisineChecked.map(e => "&cuisineSpeciality=" + e).join("")}&orderBy=${queryValues.orderBy}${getOrderByString(queryValues.orderBy, lastUser.distance, lastUser.rating, lastUser.accountUid)}&minRating=${queryValues.rating}&maxDistance=${queryValues.distance * 1000}&limit=8`,
+        getAllUsers(userAddress.latitude, userAddress.longitude, `${queryValues.cuisineChecked.map(e => "&cuisineSpeciality=" + e).join("")}&orderBy=${queryValues.orderBy}${getOrderByString(queryValues.orderBy, lastUser.distance, lastUser.rating, lastUser.accountUid)}${returnEmptyIfNull(`&minRating=${queryValues.rating}`, queryValues.rating)}${returnEmptyIfNull(`&maxDistance=${queryValues.distance * 1000}`, queryValues.distance)}&limit=8`,
         (data) => {
             console.log(data)
             loadedData(setLoading, dispatch, data, "user-scroll")
