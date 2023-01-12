@@ -1,15 +1,16 @@
 .find-swap-page {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  // justify-content: center;
+  // align-items: center;
   margin-top: 10px;
+  gap: 20px;
 }
 
 .find-swap-content {
-  display: flex;
+  // display: flex;
 
   width: 100%;
-  padding: 0 2%;
+  margin-top: var(--navbar-height);
 }
 
 .swap-results-container {

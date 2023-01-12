@@ -6,6 +6,7 @@ import "./styles/FindSwapPage.scss";
 import { useUser } from "../components/useUser";
 import { fetchSpecific } from "../utils/fetchFunctions";
 import { useSwapSearch } from "../components/useSwapSearch";
+import { Box, Drawer, Button } from "@mui/material";
 
 // distance: (user.profile.distance / 1000).toFixed(1),
 // avg_rating: user.profile.avgRating
@@ -74,6 +75,43 @@ export default function FindSwapPage(props) {
     [isLoading]
   );
 
+  /* MUI Responsive Drawer */
+  const [drawerState, setDrawerState] = useState(false);
+  console.log(drawerState);
+
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === "keydown" && event.key !== "Escape") {
+      return;
+    }
+
+    setDrawerState(open);
+  };
+
+  const filterSidebar = (
+    <Box
+      sx={{ width: 300 }}
+      role="presentation"
+      onKeyDown={toggleDrawer(false)}
+    >
+      <FilterForm
+        cuisineChecked={cuisineChecked}
+        rating={rating}
+        distance={distance}
+        // username={username}
+        onTickedChange={handleTickedChange}
+        onRatingChange={handleRatingChange}
+        onDistanceChange={handleDistanceChange}
+        // onUsernameChange={handleUsernameChange}
+      />
+    </Box>
+  );
+
+  const { window } = props;
+  const container =
+    window !== undefined ? () => window.document.body : undefined;
+
+  const drawerWidth = 301;
+
   useEffect(() => {
     document.title = "Chefswap | Find swaps";
   }, []);
@@ -113,19 +151,48 @@ export default function FindSwapPage(props) {
   return (
     <OnlyLoggedIn>
       <div className="find-swap-page">
+        <Box
+          component="nav"
+          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          aria-label="Filter options"
+        >
+          <Drawer
+            container={container}
+            variant="temporary"
+            open={drawerState}
+            onClose={toggleDrawer(false)}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+            className="mui-filter-sidebar"
+            sx={{
+              display: { xs: "block", sm: "none" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+              },
+            }}
+          >
+            {filterSidebar}
+          </Drawer>
+          <Drawer
+            variant="permanent"
+            sx={{
+              display: { xs: "none", sm: "block" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+              },
+            }}
+            open
+          >
+            {filterSidebar}
+          </Drawer>
+        </Box>
         <div className="find-swap-content">
-          {/* New FilterForm */}
-          <FilterForm
-            cuisineChecked={cuisineChecked}
-            rating={rating}
-            distance={distance}
-            // username={username}
-            onTickedChange={handleTickedChange}
-            onRatingChange={handleRatingChange}
-            onDistanceChange={handleDistanceChange}
-            // onUsernameChange={handleUsernameChange}
-          />
-
+          {!drawerState ? (
+            <Button onClick={toggleDrawer(true)}>Filter</Button>
+          ) : null}
           <SwapResultsContainer
             searchState={filterForDisplay(searchState)}
             searchDispatch={searchDispatch}

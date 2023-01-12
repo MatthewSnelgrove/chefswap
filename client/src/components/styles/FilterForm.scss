@@ -1,5 +1,10 @@
 @import "../../variables";
 
+.MuiPaper-root:has(.filter-form-container) {
+  background-color: $cs-light-gray;
+  
+}
+
 .filter-form-container {
   // position: fixed;
   // top: 50px;   // matches navbar
@@ -10,10 +15,7 @@
   width: 300px;
   padding: 0 30px;
   padding-top: 60px;
-  min-height: 100vh;
-
-  background-color: $cs-light-gray;
-
+  
   // Cuisine chips
   .MuiAutocomplete-tag {
     background-color: $cs-orange-4;
