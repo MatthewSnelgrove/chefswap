@@ -30,7 +30,7 @@ export default function FilterForm(props) {
   }
 
   return (
-    <div className="filter-form-container" style={{ paddingTop: "20px" }}>
+    <div className="filter-form-container">
       <form action="">
         <FilterByCuisineSection
           // cuisineTyped={this.props.cuisineTyped}
