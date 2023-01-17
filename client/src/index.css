@@ -55,3 +55,10 @@ code {
 .navbar-margin {
   margin-top: var(--navbar-height);
 }
+
+.username-search {
+  border-radius: 10px;
+  border: 1px solid black;
+  padding: 0px;
+  box-sizing: border-box;
+}

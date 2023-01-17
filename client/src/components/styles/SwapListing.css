@@ -90,10 +90,10 @@
     display:block;
 }
 
-@media (max-width: 750px) {
+@media (max-width: 1050px) {
     .main-container {
-        grid-template-columns: 245px 1fr;
-        column-gap: 0px;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 40px;
     }
 
     .finalCol-container {

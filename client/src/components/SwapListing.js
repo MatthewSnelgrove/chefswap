@@ -12,11 +12,10 @@ function SwapListing(props) {
     props.innerRefData.current = {
       rating: props.rating,
       accountUid: props.accountUid,
-      distance: props.distance
+      distance: props.distance,
+      similarity: props.similarity
     }
   }
-
-  console.log(props)
   return (
     <div ref={props.innerRef}>
       <div className="main-container">
@@ -29,11 +28,7 @@ function SwapListing(props) {
           </div>
 
           <div className="distance-tag">
-            <img
-              alt="location icon"
-              style={{ height: 33, width: 33 }}
-              src="../location.png"
-            ></img>
+            <span style={{ fontSize: "33px" }} class="material-symbols-outlined">location_on</span>
             <span className="distance-display">{props.distance.toFixed(1)}km</span>
           </div>
           <div className="rating-tag">

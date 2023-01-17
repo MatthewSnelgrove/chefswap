@@ -15,6 +15,7 @@ import EditProfile from "./components/EditProfile"
 import EditPassword from './components/EditPassword'
 import EditGallery from './components/EditGallery'
 import EditPersonal from './components/EditPersonal'
+import FindUserPage from "./pages/FindUserPage";
 import { QueryClientProvider, QueryClient } from "react-query";
 
 
@@ -47,7 +48,8 @@ function App() {
           <Route path="/accounts/gallery" element={<UserEditPage renderType={<EditGallery />} name="EditGallery" />} />
           <Route path="/accounts/personal" element={<UserEditPage renderType={<EditPersonal />} name="EditPersonal" />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />    
+          <Route path="/signup" element={<Signup />} />   
+          <Route path="/find-swap/search/:usernameQuery" element={<FindUserPage />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

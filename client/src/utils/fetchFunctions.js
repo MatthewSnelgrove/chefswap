@@ -187,4 +187,3 @@ export async function getMultipleRatings(userDateList, user, setFunc) {
   const userRatings = await Promise.all(userRatingsPromises)
   setFunc(Object.fromEntries(userRatings))
 }
-

@@ -7,7 +7,8 @@ module.exports = global.config = {
         editPersonal: "http://localhost:3000/accounts/personal",
         myMessages: "http://localhost:3000/my-messages",
         login: "http://localhost:3000/login",
-        mySwaps: "http://localhost:3000/my-swaps"
+        mySwaps: "http://localhost:3000/my-swaps",
+        searchSwaps: "http://localhost:3000/find-swap/search"
     },
     userStates: {
         loading: "loading"

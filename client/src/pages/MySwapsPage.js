@@ -24,10 +24,7 @@ function MySwapsPage() {
 
   return (
     <OnlyLoggedIn >
-      <div className="navbar-margin">
-        <div className="swap-container">
-          <h1 className="px-5 swap-text">Swaps</h1>
-        </div>
+      <div className="navbar-margin" style={{"paddingTop": "20px"}}>
         <SwapSwitch current={0} />
         <div
           style={{

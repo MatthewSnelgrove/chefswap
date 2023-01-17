@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import SwapListing from "./SwapListing";
 import "./styles/SwapResultsContainer.scss";
 import { newSwapRequest } from "../utils/changeFunctions";
+import SearchBy from "./SearchBy";
 
 /**
  * Container component for all swap results on /find-swap
@@ -52,15 +53,19 @@ export default class SwapResultsContainer extends Component {
     return (
       <div className="swap-results-container">
         <div className="swap-header">
-          Sort By:
-          <select className="swap-option" onChange={(e) => {
-            setOrderBy(e.target.value)
-          }}>
-            <option value="distanceAsc">Distance - Low to High</option>
-            <option value="distanceDesc">Distance - High to Low</option>
-            <option value="avgRatingAsc">Rating - Low to High</option>
-            <option value="avgRatingDesc">Rating - High to Low</option>
-          </select>
+          <SearchBy containerStyle={{display: "flex"}} />
+          <div>
+            <span>Sort By:</span>
+            <select className="swap-option" onChange={(e) => {
+              setOrderBy(e.target.value)
+            }}>
+              <option value="distanceAsc">Distance - Low to High</option>
+              <option value="distanceDesc">Distance - High to Low</option>
+              <option value="avgRatingAsc">Rating - Low to High</option>
+              <option value="avgRatingDesc">Rating - High to Low</option>
+            </select>
+          </div>
+          
         </div>
         {exUserJSX}
       </div>
