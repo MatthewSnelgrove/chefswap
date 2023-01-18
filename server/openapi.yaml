@@ -1473,7 +1473,7 @@ components:
       type: string
       minLength: 3
       maxLength: 80
-      pattern: '[^!*''();:@&=+$,/?%#[\]]{3,80}' #can't conatain any url reserved characters
+      pattern: '[^!*''();:@&=+$,/?%#[\]\s]{3,80}' #can't conatain any url reserved characters
     Password:
       type: string
       minLength: 8
