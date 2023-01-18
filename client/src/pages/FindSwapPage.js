@@ -7,6 +7,7 @@ import { useUser } from "../components/useUser";
 import { fetchSpecific } from "../utils/fetchFunctions";
 import { useSwapSearch } from "../components/useSwapSearch";
 import { Box, Drawer, Button } from "@mui/material";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 
 // distance: (user.profile.distance / 1000).toFixed(1),
 // avg_rating: user.profile.avgRating
@@ -191,7 +192,24 @@ export default function FindSwapPage(props) {
         </Box>
         <div className="find-swap-content">
           {!drawerState ? (
-            <Button onClick={toggleDrawer(true)}>Filter</Button>
+            <div
+              style={{
+                position: "absolute",
+                left: "-15px",
+                top: "50%",
+                bottom: "50%",
+              }}
+            >
+              <Button
+                fullWidth
+                color="warning"
+                onClick={toggleDrawer(true)}
+                sx={{ borderRadius: 999 }}
+                size="large"
+              >
+                <KeyboardArrowRightIcon />
+              </Button>
+            </div>
           ) : null}
           <SwapResultsContainer
             searchState={filterForDisplay(searchState)}
