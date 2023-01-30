@@ -1,29 +1,27 @@
 import express from "express";
-import session from "express-session";
-import { pool } from "./configServices/dbConfig.js";
 import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import bodyParser from "body-parser";
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
-import pgSession from "connect-pg-simple";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpecs } from "./configServices/swaggerConfig.js";
 import http from "http";
 import { Server } from "socket.io";
 import * as OpenApiValidator from "express-openapi-validator";
-import slugid from "slugid";
+import helmet from "helmet";
+import { sessionMiddleware } from "./configServices/sessionConfig.js";
+import { wrap } from "./configServices/sessionConfig.js";
+import { corsConfig } from "./configServices/corsConfig.js";
 // import * as iii from "./openapi.yaml";
 
 const PORT = process.env.PORT || 3001;
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
-io.on("connection", (socket) => {
-  console.log("a user connected");
-});
+
+app.use(helmet());
 app.use(express.json());
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(cors(corsConfig));
 app.use(cookieParser());
 app.use(
   bodyParser.urlencoded({
@@ -36,10 +34,6 @@ app.use(
   swaggerUi.setup(swaggerSpecs, { explorer: true })
 );
 
-const store = new (pgSession(session))({
-  pool: pool,
-});
-
 // const uids = [
 //   "36b83756-9a30-4779-a783-f40baad5782d",
 //   "6611bbc5-2035-4304-b944-240dadb1f296",
@@ -50,20 +44,7 @@ const store = new (pgSession(session))({
 //   console.log(`${uid} : ${slugid.encode(uid)}`);
 // }
 
-app.use(
-  session({
-    store: store,
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    rolling: true,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: false,
-      secure: false,
-      maxAge: 1000 * 60 * 60 * 24, //24 hours, reset on activity
-    },
-  })
-);
+app.use(sessionMiddleware);
 
 app.use(
   OpenApiValidator.middleware({
@@ -123,6 +104,12 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json(err.errors);
 });
 
-app.listen(PORT, () => {
+const io = new Server(server, corsConfig);
+io.use(wrap(sessionMiddleware));
+io.on("connection", (socket) => {
+  console.log(socket.request.session);
+});
+
+server.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
