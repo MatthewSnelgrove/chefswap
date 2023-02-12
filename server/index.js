@@ -104,9 +104,11 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json(err.errors);
 });
 
-const io = new Server(server, corsConfig);
+const io = new Server(server, { cors: corsConfig });
 io.use(wrap(sessionMiddleware));
 io.on("connection", (socket) => {
+  console.log("a user connected");
+  console.log("sessionId: " + socket.id);
   console.log(socket.request.session);
 });
 
