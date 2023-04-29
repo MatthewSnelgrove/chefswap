@@ -2,7 +2,6 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import * as dotenv from "dotenv";
 import bodyParser from "body-parser";
-dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpecs } from "./configServices/swaggerConfig.js";
@@ -15,6 +14,7 @@ import { wrap } from "./configServices/sessionConfig.js";
 import { corsConfig } from "./configServices/corsConfig.js";
 // import * as iii from "./openapi.yaml";
 
+dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
 const PORT = process.env.PORT || 3001;
 const app = express();
 const server = http.createServer(app);
@@ -105,10 +105,17 @@ app.use((err, req, res, next) => {
 });
 
 const io = new Server(server, { cors: corsConfig });
+//lets socket use session middleware
 io.use(wrap(sessionMiddleware));
-io.on("connection", (socket) => {
+io.on("connection", (socket, next) => {
+  socket.accountUid = socket.request.session.accountUid;
+  if (!socket.accountUid) {
+    next;
+  }
+  // socket.join(socket.)
   console.log("a user connected");
   console.log("sessionId: " + socket.id);
+  // console.log("username: " + )
   console.log(socket.request.session);
 });
 
