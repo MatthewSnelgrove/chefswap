@@ -25,7 +25,7 @@ function EditListLink(props) {
       >
         {props.display}
       </div>
-      <img className={styles.display_img_small} src={props.smallImg}></img>
+      <img className={styles.display_img_small} src={props.smallImg} />
     </li>
   );
 }

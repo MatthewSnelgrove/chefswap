@@ -5,7 +5,7 @@ function Logo() {
   return (
     <div className={styles.CSLogo}>
       <img
-        src={process.env.PUBLIC_URL + "/chefswap-logo.png"}
+        src={"/chefswap-logo.png"}
         alt="Chefswap logo"
         className={styles.logo_img}
       />

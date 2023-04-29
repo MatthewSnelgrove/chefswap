@@ -27,7 +27,7 @@ function SwapInfo(props) {
 
         <button className={styles.bg_info_i}>
           <img
-            src="chat_bubble.svg"
+            src="/chat_bubble.svg"
             style={{ width: "50px", height: "50px" }}
           ></img>
         </button>

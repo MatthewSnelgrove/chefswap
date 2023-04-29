@@ -92,7 +92,7 @@ function Home() {
         >
           <AnimatedImg
             REF
-            src={process.env.PUBLIC_URL + "/pan-graphic.png"}
+            src={"/pan-graphic.png"}
             alt="Frying pan tossing ingredients"
             size={80}
             rotate={-5}
@@ -100,7 +100,7 @@ function Home() {
             section={1}
           >
             <AnimatedImg
-              src={process.env.PUBLIC_URL + "/broccoli.png"}
+              src={"/broccoli.png"}
               alt="Broccoli"
               position={[50, 85]}
               size={15}
@@ -108,7 +108,7 @@ function Home() {
               section={1}
             />
             <AnimatedImg
-              src={process.env.PUBLIC_URL + "/carrot.png"}
+              src={"/carrot.png"}
               alt="Carrot"
               position={[37, 130]}
               size={20}
@@ -117,7 +117,7 @@ function Home() {
               section={1}
             />
             <AnimatedImg
-              src={process.env.PUBLIC_URL + "/onions.png"}
+              src={"/onions.png"}
               alt="Onions"
               position={[5, 100]}
               size={25}
@@ -126,7 +126,7 @@ function Home() {
               section={1}
             />
             <AnimatedImg
-              src={process.env.PUBLIC_URL + "/potato.png"}
+              src={"/potato.png"}
               alt="Potato"
               position={[22, 43]}
               size={18}

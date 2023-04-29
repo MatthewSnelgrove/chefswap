@@ -48,7 +48,7 @@ export default class SwapResultsContainer extends Component {
             >
               <img
                 className={styles.small_swap_button}
-                src="./swap.svg"
+                src="/swap.svg"
                 style={{ height: "80px" }}
               ></img>
             </button>

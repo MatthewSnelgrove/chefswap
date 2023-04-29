@@ -44,7 +44,7 @@ function UserProfileContainer(props) {
           >
             <img
               style={{ width: "55px" }}
-              src={isUser ? "edit.svg" : "chat.svg"}
+              src={isUser ? "/edit.svg" : "/chat.svg"}
             ></img>
           </button>
         </div>
@@ -55,7 +55,7 @@ function UserProfileContainer(props) {
           <img
             className={styles.type_edit}
             style={{ width: "35px" }}
-            src="navigate.svg"
+            src="/navigate.svg"
           ></img>
           {user.cuisinePreferences.length == 0 ? (
             <span style={{ fontStyle: "italic" }}>
@@ -74,7 +74,7 @@ function UserProfileContainer(props) {
           <img
             className={styles.type_edit}
             style={{ width: "35px" }}
-            src="navigate.svg"
+            src="/navigate.svg"
           ></img>
           {user.cuisineSpecialities.length == 0 ? (
             <span style={{ fontStyle: "italic" }}>
