@@ -20,28 +20,28 @@ function UserEditPage(props) {
             link={pages.editProfile}
             listType={"EditProfile"}
             display={"Edit Profile"}
-            smallImg={"../person.svg"}
+            smallImg={"/person.svg"}
           />
           <EditListLink
             curSelected={props.name}
             link={pages.editPassword}
             listType={"EditPassword"}
             display={"Change Password"}
-            smallImg={"../lock.svg"}
+            smallImg={"/lock.svg"}
           />
           <EditListLink
             curSelected={props.name}
             link={pages.editGallery}
             listType={"EditGallery"}
             display={"Gallery"}
-            smallImg={"../photo.svg"}
+            smallImg={"/photo.svg"}
           />
           <EditListLink
             curSelected={props.name}
             link={pages.editPersonal}
             listType={"EditPersonal"}
             display={"Personal Info"}
-            smallImg={"../key.svg"}
+            smallImg={"/key.svg"}
           />
         </ul>
         {props.renderType}
