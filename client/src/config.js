@@ -10,6 +10,7 @@ module.exports = global.config = {
         mySwaps: "http://localhost:3000/my-swaps",
         searchSwaps: "http://localhost:3000/find-swap/search"
     },
+    server: "http://localhost:3001/",
     userStates: {
         loading: "loading"
     },
