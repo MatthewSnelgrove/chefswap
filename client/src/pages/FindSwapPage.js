@@ -4,10 +4,11 @@ import OnlyLoggedIn from "../components/OnlyLoggedIn";
 import SwapResultsContainer from "../components/SwapResultsContainer";
 import "./styles/FindSwapPage.scss";
 import { useUser } from "../components/useUser";
-import { fetchSpecific } from "../utils/fetchFunctions";
+import { fetchSpecific } from "../../utils/fetchFunctions";
 import { useSwapSearch } from "../components/useSwapSearch";
 import { Box, Drawer, Button } from "@mui/material";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import global_vars from "../utils/config";
 
 // distance: (user.profile.distance / 1000).toFixed(1),
 // avg_rating: user.profile.avgRating
@@ -32,7 +33,7 @@ function filterForDisplay(users) {
  */
 export default function FindSwapPage(props) {
   const user = useUser();
-  const loading = global.config.userStates.loading;
+  const loading = global_vars.userStates.loading;
 
   // State for filter form
   const [cuisineChecked, setCuisineChecked] = useState([]);

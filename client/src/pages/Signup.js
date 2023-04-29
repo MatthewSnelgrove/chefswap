@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CredentialField from "../components/CredentialField2";
 import Modal from "../components/Modal";
-import { signupUser } from "../utils/fetchFunctions";
+import { signupUser } from "../../utils/fetchFunctions";
 import {
   validateEmail,
   dummyValidatePassword,
@@ -12,7 +12,7 @@ import {
   validateCity,
   validatePostalCode,
   validateProvince,
-} from "../utils/validationFunctions";
+} from "../../utils/validationFunctions";
 import PasswordRequirements from "../components/PasswordRequirements";
 import OnlyLoggedOut from "../components/OnlyLoggedOut";
 import Select from "react-select";

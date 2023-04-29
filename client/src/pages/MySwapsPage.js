@@ -7,24 +7,35 @@ import { useSwapType } from "../components/useSwapType";
 import SwapListPending from "../components/SwapListPending";
 import SwapListOngoing from "../components/SwapListOngoing";
 import SwapListPast from "../components/SwapListPast";
-
+import global_vars from "../../utils/config";
 
 function MySwapsPage() {
-  const user = useUser()
-  const loading = global.config.userStates.loading
-  const [swapListPending, setSwapListPending] = useSwapType({ status: "pending" })
-  const [swapListPast, setSwapListPast] = useSwapType({ status: "ended" })
-  const [swapListOngoing, setSwapListOngoing] = useSwapType({ status: "ongoing" })
-  
+  const user = useUser();
+  const loading = global_vars.userStates.loading;
+  const [swapListPending, setSwapListPending] = useSwapType({
+    status: "pending",
+  });
+  const [swapListPast, setSwapListPast] = useSwapType({ status: "ended" });
+  const [swapListOngoing, setSwapListOngoing] = useSwapType({
+    status: "ongoing",
+  });
+
   useEffect(() => {
     document.title = "Chefswap | My swaps";
   }, []);
 
-  if (user == loading || swapListPending == loading || swapListPast == loading || swapListOngoing == loading) {return (<></>)}  
+  if (
+    user == loading ||
+    swapListPending == loading ||
+    swapListPast == loading ||
+    swapListOngoing == loading
+  ) {
+    return <></>;
+  }
 
   return (
-    <OnlyLoggedIn >
-      <div className="navbar-margin" style={{"paddingTop": "20px"}}>
+    <OnlyLoggedIn>
+      <div className="navbar-margin" style={{ paddingTop: "20px" }}>
         <SwapSwitch current={0} />
         <div
           style={{
@@ -36,10 +47,20 @@ function MySwapsPage() {
           }}
         >
           <div>
-            <SwapListPending swapListPending={swapListPending} setSwapListPending={setSwapListPending} setSwapListOngoing={setSwapListOngoing} user={user} />
+            <SwapListPending
+              swapListPending={swapListPending}
+              setSwapListPending={setSwapListPending}
+              setSwapListOngoing={setSwapListOngoing}
+              user={user}
+            />
           </div>
           <div>
-            <SwapListOngoing swapListOngoing={swapListOngoing} setSwapListPast={setSwapListPast} setSwapListOngoing={setSwapListOngoing} user={user}  />
+            <SwapListOngoing
+              swapListOngoing={swapListOngoing}
+              setSwapListPast={setSwapListPast}
+              setSwapListOngoing={setSwapListOngoing}
+              user={user}
+            />
           </div>
           <div>
             <SwapListPast swapListPast={swapListPast} user={user} />

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { fetchLogin } from "../utils/fetchFunctions";
+import { fetchLogin } from "../../utils/fetchFunctions";
 import Modal from "../components/Modal";
 import CredentialField from "../components/CredentialField2";
 import OnlyLoggedOut from "../components/OnlyLoggedOut";
 import {
   validateUsername,
   validatePassword,
-} from "../utils/validationFunctions";
+} from "../../utils/validationFunctions";
 import "./styles/_SignupLogin.scss";
+import global_vars from "../../utils/config";
 
 function Login() {
   useEffect(() => {
@@ -79,7 +80,7 @@ function Login() {
           if (res.status !== 200 && res.status !== 201) {
             return res.json();
           } else {
-            window.location = global.config.pages.homepage;
+            window.location = global_vars.pages.homepage;
           }
         })
         .then((json) => {

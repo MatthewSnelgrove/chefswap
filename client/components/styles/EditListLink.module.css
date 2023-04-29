@@ -1,0 +1,19 @@
+.style_selected {
+    border-left: 4px solid var(--cs-orange-4);
+    background-color: white;
+}
+
+.display_img_small {
+    display: none;
+}
+
+@media (max-width: 710px) {
+    .text_display_big {
+        display: none;
+    }
+
+    .display_img_small {
+        display: block;
+    }
+
+}

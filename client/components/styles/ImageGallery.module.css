@@ -1,0 +1,26 @@
+.carousel_inner img {
+    margin: auto;
+    max-height: 75%;
+    max-width: 80%;
+    overflow: auto;
+    margin: auto;
+    position: absolute;
+    top: 0; 
+    left: 0;
+    bottom: 0; 
+    right: 0;
+}
+
+.carousel_indicators [data-bs-target] {
+    background-color: var(--cs-black-1);
+}
+
+#carouselExampleIndicators, .carousel_example_indicators {
+    background-color: var(--cs-grey-1);
+    border-radius: 10px;
+}
+
+.carousel_item {
+    height: 470px;
+    overflow: hidden;
+}
