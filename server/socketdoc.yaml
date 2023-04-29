@@ -1,0 +1,11 @@
+asyncapi: 2.6.0
+info:
+  title: chefswap websocket api for messaging
+  version: 1.0.0
+  description: Messaging api for chefswap
+servers:
+  development:
+    url: ws://localhost:3001
+    protocol: ws
+    description: Development server
+channels:
