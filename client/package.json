@@ -11,6 +11,7 @@
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.2.0",
+    "dotenv": "^16.0.3",
     "gh-pages": "^4.0.0",
     "mdb-react-ui-kit": "^5.0.0",
     "prettier": "^2.8.0",
@@ -23,7 +24,8 @@
     "react-select": "^5.6.1",
     "react-toastify": "^9.0.8",
     "sass": "^1.54.8",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "webpack": "^5.81.0"
   },
   "scripts": {
     "predeploy": "npm run build",
