@@ -3,6 +3,7 @@ import Typewriter from "../components/Homepage/Typewriter";
 import StyledBtn from "../components/Homepage/StyledBtn";
 import "./styles/AboutPage.scss";
 import useSocketSetup from "../utils/useSocketSetup";
+import socket from "../utils/socket";
 /**
  * Page at "/"
  */
@@ -11,6 +12,10 @@ function TEST_SESSION_PAGE() {
     document.title = "Chefswap | Home";
   }, []);
   useSocketSetup();
+  socket.emit("sendMessage", "hello from client");
+  socket.on("sendMessage", (message) => {
+    console.log(message);
+  });
 
   return (
     <>
