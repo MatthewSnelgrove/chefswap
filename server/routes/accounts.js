@@ -12,7 +12,7 @@ import { bucket } from "../configServices/cloudStorageConfig.js";
 import { computeDestinationPoint } from "geolib";
 export const router = express.Router();
 import snakeize from "snakeize";
-import { accountNotFound } from "../utils/errors.js";
+import { BusinessError, accountNotFound } from "../utils/errors.js";
 import stripNulls from "../utils/stripNulls.js";
 /**
  * get profile data for all accounts
@@ -41,30 +41,35 @@ router.get("/", async (req, res, next) => {
     includeDistanceFrom.longitude === undefined
   ) {
     if (maxDistance) {
-      next({
-        status: 400,
-        message: "invalid query params",
-        detail:
-          "maxDistance is only valid if includeDistanceFrom is also specified",
-      });
+      next(
+        new BusinessError(
+          400,
+          "invalid query params",
+          "maxDistance is only valid if includeDistanceFrom is also specified"
+        )
+      );
       return;
     }
     if (orderBy === "distanceAsc" || orderBy === "distanceDesc") {
-      next({
-        status: 400,
-        message: "invalid query params",
-        detail:
-          "can only order by distance if includeDistanceFrom is also specified",
-      });
+      next(
+        new BusinessError(
+          400,
+          "invalid query params",
+          "can only order by distance if includeDistanceFrom is also specified"
+        )
+      );
+
       return;
     }
   }
   if (key.distance && orderBy != "distanceAsc" && orderBy != "distanceDesc") {
-    next({
-      status: 400,
-      message: "invalid query params",
-      detail: `query param orderBy must equal 'distanceAsc' or 'distanceDesc to paginate by distance`,
-    });
+    next(
+      new BusinessError(
+        400,
+        "invalid query params",
+        "query param orderBy must equal 'distanceAsc' or 'distanceDesc to paginate by distance"
+      )
+    );
     return;
   }
   if (
@@ -72,12 +77,13 @@ router.get("/", async (req, res, next) => {
     orderBy != "avgRatingAsc" &&
     orderBy != "avgRatingDesc"
   ) {
-    next({
-      status: 400,
-      message: "invalid query params",
-      detail: `query param orderBy must equal 'avgRatingAsc' or 'avgRatingDesc to paginate by avgRating`,
-    });
-    return;
+    next(
+      new BusinessError(
+        400,
+        "invalid query params",
+        `query param orderBy must equal 'avgRatingAsc' or 'avgRatingDesc to paginate by avgRating`
+      )
+    );
   }
   if (key.avgRating === "null") {
     key.avgRating = orderBy === "avgRatingAsc" ? 6 : 0;
@@ -93,11 +99,13 @@ router.get("/", async (req, res, next) => {
       key.distance ||
       key.avgRating)
   ) {
-    next({
-      status: 400,
-      message: "invalid query params",
-      detail: `query param username cannot be specified with any of maxDistance, minRating, maxRating, cuisinePreference, cuisineSpeciality, orderBy, key.distance, or key.avgRating`,
-    });
+    next(
+      new BusinessError(
+        400,
+        "invalid query params",
+        "query param username cannot be specified with any of maxDistance, minRating, maxRating, cuisinePreference, cuisineSpeciality, orderBy, key.distance, or key.avgRating"
+      )
+    );
   }
   const { rows } = username
     ? //if username specfied, search by username
@@ -197,18 +205,18 @@ router.post("/", async (req, res, next) => {
       .catch((e) => {
         switch (e.constraint) {
           case "account_username_key":
-            next({
-              status: 409,
-              message: "invalid username",
-              detail: "username already exists",
-            });
+            next(
+              new BusinessError(
+                409,
+                "invalid username",
+                "username already exists"
+              )
+            );
             return;
           case "account_email_key":
-            next({
-              status: 409,
-              message: "Invalid email",
-              detail: "Email already exists",
-            });
+            next(
+              new BusinessError(409, "invalid email", "email already exists")
+            );
             return;
           default:
             console.log(e);
@@ -702,11 +710,13 @@ router.delete(
       ])
     ).rows[0];
     if (!image) {
-      next({
-        status: 404,
-        message: "image not found",
-        detail: "image with specified imageUid does not exist",
-      });
+      next(
+        new BusinessError(
+          404,
+          "image not found",
+          "image with specified imageUid does not exist"
+        )
+      );
       return;
     }
     await bucket.file(image.imageName).delete();
@@ -765,18 +775,22 @@ router.post(
           console.log(e);
           switch (e.constraint) {
             case "user_cuisine_preference_pkey":
-              next({
-                status: 409,
-                message: "preference already set",
-                detail: "account already has specified cuisine preference",
-              });
+              next(
+                new BusinessError(
+                  409,
+                  "preference already set",
+                  "account already has specified cuisine preference"
+                )
+              );
               return;
             case "cuisine_preference_preference_num_check":
-              next({
-                status: 409,
-                message: "max cuisine preferences",
-                detail: "maximum number of cuisine preferences already reached",
-              });
+              next(
+                new BusinessError(
+                  400,
+                  "max cuisine preferences",
+                  "maximun number of cuisine preferences reached"
+                )
+              );
               return;
             default:
               next({});
@@ -811,11 +825,13 @@ router.delete(
     );
     const prefNum = prefRes ? prefRes.rows[0].preferenceNum : null;
     if (!prefNum) {
-      next({
-        status: 404,
-        message: "preference not found",
-        detail: "account does not have specified preference",
-      });
+      next(
+        new BusinessError(
+          404,
+          "preference not found",
+          "account does not have specified preference"
+        )
+      );
       return;
     }
     await pool.query(
@@ -886,19 +902,22 @@ router.post(
           console.log(e);
           switch (e.constraint) {
             case "user_cuisine_speciality_pkey":
-              next({
-                status: 409,
-                message: "speciality already set",
-                detail: "account already has specified cuisine speciality",
-              });
+              next(
+                new BusinessError(
+                  400,
+                  "speciality already set",
+                  "account already has specified cuisine speciality"
+                )
+              );
               return;
             case "cuisine_speciality_speciality_num_check":
-              next({
-                status: 409,
-                message: "max cuisine specialities",
-                detail:
-                  "maximum number of cuisine specialities already reached",
-              });
+              next(
+                new BusinessError(
+                  400,
+                  "max cuisine specialities",
+                  "maximun number of cuisine specialities reached"
+                )
+              );
               return;
             default:
               next({});
@@ -934,11 +953,13 @@ router.delete(
     );
     const specNum = specRes ? specRes.rows[0].specialityNum : null;
     if (!specNum) {
-      next({
-        status: 404,
-        message: "speciality not found",
-        detail: "account does not have specified speciality",
-      });
+      next(
+        new BusinessError(
+          404,
+          "speciality not found",
+          "account does not have specified speciality"
+        )
+      );
       return;
     }
     await pool.query(
@@ -1014,18 +1035,18 @@ async function setSingleFieldInAccount(req, res, next, field) {
       .catch((e) => {
         switch (e.constraint) {
           case "account_username_key":
-            next({
-              status: 409,
-              message: "invalid username",
-              detail: "username already exists",
-            });
+            next(
+              new BusinessError(
+                409,
+                "invalid username",
+                "username already exists"
+              )
+            );
             return;
           case "account_email_key":
-            next({
-              status: 409,
-              message: "Invalid email",
-              detail: "Email already exists",
-            });
+            next(
+              new BusinessError(409, "invalid email", "email already exists")
+            );
             return;
           default:
             next({});
