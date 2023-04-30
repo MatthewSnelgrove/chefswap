@@ -1,11 +1,58 @@
 asyncapi: 2.6.0
 info:
-  title: chefswap websocket api for messaging
+  title: Chefswap Messaging
   version: 1.0.0
-  description: Messaging api for chefswap
+  description: Messaging websocket api for chefswap
 servers:
   development:
     url: ws://localhost:3001
     protocol: ws
     description: Development server
 channels:
+  /{accountUid}:
+    parameters:
+      accountUid:
+        $ref: "#/components/parameters/accountUid"
+    subscribe:
+      operationId: receiveMessage
+      summary: Receive a message from the server
+      message:
+        $ref: "#/components/messages/ServerMessage"
+    publish:
+      operationId: sendMessage
+      summary: Send a message to the server
+      message:
+        $ref: "#/components/messages/ClientMessage"
+components:
+  parameters:
+    accountUid:
+      description: Account uid - v4 uuid
+      schema:
+        type: string
+        format: uuid
+  messages:
+    ClientMessage:
+      name: clientMessage
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          to:
+            type: string
+            format: uuid
+          content:
+            type: string
+    ServerMessage:
+      name: ServerMessage
+      contentType: application/json
+      payload:
+        type: object
+        properties:
+          from:
+            type: string
+            format: uuid
+          content:
+            type: string
+          sentTimestamp:
+            type: string
+            format: date-time
