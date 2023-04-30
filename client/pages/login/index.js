@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { fetchLogin } from "../../utils/fetchFunctions";
 import Modal from "../../components/Modal";
 import CredentialField from "../../components/CredentialField2";
