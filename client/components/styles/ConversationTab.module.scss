@@ -1,6 +1,6 @@
 $chat-hover: rgb(246, 246, 246);
 
-.conversation-tab-container {
+.conversation_tab_container {
   padding: 0;
   margin: 0;
   border: none;
@@ -10,11 +10,12 @@ $chat-hover: rgb(246, 246, 246);
   padding-right: 8px;
   height: 60px;
   width: 100%;
+  gap: 5px;
 
   align-items: center;
   cursor: pointer;
 
-  .status-bar {
+  .status_bar {
     height: 70%;
     width: 5px;
 
@@ -22,16 +23,16 @@ $chat-hover: rgb(246, 246, 246);
     border-radius: 10px;
   }
 
-  .avatar-container {
+  .avatar_container {
     margin-left: 15px;
     margin-right: 10px;
   }
 }
 
-.conversation-tab-container:hover {
+.conversation_tab_container:hover {
   background-color: $chat-hover;
 }
 
-.conversation-tab-container:active {
+.conversation_tab_container:active {
   opacity: 0.6;
 }
