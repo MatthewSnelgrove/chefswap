@@ -1,8 +1,7 @@
-@import "../../variables";
+@import "../../styles/variables";
 
 .MuiPaper-root:has(.filter-form-container) {
   background-color: $cs-light-gray;
-  
 }
 
 .filter_form_container {

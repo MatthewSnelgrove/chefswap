@@ -15,14 +15,14 @@ function SwapSwitch(props) {
           linkToPage(pages.mySwaps);
         }}
         className={`${styles.swap_click_button} ${
-          props.current === 0
+          props.current == 0
             ? styles.highlight_container
             : styles.non_highlight_container
         }
 
         `}
       >
-        <span className="material-icons-round swap-click-image">
+        <span className={`material-icons-round ${styles.swap_click_image}`}>
           multiple_stop
         </span>
       </button>
@@ -31,7 +31,7 @@ function SwapSwitch(props) {
           linkToPage(pages.myMessages);
         }}
         className={`${styles.message_button} ${
-          props.current === 1
+          props.current == 1
             ? styles.highlight_container
             : styles.non_highlight_container
         }`}

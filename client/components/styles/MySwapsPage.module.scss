@@ -4,12 +4,6 @@
   width: 100%;
 }
 
-:root {
-  --image-background-colour: rgba(205, 201, 201, 0.911);
-  --hover-colour : darkgrey;
-  --image-colour: rgba(71, 71, 71, 0.783);
-}
-
 .MuiAccordion-region {
   background-color: rgb(225,227,229);
 }
@@ -17,7 +11,6 @@
 .MuiPaper-root > div {
   background-color: var(--cs-grey-1);
 }
-
 
 .MuiPaper-root {
   margin-bottom: 10px;

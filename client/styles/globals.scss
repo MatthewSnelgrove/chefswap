@@ -56,3 +56,31 @@ code {
   margin-top: var(--navbar-height);
 }
 
+:root {
+  --image-background-colour: rgba(205, 201, 201, 0.911);
+  --hover-colour : darkgrey;
+  --image-colour: rgba(71, 71, 71, 0.783);
+  --cs-white-1: #FFFFFF;
+  --cs-black-1: rgba(0, 0, 0, 1);
+  --cs-black-2: rgb(15, 15, 15);
+  --cs-grey-1: #EBEDF0;
+  --cs-lightblue-1: rgb(0, 149, 246);
+  --cs-red-1: rgb(252, 9, 9);
+  --cs-blue-1: #15002e;
+  --cs-blue-2: #0909a5;
+  --cs-cream-1: #FFFDE7;
+  --cs-cream-2: #F4EEE0;
+  --cs-brown-1: #A1887F;
+  --cs-brown-2: #795548;
+  --cs-brown-3: #5D4037;
+  --cs-brown-4: #3E2723;
+  --cs-orange-1: #FFE0B2;
+  --cs-orange-2: #FFCC80;
+  --cs-orange-3: #FFB74D;
+  --cs-orange-4: #FFA726;
+  --cs-orange-5: #FB8C00;
+  --cs-dark-orange: rgb(149, 80, 1);
+  --cs-green-1: rgba(35, 146, 13, 0.705);
+  --font-bold-1: 500;
+  --navbar-height: 67px;
+}

@@ -1,4 +1,4 @@
-.find-swap-page {
+.find_swap_page {
   display: flex;
   // justify-content: center;
   // align-items: center;
@@ -6,13 +6,9 @@
   gap: 20px;
 }
 
-.find-swap-content {
+.find_swap_content {
   // display: flex;
 
   width: 100%;
   margin-top: var(--navbar-height);
-}
-
-.swap-results-container {
-  width: 80%;
 }
