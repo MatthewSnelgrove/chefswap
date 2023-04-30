@@ -17,4 +17,5 @@ export default global.config = {
     maxQueryLength: 6,
   },
   cuisineItems: ["Indian", "Italian", "Greek", "Pizza", "Thai"],
+  serverUrl: "http://localhost:3001",
 };

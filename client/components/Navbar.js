@@ -101,7 +101,10 @@ function LoggedIn(props) {
               </a>
               <ul className="dropdown-menu">
                 <li>
-                  <a className="dropdown-item" href={"/".concat(user.username)}>
+                  <a
+                    className="dropdown-item"
+                    href={"/u/".concat(user.username)}
+                  >
                     My Profile
                   </a>
                 </li>
