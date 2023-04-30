@@ -18,6 +18,7 @@ import OnlyLoggedOut from "../../components/OnlyLoggedOut";
 import Select from "react-select";
 import styles from "../../styles/Signup.module.scss";
 import fieldStyles from "../../components/styles/CredentialField.module.scss";
+import Head from "next/head";
 
 function Signup() {
   // State holding all fields needed for specific form
@@ -171,225 +172,231 @@ function Signup() {
   }
 
   return (
-    <OnlyLoggedOut>
-      <Modal
-        title="Welcome to Chefswap!"
-        backgroundUrl="https://cdn.pixabay.com/photo/2021/01/31/13/18/food-5966920_1280.jpg"
-      >
-        <form
-          onSubmit={handleSubmit}
-          className={styles.signup_login_form}
-          autoComplete="off"
-        >
-          <fieldset className={styles.account_details}>
-            <legend>Account Details</legend>
-            <CredentialField
-              type="email"
-              label="Email *"
-              id="email"
-              size="90"
-              value={fields.email}
-              onChange={handleFieldChange}
-              onBlur={handleFieldBlur}
-              clicked={fieldsClicked.email}
-              error={errors.email}
-              required
-            />
-            <CredentialField
-              label="Username *"
-              id="username"
-              size="90"
-              value={fields.username}
-              onChange={handleFieldChange}
-              onBlur={handleFieldBlur}
-              clicked={fieldsClicked.username}
-              error={errors.username}
-              required
-            />
+    <>
+      <Head>
+        <title>Chefswap | Sign up</title>
+      </Head>
 
-            <div
-              className={styles.password_fields}
-              style={{ width: "90%", display: "flex" }}
-            >
+      <OnlyLoggedOut>
+        <Modal
+          title="Welcome to Chefswap!"
+          backgroundUrl="https://cdn.pixabay.com/photo/2021/01/31/13/18/food-5966920_1280.jpg"
+        >
+          <form
+            onSubmit={handleSubmit}
+            className={styles.signup_login_form}
+            autoComplete="off"
+          >
+            <fieldset className={styles.account_details}>
+              <legend>Account Details</legend>
               <CredentialField
-                type="password"
-                label="Password *"
-                id="password"
-                size="50"
-                value={fields.password}
+                type="email"
+                label="Email *"
+                id="email"
+                size="90"
+                value={fields.email}
                 onChange={handleFieldChange}
                 onBlur={handleFieldBlur}
-                clicked={fieldsClicked.password}
-                error={errors.password}
+                clicked={fieldsClicked.email}
+                error={errors.email}
                 required
               />
               <CredentialField
-                type="password"
-                label="Confirm Password *"
-                id="confirmPassword"
-                size="50"
-                value={fields.confirmPassword}
+                label="Username *"
+                id="username"
+                size="90"
+                value={fields.username}
                 onChange={handleFieldChange}
                 onBlur={handleFieldBlur}
-                clicked={fieldsClicked.confirmPassword}
-                error={errors.confirmPassword}
+                clicked={fieldsClicked.username}
+                error={errors.username}
+                required
               />
-            </div>
 
-            <PasswordRequirements
-              password={fields.password}
-              confirmError={errors.confirmPassword}
-              size="85"
-            />
-          </fieldset>
+              <div
+                className={styles.password_fields}
+                style={{ width: "90%", display: "flex" }}
+              >
+                <CredentialField
+                  type="password"
+                  label="Password *"
+                  id="password"
+                  size="50"
+                  value={fields.password}
+                  onChange={handleFieldChange}
+                  onBlur={handleFieldBlur}
+                  clicked={fieldsClicked.password}
+                  error={errors.password}
+                  required
+                />
+                <CredentialField
+                  type="password"
+                  label="Confirm Password *"
+                  id="confirmPassword"
+                  size="50"
+                  value={fields.confirmPassword}
+                  onChange={handleFieldChange}
+                  onBlur={handleFieldBlur}
+                  clicked={fieldsClicked.confirmPassword}
+                  error={errors.confirmPassword}
+                />
+              </div>
 
-          {/* Add validation HERE */}
-          <fieldset className={styles.address_details}>
-            <legend>Address</legend>
+              <PasswordRequirements
+                password={fields.password}
+                confirmError={errors.confirmPassword}
+                size="85"
+              />
+            </fieldset>
 
-            <CredentialField
-              label="Address 1 *"
-              id="address1"
-              size="90"
-              value={fields.address1}
-              onChange={handleFieldChange}
-              onBlur={handleFieldBlur}
-              clicked={fieldsClicked.address1}
-              error={errors.address1}
-            />
-            <CredentialField
-              label="City *"
-              id="city"
-              size="90"
-              value={fields.city}
-              onChange={handleFieldChange}
-              onBlur={handleFieldBlur}
-              clicked={fieldsClicked.city}
-              error={errors.city}
-            />
+            {/* Add validation HERE */}
+            <fieldset className={styles.address_details}>
+              <legend>Address</legend>
 
-            <Select
-              className="province-dropdown"
-              classNamePrefix="province-dropdown"
-              options={provinces}
-              isClearable={true}
-              isSearchable={true}
-              placeholder={<div>Province *</div>}
-              name="province"
-              required
-              onChange={() => {
-                setTimeout(() => {
-                  let province =
-                    document.getElementsByName("province")[0].value;
-                  console.log(`Province: ${province}`);
-                  handleFieldChange({ province: province });
-                }, 100);
-              }}
-              onBlur={() => {
-                handleFieldBlur("province");
-              }}
-              styles={{
-                control: (styles) => {
-                  return {
-                    ...styles,
-                    ":focus": {
-                      boxShadow: "0 0 0 1px #FB8C00",
-                      borderColor: "#FB8C00",
-                    },
-                  };
-                },
-                option: (
-                  styles,
-                  { data, isDisabled, isFocused, isSelected }
-                ) => {
-                  return {
-                    ...styles,
-                    backgroundColor: isSelected
-                      ? "#FFA726"
-                      : isFocused
-                      ? "#ffa8262f"
-                      : "white",
-                    ":active": {
-                      ...styles[":active"],
-                      backgroundColor: "#ffa8266d",
-                    },
-                  };
-                },
-              }}
-            />
+              <CredentialField
+                label="Address 1 *"
+                id="address1"
+                size="90"
+                value={fields.address1}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
+                clicked={fieldsClicked.address1}
+                error={errors.address1}
+              />
+              <CredentialField
+                label="City *"
+                id="city"
+                size="90"
+                value={fields.city}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
+                clicked={fieldsClicked.city}
+                error={errors.city}
+              />
+
+              <Select
+                className="province-dropdown"
+                classNamePrefix="province-dropdown"
+                options={provinces}
+                isClearable={true}
+                isSearchable={true}
+                placeholder={<div>Province *</div>}
+                name="province"
+                required
+                onChange={() => {
+                  setTimeout(() => {
+                    let province =
+                      document.getElementsByName("province")[0].value;
+                    console.log(`Province: ${province}`);
+                    handleFieldChange({ province: province });
+                  }, 100);
+                }}
+                onBlur={() => {
+                  handleFieldBlur("province");
+                }}
+                styles={{
+                  control: (styles) => {
+                    return {
+                      ...styles,
+                      ":focus": {
+                        boxShadow: "0 0 0 1px #FB8C00",
+                        borderColor: "#FB8C00",
+                      },
+                    };
+                  },
+                  option: (
+                    styles,
+                    { data, isDisabled, isFocused, isSelected }
+                  ) => {
+                    return {
+                      ...styles,
+                      backgroundColor: isSelected
+                        ? "#FFA726"
+                        : isFocused
+                        ? "#ffa8262f"
+                        : "white",
+                      ":active": {
+                        ...styles[":active"],
+                        backgroundColor: "#ffa8266d",
+                      },
+                    };
+                  },
+                }}
+              />
+
+              <div
+                className={fieldStyles.input_error_msg}
+                id={"province-error-msg"}
+                style={{
+                  visibility:
+                    fieldsClicked.province && errors.province.error
+                      ? "visible"
+                      : "hidden",
+                  width: "86%",
+                  marginBottom: "18px",
+                }}
+              >
+                {errors.province?.msg || ""}
+              </div>
+
+              <CredentialField
+                label="Postal Code *"
+                id="postalCode"
+                size="90"
+                value={fields.postalCode}
+                onChange={handleFieldChange}
+                onBlur={handleFieldBlur}
+                clicked={fieldsClicked.postalCode}
+                error={errors.postalCode}
+              />
+
+              <div
+                className={styles.optional_address_lines}
+                style={{ width: "90%", display: "flex" }}
+              >
+                <CredentialField
+                  label="Address line 2"
+                  id="address2"
+                  size="50"
+                  value={fields.address2}
+                  onChange={handleFieldChange}
+                  onBlur={handleFieldBlur}
+                  clicked={fieldsClicked.address2}
+                  error={errors.address2}
+                />
+                <CredentialField
+                  label="Address line 3"
+                  id="address3"
+                  size="50"
+                  value={fields.address3}
+                  onChange={handleFieldChange}
+                  onBlur={handleFieldBlur}
+                  clicked={fieldsClicked.address3}
+                  error={errors.address3}
+                />
+              </div>
+            </fieldset>
 
             <div
               className={fieldStyles.input_error_msg}
-              id={"province-error-msg"}
+              id="form-error-msg"
               style={{
-                visibility:
-                  fieldsClicked.province && errors.province.error
-                    ? "visible"
-                    : "hidden",
-                width: "86%",
-                marginBottom: "18px",
+                visibility: !formError ? "hidden" : "visible",
+                width: "90%",
+                fontSize: "1em",
+                textAlign: "center",
               }}
             >
-              {errors.province?.msg || ""}
+              {formError}
             </div>
 
-            <CredentialField
-              label="Postal Code *"
-              id="postalCode"
-              size="90"
-              value={fields.postalCode}
-              onChange={handleFieldChange}
-              onBlur={handleFieldBlur}
-              clicked={fieldsClicked.postalCode}
-              error={errors.postalCode}
-            />
-
-            <div
-              className={styles.optional_address_lines}
-              style={{ width: "90%", display: "flex" }}
-            >
-              <CredentialField
-                label="Address line 2"
-                id="address2"
-                size="50"
-                value={fields.address2}
-                onChange={handleFieldChange}
-                onBlur={handleFieldBlur}
-                clicked={fieldsClicked.address2}
-                error={errors.address2}
-              />
-              <CredentialField
-                label="Address line 3"
-                id="address3"
-                size="50"
-                value={fields.address3}
-                onChange={handleFieldChange}
-                onBlur={handleFieldBlur}
-                clicked={fieldsClicked.address3}
-                error={errors.address3}
-              />
-            </div>
-          </fieldset>
-
-          <div
-            className={fieldStyles.input_error_msg}
-            id="form-error-msg"
-            style={{
-              visibility: !formError ? "hidden" : "visible",
-              width: "90%",
-              fontSize: "1em",
-              textAlign: "center",
-            }}
-          >
-            {formError}
-          </div>
-
-          <button type="submit" className={styles.submit_btn}>
-            Start Swapping!
-          </button>
-        </form>
-      </Modal>
-    </OnlyLoggedOut>
+            <button type="submit" className={styles.submit_btn}>
+              Start Swapping!
+            </button>
+          </form>
+        </Modal>
+      </OnlyLoggedOut>
+    </>
   );
 }
 
