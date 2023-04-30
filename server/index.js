@@ -73,6 +73,7 @@ app.use("/api/v1/accounts", accountsRouter);
 import { router as swapsRouter } from "./routes/swaps.js";
 app.use("/api/v1/swaps", swapsRouter);
 import { router as ratingsRouter } from "./routes/ratings.js";
+import messagingHandler from "./socketEventHandlers/messagingHandler.js";
 app.use("/api/v1/ratings", ratingsRouter);
 
 app.use((err, req, res, next) => {
@@ -111,18 +112,16 @@ const io = new Server(server, { cors: corsConfig });
 //lets socket use session middleware
 io.use(wrap(sessionMiddleware));
 io.on("connection", (socket, next) => {
-  if (!socket.request.session.accountUid) {
-    next(new BusinessError(401, "not logged in", "must be logged in to chat"));
-  }
+  console.log(socket.request.session);
   socket.accountUid = socket.request.session.accountUid;
   if (!socket.accountUid) {
-    next;
+    next(new BusinessError(401, "not logged in", "must be logged in to chat"));
+    return;
   }
-  // socket.join(socket.)
+  socket.join(socket.accountUid);
   console.log("a user connected");
   console.log("sessionId: " + socket.id);
-  // console.log("username: " + )
-  console.log(socket.request.session);
+  messagingHandler(io, socket);
 });
 
 server.listen(PORT, () => {
