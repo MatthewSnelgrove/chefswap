@@ -16,6 +16,7 @@ export default class ChatInput extends Component {
       <div className={styles.chat_input_container}>
         <form onSubmit={handleSend} className={styles.chat_form}>
           <input
+            id="chat-input"
             type="text"
             className={styles.chat_input}
             placeholder="Send a message"
