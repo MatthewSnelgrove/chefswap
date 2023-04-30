@@ -25,7 +25,6 @@ function MySwapsPage() {
   return (
     <OnlyLoggedIn >
       <div className="navbar-margin" style={{"paddingTop": "20px"}}>
-        <SwapSwitch current={0} />
         <div
           style={{
             display: "flex",

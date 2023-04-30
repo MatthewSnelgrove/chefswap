@@ -18,7 +18,7 @@ export default class InteractButton extends Component {
       <button
         className="interact-btn"
         onClick={onClick}
-        style={{ backgroundColor: color }}
+        //style={{ backgroundColor: color }}
       >
         {text}
       </button>

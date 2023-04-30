@@ -13,20 +13,10 @@ import Username from "./Username";
 export default class ConversationTab extends Component {
   render() {
     const user = this.props.user; // user json obj from db
-    const status = this.props.status; // testing, 0 - no swap, 1 - pending, 2 - ongoing
-
-    let bc = "transparent";
-
-    if (status === 1) bc = "orange";
-    else if (status === 2) bc = "green";
-
     return (
       <button className="conversation-tab-container">
         <div
           className="status-bar"
-          style={{
-            backgroundColor: `${bc}`,
-          }}
         ></div>
         <Avatar />
         <Username username={user.username} />

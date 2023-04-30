@@ -1,5 +1,5 @@
 $message-border: rgb(220, 220, 220);
-$message-bc: rgb(240, 240, 240);
+$message-bc: var(--cs-orange-4);
 $sys-msg-col: rgb(160, 160, 160);
 
 .message-row {
@@ -27,6 +27,7 @@ $sys-msg-col: rgb(160, 160, 160);
 .my-message-bubble {
   @extend %user-message;
   background-color: $message-bc;
+  color: white;
 }
 
 .system-message {
@@ -35,4 +36,11 @@ $sys-msg-col: rgb(160, 160, 160);
   
   padding-top: 5px;
   padding-bottom: 5px;
+}
+
+@media (max-width: 650px) {
+  .system-message {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }

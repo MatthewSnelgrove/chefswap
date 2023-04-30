@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import PeopleContainer from "./PeopleContainer";
 import "./styles/ConversationContainer.scss";
 import Chatbox from "./Chatbox";
+import SwapSwitch from "./SwapSwitch";
+
 const { io } = require("socket.io-client");
 /**
  * Container component for entire conversations page (/my-messages)
@@ -17,12 +19,15 @@ export default class ConversationContainer extends Component {
     
 
     return (
-      <div className="conversation-flex">
-        <div className="conversation-container">
-          <PeopleContainer />
-          <Chatbox />
+      <>
+        <div style={{marginTop: "20px"}} className="conversation-flex">
+          <div className="conversation-container">
+            <PeopleContainer />
+            <Chatbox />
+          </div>
         </div>
-      </div>
+      </>
+      
     );
   }
 }

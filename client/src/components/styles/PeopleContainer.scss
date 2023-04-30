@@ -10,8 +10,8 @@ $conversations-banner: rgb(240, 240, 240);
   flex-direction: column;
 
   .people-heading {
-    font-size: 1.4em;
-    font-weight: bold;
+    font-size: 2em;
+    font-weight: 500;
     background-color: $conversations-banner;
 
     width: 100%;
@@ -24,8 +24,21 @@ $conversations-banner: rgb(240, 240, 240);
   }
 
   .people-list {
-    padding-top: 8px;
     flex: 8.5;
     overflow-y: auto;
+
+    .username-container {
+      font-size: 16px;
+    }
+
+  }
+}
+
+
+@media screen and (max-width: 1000px) {
+  .people-container {
+    .people-heading {
+      font-size: 1.2em;
+    }
   }
 }
