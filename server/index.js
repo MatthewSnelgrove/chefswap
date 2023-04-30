@@ -111,17 +111,31 @@ app.use((err, req, res, next) => {
 const io = new Server(server, { cors: corsConfig });
 //lets socket use session middleware
 io.use(wrap(sessionMiddleware));
+io.use((socket, next) => {
+  if (!socket.request.session.accountUid) {
+    const err = new BusinessError(
+      401,
+      "not logged in",
+      "must be logged in to chat"
+    );
+    next(err);
+    console.log(err);
+  }
+  next();
+});
+
 io.on("connection", (socket, next) => {
   console.log(socket.request.session);
   socket.accountUid = socket.request.session.accountUid;
-  if (!socket.accountUid) {
-    next(new BusinessError(401, "not logged in", "must be logged in to chat"));
-    return;
-  }
   socket.join(socket.accountUid);
   console.log("a user connected");
   console.log("sessionId: " + socket.id);
   messagingHandler(io, socket);
+
+  socket.on("connect_error", (err) => {
+    console.log(err.message); // prints the message associated with the error
+    next();
+  });
 });
 
 server.listen(PORT, () => {
