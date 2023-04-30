@@ -10,7 +10,7 @@ $chat-hover: rgb(246, 246, 246);
   padding-right: 8px;
   height: 60px;
   width: 100%;
-
+  border-left: 2px solid white;
   align-items: center;
   cursor: pointer;
 
@@ -30,6 +30,7 @@ $chat-hover: rgb(246, 246, 246);
 
 .conversation-tab-container:hover {
   background-color: $chat-hover;
+  border-left: 2px solid orange;
 }
 
 .conversation-tab-container:active {

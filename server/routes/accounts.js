@@ -33,6 +33,7 @@ router.get("/", async (req, res, next) => {
     limit = 20,
   } = req.query;
   const matchableWith = req.session.accountUid;
+  console.log(req.session);
   //validation too complicated for openapi spec
   if (
     //includeDistanceFrom.lat/lng will only be valid numbers or undefined due to openapi validation

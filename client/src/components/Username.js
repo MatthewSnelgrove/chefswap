@@ -13,7 +13,7 @@ export default class Username extends Component {
     const username = this.props.username;
 
     return (
-      <div className="username-container" style={{ fontSize: size }}>
+      <div className="username-container">
         {username}
       </div>
     );
