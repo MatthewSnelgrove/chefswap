@@ -13,21 +13,20 @@ function ImageGallery(props) {
   return (
     <div
       id="carouselExampleIndicators"
-      className={styles.carousel_example_indicators}
-      class="carousel slide h-50"
+      className={`${styles.carousel_example_indicators} carousel_example_indicators carousel slide h-50`}
       data-bs-ride="carousel"
     >
-      <div class={`${styles.carousel_indicators} carousel_indicators`}>
+      <div className={`${styles.carousel_indicators} carousel-indicators`}>
         {props.images.map((image, index) => (
           <button
             type="button"
             data-bs-target="#carouselExampleIndicators"
             data-bs-slide-to={index}
-            class={index == 0 ? "active" : {}}
+            class={index == 0 ? "active" : ""}
           ></button>
         ))}
       </div>
-      <div class={`${styles.carousel_inner} carousel_inner`}>
+      <div className={`${styles.carousel_inner} carousel-inner`}>
         {props.images.map((image, index) => (
           <CarouselItem
             key={index}
@@ -38,22 +37,22 @@ function ImageGallery(props) {
         ))}
       </div>
       <button
-        class="carousel-control-prev"
+        className="carousel-control-prev"
         type="button"
         data-bs-target="#carouselExampleIndicators"
         data-bs-slide="prev"
       >
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
+        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span className="visually-hidden">Previous</span>
       </button>
       <button
-        class="carousel-control-next"
+        className="carousel-control-next"
         type="button"
         data-bs-target="#carouselExampleIndicators"
         data-bs-slide="next"
       >
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
+        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+        <span className="visually-hidden">Next</span>
       </button>
     </div>
   );
@@ -64,8 +63,8 @@ function CarouselItem(props) {
     <div
       className={
         props.index == 0
-          ? `${styles.carousel_item} active`
-          : styles.carousel_item
+          ? `${styles.carousel_item} carousel-item active`
+          : `${styles.carousel_item} carousel-item`
       }
     >
       <img
