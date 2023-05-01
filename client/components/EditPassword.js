@@ -1,5 +1,6 @@
-import { React, useEffect, useState } from "react";
+import { React, useState } from "react";
 import styles from "./styles/EditPassword.module.scss";
+import fieldStyles from "./styles/EditProfile.module.css";
 import { changePassword } from "../utils/changeFunctions";
 import { useUser } from "./useUser";
 import ProfilePicture from "./ProfilePicture";
@@ -126,7 +127,7 @@ function EditPassword() {
       onSubmit={(e) => handleSubmit(e, user.accountUid)}
       className={styles.edit_container}
     >
-      <div className={edit_item} style={{ marginTop: "35px" }}>
+      <div className={styles.edit_item} style={{ marginTop: "35px" }}>
         <div>
           <ProfilePicture pfpLink={user.pfpLink} />
         </div>
@@ -228,7 +229,7 @@ function EditPassword() {
 
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button
-          className={styles.submitBtn}
+          className={fieldStyles.submitBtn}
           style={{ marginTop: "20px", width: "50%" }}
         >
           Submit

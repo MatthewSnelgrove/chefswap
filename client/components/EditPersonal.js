@@ -14,7 +14,8 @@ import {
   validateProvince,
 } from "../utils/validationFunctions";
 import { toast } from "react-toastify";
-import styles from "../styles/EditPassword.module.scss";
+import styles from "./styles/EditPassword.module.scss";
+import fieldStyles from "./styles/EditProfile.module.css";
 import global_vars from "../utils/config";
 
 const provinces = [
@@ -313,7 +314,10 @@ function EditPersonal(props) {
           />
         </div>
         <div className={styles.edit_item}>
-          <button className={styles.submitBtn} style={{ marginTop: "20px" }}>
+          <button
+            className={fieldStyles.submitBtn}
+            style={{ marginTop: "20px" }}
+          >
             Change Email
           </button>
         </div>
@@ -523,7 +527,10 @@ function EditPersonal(props) {
           />
         </div>
         <div className={styles.edit_item} style={{ marginBottom: "50px" }}>
-          <button className={styles.submitBtn} style={{ marginTop: "20px" }}>
+          <button
+            className={fieldStyles.submitBtn}
+            style={{ marginTop: "20px" }}
+          >
             Change address info
           </button>
         </div>

@@ -29,7 +29,7 @@ function EditGallery() {
         <span className={styles.gallery_text}>Gallery</span>
         <form id="image-form">
           <label
-            className={`${styles.base_btn} ${styles.add_photo_text}`}
+            className={`base-btn ${styles.add_photo_text}`}
             onSubmit={(e) => {
               e.preventDefault();
             }}
@@ -45,7 +45,11 @@ function EditGallery() {
                 }
                 const formData = new FormData();
                 formData.append("image", e.target.files[0]);
-                addNewPhoto(user.accountUid, formData, GalleryLink);
+                addNewPhoto(
+                  user.accountUid,
+                  formData,
+                  GalleryLink + "?tab=gallery"
+                );
               }}
               style={{ display: "none" }}
             />

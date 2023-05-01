@@ -2,26 +2,31 @@ import React from "react";
 import styles from "./styles/EditListLink.module.css";
 
 function EditListLink(props) {
-  const curSelected = props.curSelected;
-  const listType = props.listType;
+  // const curSelected = props.curSelected;
+  // const listType = props.listType;
+  const selected = props.selected;
+  const onClick = props.onClick;
 
   return (
     <li
-      id={curSelected == listType ? "style-selected" : ""}
-      className={curSelected == listType ? styles.style_selected : ""}
+      id={selected ? "style-selected" : ""}
+      className={
+        selected ? `${styles.style_selected} ${styles.tab}` : styles.tab
+      }
+      onClick={onClick}
     >
-      <a
-        className="full-a"
+      {/* <a
+        className={styles.full_a}
         onClick={(e) => {
           if (curSelected == listType) {
             return;
           }
           window.location = props.link;
         }}
-      />
+      /> */}
       <div
         className={styles.text_display_big}
-        style={curSelected == listType ? { fontWeight: "600" } : {}}
+        style={selected ? { fontWeight: "600" } : {}}
       >
         {props.display}
       </div>

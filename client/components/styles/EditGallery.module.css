@@ -9,10 +9,6 @@
     padding: 3px;
 }
 
-:root {
-    --gallery-img-size: 325px;
-}
-
 .add_photo_text {
     font-size: 40px;
 }

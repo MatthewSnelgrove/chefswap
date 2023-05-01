@@ -41,6 +41,7 @@ code {
   border-radius: 10px;
   color: var(--cs-white-1);
   border: 0px;
+  cursor: pointer;
 }
 
 .base-btn {
@@ -50,6 +51,7 @@ code {
   background-color: var(--cs-lightblue-1);
   border-radius: 10px;
   color: var(--cs-white-1);
+  cursor: pointer;
 }
 
 .navbar-margin {
@@ -83,4 +85,5 @@ code {
   --cs-green-1: rgba(35, 146, 13, 0.705);
   --font-bold-1: 500;
   --navbar-height: 67px;
+  --gallery-img-size: 325px;
 }

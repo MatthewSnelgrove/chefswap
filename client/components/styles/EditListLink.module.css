@@ -1,10 +1,22 @@
 .style_selected {
-    border-left: 4px solid var(--cs-orange-4);
+    border-left: 4px solid var(--cs-orange-4) !important;
     background-color: white;
 }
 
 .display_img_small {
     display: none;
+}
+
+.full_a {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.tab {
+  cursor: pointer;
 }
 
 @media (max-width: 710px) {

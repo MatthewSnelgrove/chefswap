@@ -1,10 +1,10 @@
 export default global.config = {
   pages: {
     homepage: "http://localhost:3000/",
-    editProfile: "http://localhost:3000/accounts/edit",
-    editGallery: "http://localhost:3000/accounts/gallery",
-    editPassword: "http://localhost:3000/accounts/password/change",
-    editPersonal: "http://localhost:3000/accounts/personal",
+    editProfile: "http://localhost:3000/me",
+    editGallery: "http://localhost:3000/me",
+    editPassword: "http://localhost:3000/me",
+    editPersonal: "http://localhost:3000/me",
     myMessages: "http://localhost:3000/my-messages",
     login: "http://localhost:3000/login",
     mySwaps: "http://localhost:3000/my-swaps",
