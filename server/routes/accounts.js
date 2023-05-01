@@ -26,13 +26,14 @@ router.get("/", async (req, res, next) => {
     maxRating,
     cuisinePreference,
     cuisineSpeciality,
+    validMatchOnly,
     orderBy,
     key = {
       accountUid: "00000000-0000-0000-0000-000000000000",
     },
     limit = 20,
   } = req.query;
-  const matchableWith = req.session.accountUid;
+  const matchableWith = validMatchOnly ? req.session.accountUid : null;
   console.log(req.session);
   //validation too complicated for openapi spec
   if (
