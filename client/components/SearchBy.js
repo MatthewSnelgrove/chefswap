@@ -1,5 +1,6 @@
 import { React, useRef } from "react";
 import styles from "./styles/SearchBy.module.css";
+import findUserStyles from "../styles/FindUserPage.module.css";
 import global_vars from "../utils/config";
 
 function SearchBy(props) {
@@ -7,7 +8,7 @@ function SearchBy(props) {
 
   return (
     <div style={props.containerStyle ? props.containerStyle : {}}>
-      <span style={props.textStyle ? props.textStyle : {}}>Search By:</span>
+      <span style={props.textStyle ? props.textStyle : {}}>Search User:</span>
       <div className={styles.input_container}>
         <input
           ref={searchRef}
@@ -25,7 +26,11 @@ function SearchBy(props) {
           className={styles.search_button}
           onClick={(e) => goToPage(searchRef)}
         >
-          <span class="material-symbols-outlined search-tag">search</span>
+          <span
+            class={`material-symbols-outlined ${findUserStyles.search_tag}`}
+          >
+            search
+          </span>
         </button>
       </div>
     </div>
@@ -33,7 +38,7 @@ function SearchBy(props) {
 }
 
 function goToPage(searchRef) {
-  window.location = `${global_vars.pages.searchSwaps}/${searchRef.current.value}`;
+  window.location = `${global_vars.pages.searchSwaps}?query=${searchRef.current.value}`;
 }
 
 export default SearchBy;
