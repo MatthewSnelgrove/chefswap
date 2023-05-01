@@ -10,18 +10,20 @@ servers:
     description: Development server
 channels:
   /:
+    publish:
+      operationId: sendMesssage
+      summary: Send message related data to the server
+      message:
+        oneOf:
+          - $ref: "#/components/messages/SendUserMessage"
+          - $ref: "#/components/messages/GetMessages"
     subscribe:
-      operationId: receiveMessage
-      summary: Receive a message from the server
+      operationId: listenForMessage
+      summary: Listen for message related data from the server
       message:
         oneOf:
           - $ref: "#/components/messages/ReceiveUserMessage"
           - $ref: "#/components/messages/ReceiveSystemMessage"
-    publish:
-      operationId: sendMessage
-      summary: Send a message to the server
-      message:
-        $ref: "#/components/messages/SendUserMessage"
 components:
   messages:
     SendUserMessage:
@@ -29,53 +31,101 @@ components:
       contentType: application/json
       payload:
         type: object
+        required:
+          - receiver_uid
+          - content
         properties:
           receiver_uid:
             type: string
             format: uuid
-          message:
-            $ref: "#/components/schemas/message"
+          content:
+            $ref: "#/components/schemas/messageContent"
+      x-ack:
+        args:
+          $ref: "#/components/schemas/userMessagePayload"
+    GetMessages:
+      name: getMessages
+      summary: Get past messages between account with uid messagerUid. Use timestampKey and limit for pagination.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - messagerUid
+          - timestampKey
+          - limit
+        properties:
+          messagerUid:
+            type: string
+            format: uuid
+          timestampKey:
+            type: string
+            format: date-time
+          limit:
+            type: number
+            format: integer
+            minimum: 1
+      x-ack:
+        args:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/userMessagePayload"
+              - $ref: "#/components/schemas/systemMessagePayload"
     ReceiveUserMessage:
-      name: ReceiveMessage
+      name: receiveUserMessage
       contentType: application/json
       payload:
-        type: object
-        properties:
-          message_uid:
-            type: string
-            format: uuid
-          sender_uid:
-            type: string
-            format: uuid
-          receiver_uid:
-            type: string
-            format: uuid
-          message:
-            $ref: "#/components/schemas/message"
-          timestamp:
-            type: string
-            format: date-time
+        $ref: "#/components/schemas/userMessagePayload"
     ReceiveSystemMessage:
-      name: ReceiveSystemMessage
+      name: receiveSystemMessage
       contentType: application/json
       payload:
-        type: object
-        properties:
-          message_uid:
-            type: string
-            format: uuid
-          account1_uid:
-            type: string
-            format: uuid
-          account2_uid:
-            type: string
-            format: uuid
-          message:
-            $ref: "#/components/schemas/message"
-          timestamp:
-            type: string
-            format: date-time
+        $ref: "#/components/schemas/systemMessagePayload"
   schemas:
-    message:
+    userMessagePayload:
+      required:
+        - message_uid
+        - sender_uid
+        - receiver_uid
+        - content
+        - timestamp
+      properties:
+        message_uid:
+          type: string
+          format: uuid
+        sender_uid:
+          type: string
+          format: uuid
+        receiver_uid:
+          type: string
+          format: uuid
+        content:
+          $ref: "#/components/schemas/messageContent"
+        timestamp:
+          type: string
+          format: date-time
+    systemMessagePayload:
+      required:
+        - message_uid
+        - account1_uid
+        - account2_uid
+        - content
+        - timestamp
+      properties:
+        message_uid:
+          type: string
+          format: uuid
+        account1_uid:
+          type: string
+          format: uuid
+        account2_uid:
+          type: string
+          format: uuid
+        content:
+          $ref: "#/components/schemas/messageContent"
+        timestamp:
+          type: string
+          format: date-time
+    messageContent:
       type: string
       maxLength: 300
