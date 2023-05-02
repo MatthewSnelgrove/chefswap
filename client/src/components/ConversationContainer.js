@@ -11,23 +11,21 @@ const { io } = require("socket.io-client");
  */
 export default class ConversationContainer extends Component {
   render() {
-    const socket = io(global.config.server)
+    // const socket = io(global.config.server)
 
-    socket.on("connect", () => {
-      console.log(socket.id); // x8WIv7-mJelg7on_ALbx
-    });
-    
+    // socket.on("connect", () => {
+    //   console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+    // });
 
     return (
       <>
-        <div style={{marginTop: "20px"}} className="conversation-flex">
+        <div style={{ marginTop: "20px" }} className="conversation-flex">
           <div className="conversation-container">
             <PeopleContainer />
             <Chatbox />
           </div>
         </div>
       </>
-      
     );
   }
 }
