@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./styles/SwapListing.module.css";
 import Tag from "./Tag";
 import ProfilePicture from "./ProfilePicture";
+import Link from "next/link";
 
 /**
  * Models a single swap result listed in /find-swap
@@ -21,13 +22,20 @@ function SwapListing(props) {
       <div className={styles.main_container}>
         <div className={styles.info_container}>
           <div className={styles.image_container}>
-            <ProfilePicture
-              style={{ height: 55, width: 55, borderRadius: 30 }}
-              pfpLink={props.pfpLink}
-            />
+            <Link href={`/u/${props.username}`}>
+              <ProfilePicture
+                style={{ height: 55, width: 55, borderRadius: 30 }}
+                pfpLink={props.pfpLink}
+              />
+            </Link>
           </div>
           <div className={styles.user_tag}>
-            <div className={styles.username}>{props.username}</div>
+            <Link
+              href={`/u/${props.username}`}
+              style={{ color: "inherit", textDecoration: "none" }}
+            >
+              <div className={styles.username}>{props.username}</div>
+            </Link>
           </div>
 
           <div className={styles.distance_tag}>
