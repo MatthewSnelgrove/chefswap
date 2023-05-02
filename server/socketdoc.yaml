@@ -11,14 +11,13 @@ servers:
 channels:
   /:
     publish:
-      operationId: sendMesssage
       summary: Send message related data to the server
       message:
         oneOf:
           - $ref: "#/components/messages/SendUserMessage"
           - $ref: "#/components/messages/GetMessages"
+          - $ref: "#/components/messages/GetConversations"
     subscribe:
-      operationId: listenForMessage
       summary: Listen for message related data from the server
       message:
         oneOf:
@@ -32,10 +31,10 @@ components:
       payload:
         type: object
         required:
-          - receiver_uid
+          - receiverUid
           - content
         properties:
-          receiver_uid:
+          receiverUid:
             type: string
             format: uuid
           content:
@@ -71,6 +70,15 @@ components:
             oneOf:
               - $ref: "#/components/schemas/userMessagePayload"
               - $ref: "#/components/schemas/systemMessagePayload"
+    GetConversations:
+      name: getConversationss
+      summary: Get all current conversations of signed in account
+      contentType: application/json
+      x-ack:
+        args:
+          type: array
+          items:
+            - $ref: "#/components/schemas/conversation"
     ReceiveUserMessage:
       name: receiveUserMessage
       contentType: application/json
@@ -84,19 +92,19 @@ components:
   schemas:
     userMessagePayload:
       required:
-        - message_uid
-        - sender_uid
-        - receiver_uid
+        - messageUid
+        - senderUid
+        - receiverUid
         - content
         - timestamp
       properties:
-        message_uid:
+        messageUid:
           type: string
           format: uuid
-        sender_uid:
+        senderUid:
           type: string
           format: uuid
-        receiver_uid:
+        receiverUid:
           type: string
           format: uuid
         content:
@@ -106,19 +114,19 @@ components:
           format: date-time
     systemMessagePayload:
       required:
-        - message_uid
-        - account1_uid
-        - account2_uid
+        - messageUid
+        - account1Uid
+        - account2Uid
         - content
         - timestamp
       properties:
-        message_uid:
+        messageUid:
           type: string
           format: uuid
-        account1_uid:
+        account1Uid:
           type: string
           format: uuid
-        account2_uid:
+        account2Uid:
           type: string
           format: uuid
         content:
@@ -126,6 +134,25 @@ components:
         timestamp:
           type: string
           format: date-time
+    conversation:
+      required:
+        - conversationUid
+        - account1Uid
+        - account2Uid
+        - lastMessageUid
+      properties:
+        conversationUid:
+          type: string
+          format: uuid
+        account1Uid:
+          type: string
+          format: uuid
+        account2Uid:
+          type: string
+          format: uuid
+        lastMessageUid:
+          type: string
+          format: uuid
     messageContent:
       type: string
       maxLength: 300
