@@ -1,8 +1,16 @@
 export default (io, socket) => {
-  const sendMessage = (message) => {
-    //save message in db?
-    socket.emit("sendMessage", "hello from server");
-    console.log(message);
+  const sendUserMessage = (message, callback) => {
+    //validate message
+    //receiver exists
+    //save message in db
+    console.log("input message: ", message);
+    message.messageUid = "test32e6-c4f8-44d4-9408-cfb4f8499d01";
+    message.senderUid = socket.accountUid;
+    message.receiverUid = "fa4632e6-c4f8-44d4-9408-cfb4f8499d01";
+    message.timestamp = Date.now();
+    console.log("output message: ", message);
+    io.to(message.receiverUid).emit("receiveUserMessage", message);
+    callback(message);
   };
 
   const deleteMessage = (messageId) => {
@@ -10,6 +18,6 @@ export default (io, socket) => {
     socket.emit("deleteMessage", messageId);
   };
 
-  socket.on("sendMessage", sendMessage);
+  socket.on("sendUserMessage", sendUserMessage);
   socket.on("deleteMessage", deleteMessage);
 };
