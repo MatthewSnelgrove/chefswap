@@ -125,11 +125,10 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket, next) => {
-  console.log(socket.request.session);
   socket.accountUid = socket.request.session.accountUid;
   socket.join(socket.accountUid);
   console.log("a user connected");
-  console.log("sessionId: " + socket.id);
+  console.log("joinedRoom: " + socket.accountUid);
   messagingHandler(io, socket);
 
   socket.on("connect_error", (err) => {
