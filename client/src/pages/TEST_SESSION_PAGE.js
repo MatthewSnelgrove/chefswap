@@ -12,8 +12,20 @@ function TEST_SESSION_PAGE() {
     document.title = "Chefswap | Home";
   }, []);
   useSocketSetup();
-  socket.emit("sendMessage", "hello from client");
-  socket.on("sendMessage", (message) => {
+
+  const sendUserMessage = () => {
+    socket.emit(
+      "sendUserMessage",
+      {
+        reveiverUid: "fa4632e6-c4f8-44d4-9408-cfb4f8499d01",
+        content: "test message",
+      },
+      (response) => {
+        console.log(response);
+      }
+    );
+  };
+  socket.on("receiveUserMessage", (message) => {
     console.log(message);
   });
 
@@ -29,7 +41,7 @@ function TEST_SESSION_PAGE() {
             Chefswap helps users across Canada connect with each other through a
             love for cooking and eating!
           </div>
-          <StyledBtn arrowed text="START SWAPPING" link="/signup" />
+          <button onClick={sendUserMessage}>Send Message</button>
         </main>
       </div>
       <body>this is text</body>
