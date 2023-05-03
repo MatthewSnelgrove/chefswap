@@ -127,7 +127,7 @@ function EditPassword() {
       onSubmit={(e) => handleSubmit(e, user.accountUid)}
       className={styles.edit_container}
     >
-      <div className={styles.edit_item} style={{ marginTop: "35px" }}>
+      <div className={styles.pfp_container} style={{ marginTop: "35px" }}>
         <div>
           <ProfilePicture pfpLink={user.pfpLink} />
         </div>
@@ -141,34 +141,23 @@ function EditPassword() {
           >
             {user.username}
           </h1>
-          {/* <div className="info-text" style={{fontWeight: "600", marginTop: "25px"}}>Change Password</div>  */}
-          {/* <div className="info-text">
-            A valid password contains atleast 1 lowercase, 1 uppercase, 1
-            number, and is 8 to 50 characters long
-          </div> */}
         </div>
       </div>
       <div
         style={{
-          width: "100%",
+          width: "80%",
           display: "flex",
           justifyContent: "center",
           marginTop: "30px",
+          marginLeft: "-10px",
+          maxWidth: 500,
         }}
       >
-        {/* <label>New Password</label>
-        <input
-          id="password"
-          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,50}$"
-          type="password"
-          required
-        ></input> */}
-
         <CredentialField
           type="password"
           label="Password"
           id="password"
-          size="50"
+          size="100"
           value={fields.password}
           onChange={handleFieldChange}
           onBlur={handleFieldBlur}
@@ -179,9 +168,11 @@ function EditPassword() {
       </div>
       <div
         style={{
-          width: "100%",
+          width: "80%",
           display: "flex",
           justifyContent: "center",
+          marginLeft: "-10px",
+          maxWidth: 500,
         }}
       >
         {/* <button className="submitBtn" style={{marginTop: "25px", marginBottom: "25px"}}>Change Password</button> */}
@@ -190,7 +181,7 @@ function EditPassword() {
           type="password"
           label="Confirm Password"
           id="confirmPassword"
-          size="50"
+          size="100"
           value={fields.confirmPassword}
           onChange={handleFieldChange}
           onBlur={handleFieldBlur}
@@ -200,41 +191,31 @@ function EditPassword() {
         />
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          paddingLeft: "20%",
-        }}
-      >
-        <PasswordRequirements
-          password={fields.password}
-          confirmError={errors.confirmPassword}
-          size="85"
-        />
-      </div>
+      <PasswordRequirements
+        password={fields.password}
+        confirmError={errors.confirmPassword}
+        size="80"
+      />
 
       <div
         className={styles.input_error_msg} // TODO: fix classname styles
         id="form-error-msg"
         style={{
           visibility: !formError ? "hidden" : "visible",
-          width: "90%",
+          width: "80%",
           fontSize: "1em",
-          textAlign: "center",
+          color: "red",
         }}
       >
         {formError}
       </div>
 
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          className={fieldStyles.submitBtn}
-          style={{ marginTop: "20px", width: "50%" }}
-        >
-          Submit
-        </button>
-      </div>
+      <button
+        className={fieldStyles.submitBtn}
+        style={{ marginTop: "20px", width: "50%" }}
+      >
+        Submit
+      </button>
     </form>
   );
 }
