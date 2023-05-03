@@ -230,214 +230,225 @@ function EditPersonal(props) {
   }
 
   return (
-    <div className={styles.edit_container} style={{ marginTop: "80px" }}>
-      <div className={styles.edit_item} style={{ marginTop: "35px" }}>
-        <div>
-          <ProfilePicture pfpLink={user.pfpLink} />
-        </div>
-        <div>
-          <h1 style={{ marginTop: "10px", fontSize: "25px" }}>
-            {user.username}
-          </h1>
-          <div
-            className={styles.info_text}
-            style={{ fontWeight: "600", marginTop: "25px" }}
-          >
-            Change Email
-          </div>
-          <div className={styles.info_text}>
-            You can change your email without changing your address
-          </div>
-        </div>
+    <div className={styles.personal_container}>
+      <div className={styles.graphics_container}>
+        <ProfilePicture pfpLink={user.pfpLink} />
       </div>
-      <form onSubmit={(e) => handleEmailSubmit(e, user.accountUid)}>
-        <div className={styles.edit_item} style={{ marginTop: "20px" }}>
-          {/* <div className="edit-item-align"></div> */}
-          <CredentialField
-            type="email"
-            label="Email"
-            id="email"
-            size={40}
-            value={email}
-            onChange={handleEmailChange}
-            onBlur={handleEmailBlur}
-            clicked={emailClicked}
-            error={errors.email}
-            required
-          />
+
+      <div className={styles.fields_container}>
+        <h1 style={{ marginTop: "10px", fontSize: "25px" }}>{user.username}</h1>
+
+        <div
+          className={styles.info_text}
+          style={{ fontWeight: "600", marginTop: "25px" }}
+        >
+          Change Email
         </div>
-        <div className={styles.edit_item}>
+        <div className={styles.info_text}>
+          You can change your email without changing your address
+        </div>
+
+        <form
+          onSubmit={(e) => handleEmailSubmit(e, user.accountUid)}
+          style={{ width: "100%" }}
+        >
+          <div style={{ marginTop: "30px", width: "80%", marginLeft: "-10px" }}>
+            <CredentialField
+              type="email"
+              label="Email"
+              id="email"
+              size={100}
+              value={email}
+              onChange={handleEmailChange}
+              onBlur={handleEmailBlur}
+              clicked={emailClicked}
+              error={errors.email}
+              required
+            />
+          </div>
           <button
             className={fieldStyles.submitBtn}
             style={{ marginTop: "20px" }}
           >
             Change Email
           </button>
-        </div>
-      </form>
-      <div
-        className={styles.input_error_msg}
-        id="form-error-msg"
-        style={{
-          visibility: !emailError ? "hidden" : "visible",
-          width: "90%",
-          fontSize: "1em",
-          textAlign: "center",
-        }}
-      >
-        {emailError}
-      </div>
+        </form>
 
-      <div className={styles.edit_item}>
-        <div className={styles.info_text_align}>
+        <div
+          className={styles.input_error_msg}
+          id="form-error-msg"
+          style={{
+            visibility: !emailError ? "hidden" : "visible",
+            width: "90%",
+            fontSize: "1em",
+            textAlign: "center",
+          }}
+        >
+          {emailError}
+        </div>
+
+        <div
+          className={styles.info_text}
+          style={{
+            fontWeight: "600",
+            marginTop: "35px",
+            marginBottom: "0px",
+          }}
+        >
+          Change Address
+        </div>
+        <div className={styles.info_text}>
+          You can change your address without changing your email
+        </div>
+
+        <form
+          onSubmit={(e) => handleAddressSubmit(e, user.accountUid)}
+          style={{ width: "100%" }}
+        >
+          <div style={{ marginTop: "30px", width: "80%", marginLeft: "-10px" }}>
+            <CredentialField
+              type="text"
+              label="Address line 1"
+              id="address1"
+              size={100}
+              value={address.address1}
+              onChange={handleAddressChange}
+              onBlur={handleAddressBlur}
+              clicked={true}
+              error={errors.address.address1}
+            />
+          </div>
+          <div style={{ marginTop: "30px", width: "80%", marginLeft: "-10px" }}>
+            <CredentialField
+              type="text"
+              label="Address line 2"
+              id="address2"
+              size={100}
+              value={address.address2}
+              onChange={handleAddressChange}
+              onBlur={handleAddressBlur}
+              clicked={addressClicked.address2}
+              error={errors.address.address2}
+            />
+          </div>
           <div
-            className={styles.info_text}
             style={{
-              fontWeight: "600",
-              marginTop: "35px",
-              marginBottom: "0px",
+              marginTop: "30px",
+              width: "80%",
+              marginLeft: "-10px",
+              marginBottom: "20px",
             }}
           >
-            Change Address
+            <CredentialField
+              type="text"
+              label="Address line 3"
+              id="address3"
+              size={100}
+              value={address.address3}
+              onChange={handleAddressChange}
+              onBlur={handleAddressBlur}
+              clicked={addressClicked.address3}
+              error={errors.address.address3}
+            />
           </div>
-          <div className={styles.info_text}>
-            You can change your address without changing your email
-          </div>
-        </div>
-      </div>
 
-      <form onSubmit={(e) => handleAddressSubmit(e, user.accountUid)}>
-        <div className={styles.edit_item} style={{ marginTop: "20px" }}>
-          <CredentialField
-            type="text"
-            label="Address line 1"
-            id="address1"
-            size={40}
-            value={address.address1}
-            onChange={handleAddressChange}
-            onBlur={handleAddressBlur}
-            clicked={true}
-            error={errors.address.address1}
-          />
-        </div>
-        <div className={styles.edit_item}>
-          <CredentialField
-            type="text"
-            label="Address line 2"
-            id="address2"
-            size={40}
-            value={address.address2}
-            onChange={handleAddressChange}
-            onBlur={handleAddressBlur}
-            clicked={addressClicked.address2}
-            error={errors.address.address2}
-          />
-        </div>
-        <div className={styles.edit_item}>
-          <CredentialField
-            type="text"
-            label="Address line 3"
-            id="address3"
-            size={40}
-            value={address.address3}
-            onChange={handleAddressChange}
-            onBlur={handleAddressBlur}
-            clicked={addressClicked.address3}
-            error={errors.address.address3}
-          />
-        </div>
-        <div className={styles.edit_item}>
-          <div></div>
-          <Select
-            className="province-dropdown"
-            classNamePrefix="province-dropdown"
-            options={provinces}
-            isClearable={true}
-            isSearchable={true}
-            placeholder={<span>Province</span>}
-            name="province"
-            value={provinces.find((obj) => obj.value === address.province)}
-            onChange={(e) => {
-              let province = e.value;
-              console.log(`Province: ${province}`);
-              handleAddressChange({ province: province });
-            }}
-            onBlur={() => {
-              handleAddressBlur("province");
-            }}
-            styles={{
-              control: (styles) => {
-                return {
-                  ...styles,
-                  ":focus": {
-                    boxShadow: "0 0 0 1px #FB8C00",
-                    borderColor: "#FB8C00",
-                  },
-                };
-              },
-              option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-                return {
-                  ...styles,
-                  backgroundColor: isSelected
-                    ? "#FFA726"
-                    : isFocused
-                    ? "#ffa8262f"
-                    : "white",
-                  ":active": {
-                    ...styles[":active"],
-                    backgroundColor: "#ffa8266d",
-                  },
-                };
-              },
-            }}
-          />
-        </div>
-        <div className={styles.edit_item} style={{ marginTop: "30px" }}>
-          <CredentialField
-            type="city"
-            label="City"
-            id="city"
-            size={40}
-            value={address.city}
-            onChange={handleAddressChange}
-            onBlur={handleAddressBlur}
-            clicked={addressClicked.city}
-            error={errors.address.city}
-          />
-        </div>
-        <div className={styles.edit_item}>
-          <CredentialField
-            type="text"
-            label="Postal Code"
-            id="postalCode"
-            size={40}
-            value={address.postalCode}
-            onChange={handleAddressChange}
-            onBlur={handleAddressBlur}
-            clicked={addressClicked.postalCode}
-            error={errors.address.postalCode}
-          />
-        </div>
-        <div className={styles.edit_item} style={{ marginBottom: "50px" }}>
+          <div style={{ width: "80%" }}>
+            <Select
+              className="province-dropdown"
+              classNamePrefix="province-dropdown"
+              options={provinces}
+              isClearable={true}
+              isSearchable={true}
+              placeholder={<span>Province</span>}
+              name="province"
+              value={provinces.find((obj) => obj.value === address.province)}
+              onChange={(e) => {
+                let province = e.value;
+                console.log(`Province: ${province}`);
+                handleAddressChange({ province: province });
+              }}
+              onBlur={() => {
+                handleAddressBlur("province");
+              }}
+              styles={{
+                control: (styles) => {
+                  return {
+                    ...styles,
+                    ":focus": {
+                      boxShadow: "0 0 0 1px #FB8C00",
+                      borderColor: "#FB8C00",
+                    },
+                  };
+                },
+                option: (
+                  styles,
+                  { data, isDisabled, isFocused, isSelected }
+                ) => {
+                  return {
+                    ...styles,
+                    backgroundColor: isSelected
+                      ? "#FFA726"
+                      : isFocused
+                      ? "#ffa8262f"
+                      : "white",
+                    ":active": {
+                      ...styles[":active"],
+                      backgroundColor: "#ffa8266d",
+                    },
+                  };
+                },
+              }}
+            />
+          </div>
+
+          <div style={{ marginTop: "50px", width: "80%", marginLeft: "-10px" }}>
+            <CredentialField
+              type="city"
+              label="City"
+              id="city"
+              size={100}
+              value={address.city}
+              onChange={handleAddressChange}
+              onBlur={handleAddressBlur}
+              clicked={addressClicked.city}
+              error={errors.address.city}
+            />
+          </div>
+
+          <div style={{ marginTop: "30px", width: "80%", marginLeft: "-10px" }}>
+            <CredentialField
+              type="text"
+              label="Postal Code"
+              id="postalCode"
+              size={100}
+              value={address.postalCode}
+              onChange={handleAddressChange}
+              onBlur={handleAddressBlur}
+              clicked={addressClicked.postalCode}
+              error={errors.address.postalCode}
+            />
+          </div>
+
           <button
             className={fieldStyles.submitBtn}
             style={{ marginTop: "20px" }}
           >
             Change address info
           </button>
+        </form>
+
+        <div
+          className={styles.input_error_msg}
+          id="form-error-msg"
+          style={{
+            visibility: !addressError ? "hidden" : "visible",
+            width: "90%",
+            fontSize: "1em",
+            textAlign: "center",
+          }}
+        >
+          {addressError}
         </div>
-      </form>
-      <div
-        className={styles.input_error_msg}
-        id="form-error-msg"
-        style={{
-          visibility: !addressError ? "hidden" : "visible",
-          width: "90%",
-          fontSize: "1em",
-          textAlign: "center",
-        }}
-      >
-        {addressError}
       </div>
     </div>
   );
