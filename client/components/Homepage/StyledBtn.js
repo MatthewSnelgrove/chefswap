@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import styles from "./styles/StyledBtn.module.scss";
+import Link from "next/link";
 
 /**
  * Styled button for Navbar and homepage
@@ -47,7 +48,7 @@ function StyledBtn({
   let theme = isLight ? lightTheme : darkTheme;
 
   return (
-    <a href={link ? link : ""}>
+    <Link href={link ? link : ""}>
       <button
         className={styles.StyledBtn}
         style={theme}
@@ -56,7 +57,7 @@ function StyledBtn({
       >
         {text} {arrow}
       </button>
-    </a>
+    </Link>
   );
 }
 
