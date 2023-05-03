@@ -6,6 +6,7 @@ import styles from "./styles/Navbar.module.scss";
 import { useUser } from "./useUser";
 import ProfilePicture from "./ProfilePicture";
 import global_vars from "../utils/config.js";
+import Link from "next/link";
 
 function Navbar() {
   const user = useUser();
@@ -25,9 +26,11 @@ function LoggedIn(props) {
       className={`navbar navbar-expand-sm navbar-fixed ${styles.navbar_fixed}`}
     >
       <div className="container-fluid">
-        <a className="navbar-brand" href="/">
-          <Logo />
-        </a>
+        <div className="navbar-brand">
+          <Link href="/">
+            <Logo />
+          </Link>
+        </div>
         <button
           className="navbar-toggler"
           type="button"
@@ -42,18 +45,14 @@ function LoggedIn(props) {
         <div className="collapse navbar-collapse" id="navbarNavDropdown">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <a
-                className={`nav-link ${styles.nav_link}`}
-                aria-current="page"
-                href="/my-swaps"
-              >
-                My Swaps
-              </a>
+              <div className={`nav-link ${styles.nav_link}`}>
+                <Link href="/my-swaps">My Swaps</Link>
+              </div>
             </li>
             <li className="nav-item">
-              <a className={`nav-link ${styles.nav_link}`} href="/find-swap">
-                Find a Swap
-              </a>
+              <div className={`nav-link ${styles.nav_link}`}>
+                <Link href="/find-swap">Find a Swap</Link>
+              </div>
             </li>
           </ul>
           <ul className="navbar-nav ms-auto pe-3">
@@ -69,19 +68,19 @@ function LoggedIn(props) {
               </a>
               <ul className="dropdown-menu">
                 <li>
-                  <a className="dropdown-item" href="/about">
-                    About Chefswap
-                  </a>
+                  <Link href="/about">
+                    <div className="dropdown-item">About Chefswap</div>
+                  </Link>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="/about-us">
-                    About Us
-                  </a>
+                  <Link href="/about-us">
+                    <div className="dropdown-item">About Us</div>
+                  </Link>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="/help">
-                    Help
-                  </a>
+                  <Link href="/help">
+                    <div className="dropdown-item">Help</div>
+                  </Link>
                 </li>
               </ul>
             </li>
@@ -101,12 +100,9 @@ function LoggedIn(props) {
               </a>
               <ul className="dropdown-menu">
                 <li>
-                  <a
-                    className="dropdown-item"
-                    href={"/u/".concat(user.username)}
-                  >
-                    My Profile
-                  </a>
+                  <Link href={"/u/".concat(user.username)}>
+                    <div className="dropdown-item">My Profile</div>
+                  </Link>
                 </li>
                 <li>
                   <button className="dropdown-item" onClick={signoutUser}>
