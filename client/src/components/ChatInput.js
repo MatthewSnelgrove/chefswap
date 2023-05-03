@@ -1,15 +1,26 @@
 import React, { Component } from "react";
 import "./styles/ChatInput.scss";
-
+import socket from "../utils/socket";
 /**
  * User input chatbar for sending messages (bottom bar of chat)
  */
-export default class ChatInput extends Component {
-  render() {
+function ChatInput(props) {
+
     function handleSend(e) {
       e.preventDefault();
-      const msg = document.querySelector("#chat-input").value;
-      alert(`Message was sent: ${msg}`);
+      const chatInput = document.querySelector("#chat-input")
+      const msg = chatInput.value
+      socket.emit(
+        "sendUserMessage",
+        {
+          reveiverUid: "fa4632e6-c4f8-44d4-9408-cfb4f8499d01",
+          content: msg,
+        },
+        (response) => {
+          props.setMessages((pastMessages) => [...pastMessages, response])
+        }
+      );
+      chatInput.value = ""
     }
 
     return (
@@ -27,5 +38,6 @@ export default class ChatInput extends Component {
         </form>
       </div>
     );
-  }
 }
+
+export default ChatInput;

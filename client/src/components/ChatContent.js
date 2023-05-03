@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { useUser } from "./useUser"
 import Message from "./Message";
 import "./styles/ChatContent.scss";
 
@@ -6,11 +7,21 @@ import "./styles/ChatContent.scss";
  * Container component for all chat messages
  * @use Message
  */
-export default class ChatContent extends Component {
-  render() {
+ function ChatContent(props) {
+    const user = useUser()
+    const globalVars = global.config
+
+    if (user == globalVars.userStates.loading) {
+      return (<></>)
+    }
+
+    const messagesHTML = props.messages.map((message) => {
+      return <Message content={message.content} who={user.accountUid == message.senderUid ? 1: 0} />
+    })
+  
     return (
       <div className="chat-content">
-        <Message content="Hey, how are you?" who={0} />
+        {/* <Message content="Hey, how are you?" who={0} />
         <Message
           content="I'd love to meet up and try your Indian food!"
           who={0}
@@ -62,8 +73,11 @@ export default class ChatContent extends Component {
         <Message
           content="Matthew Snelgrove requested to swap with Albert kun!"
           who={2}
-        />
+        /> */}
+        {messagesHTML}
+
       </div>
     );
-  }
 }
+
+export default ChatContent;
