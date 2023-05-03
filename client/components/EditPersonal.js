@@ -34,34 +34,6 @@ const provinces = [
   { value: "Nunavut", label: "Nunavut" },
 ];
 
-// function manageAddress(ev) {
-//   const testRegex = RegExp("[a-zA-Z0-9 ]");
-//   if (!testRegex.test(ev.key)) {
-//     ev.preventDefault();
-//   }
-// }
-
-// function managePostalCode(ev) {
-//   if (ev.key.length > 1) {
-//     return;
-//   }
-//   if (ev.target.value.length >= 6) {
-//     return;
-//   }
-
-//   const testRegex = RegExp("[a-zA-Z0-9]");
-//   if (!testRegex.test(ev.key)) {
-//     ev.preventDefault();
-//   }
-// }
-
-// function manageOnlyText(ev) {
-//   const testRegex = RegExp("[A-Za-z ]");
-//   if (!testRegex.test(ev.key)) {
-//     ev.preventDefault();
-//   }
-// }
-
 function cleanEmptyJSON(JSON) {
   return Object.fromEntries(
     Object.entries(JSON).filter((details) => {
@@ -73,25 +45,6 @@ function cleanEmptyJSON(JSON) {
     })
   );
 }
-
-// function onSubmitAddress(e, Uid) {
-//   const address = cleanEmptyJSON({
-//     address1: e.target[0].value,
-//     address2: e.target[1].value,
-//     address3: e.target[2].value,
-//     province: e.target[3].value,
-//     city: e.target[4].value,
-//     postalCode: e.target[5].value,
-//   });
-
-//   console.log(address);
-
-//   changeAddress(Uid, address);
-// }
-
-// function onSubmitEmail(ev, Uid) {
-//   changeEmail(Uid, { email: ev.target[0].value });
-// }
 
 function EditPersonal(props) {
   // State holding all fields needed for specific form
@@ -352,21 +305,9 @@ function EditPersonal(props) {
           </div>
         </div>
       </div>
-      {/* </div> */}
+
       <form onSubmit={(e) => handleAddressSubmit(e, user.accountUid)}>
         <div className={styles.edit_item} style={{ marginTop: "20px" }}>
-          {/* <div>
-            <label>Address1</label>
-          </div> */}
-          {/* <input
-            type="text"
-            defaultValue={address.address1}
-            onKeyDown={(e) => {
-              manageAddress(e);
-            }}
-            required
-          ></input> */}
-
           <CredentialField
             type="text"
             label="Address line 1"
@@ -380,17 +321,6 @@ function EditPersonal(props) {
           />
         </div>
         <div className={styles.edit_item}>
-          {/* <div>
-            <label>Address2</label>
-          </div>
-          <input
-            type="address"
-            onKeyDown={(e) => {
-              manageAddress(e);
-            }}
-            defaultValue={address.address2 ? address.address2 : ""}
-          ></input> */}
-
           <CredentialField
             type="text"
             label="Address line 2"
@@ -404,16 +334,6 @@ function EditPersonal(props) {
           />
         </div>
         <div className={styles.edit_item}>
-          {/* <div>
-            <label>Address3</label>
-          </div>
-          <input
-            type="address"
-            onKeyDown={(e) => {
-              manageAddress(e);
-            }}
-            defaultValue={address.address3 ? address.address3 : ""}
-          ></input> */}
           <CredentialField
             type="text"
             label="Address line 3"
@@ -473,18 +393,6 @@ function EditPersonal(props) {
           />
         </div>
         <div className={styles.edit_item} style={{ marginTop: "30px" }}>
-          {/* <div>
-            <label>City</label>
-          </div>
-          <div>
-            <input
-              style={{ width: "100%" }}
-              type="text"
-              defaultValue={address.city}
-              onKeyDown={(e) => manageOnlyText(e)}
-              required
-            ></input>
-          </div> */}
           <CredentialField
             type="city"
             label="City"
@@ -498,22 +406,6 @@ function EditPersonal(props) {
           />
         </div>
         <div className={styles.edit_item}>
-          {/* <div>
-            <label>Postal Code</label>
-          </div>
-          <div>
-            <input
-              style={{ width: "100%", textTransform: "uppercase" }}
-              type="text"
-              defaultValue={address.postal_code}
-              minLength="6"
-              maxLength="6"
-              pattern="^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJ-NPRSTV-Z]\d[ABCEGHJ-NPRSTV-Z]\d$"
-              onKeyDown={(e) => managePostalCode(e)}
-              required
-            ></input>
-          </div> */}
-
           <CredentialField
             type="text"
             label="Postal Code"

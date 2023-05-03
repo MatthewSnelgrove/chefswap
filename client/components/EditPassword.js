@@ -212,7 +212,7 @@ function EditPassword() {
 
       <button
         className={fieldStyles.submitBtn}
-        style={{ marginTop: "20px", width: "50%" }}
+        style={{ marginTop: "20px", width: "80%", maxWidth: 500 }}
       >
         Submit
       </button>
