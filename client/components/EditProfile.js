@@ -64,7 +64,11 @@ function EditProfile(props) {
           <label>Bio</label>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <textarea className={styles.bio} defaultValue={user.bio}></textarea>
+          <textarea
+            className={styles.bio}
+            id="bio"
+            defaultValue={user.bio}
+           />
           <button
             className={`${styles.change_bio_button} base-btn-lightblue`}
             onClick={(e) => {
