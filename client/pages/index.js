@@ -143,6 +143,7 @@ function Home() {
             href="https://github.com/MatthewSnelgrove/chefswap"
             target="_blank"
             rel="noreferrer"
+            style={{ textDecoration: "underline" }}
           >
             GitHub!
           </a>
