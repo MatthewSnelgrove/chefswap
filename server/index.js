@@ -102,8 +102,8 @@ app.use((err, req, res, next) => {
     console.log("err is unknown system error");
     res.status(500).json({
       path: req.originalUrl,
-      message: "unknown server error",
-      detail: "request caused an unknown error on the server",
+      message: "internal server error",
+      detail: "request caused an internal error on the server",
     });
   }
 });
