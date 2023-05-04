@@ -124,16 +124,26 @@ io.use((socket, next) => {
   next();
 });
 
-io.on("connection", (socket, next) => {
+io.on("connection", (socket) => {
   socket.accountUid = socket.request.session.accountUid;
   socket.join(socket.accountUid);
+  console.log(socket.rooms);
   console.log("a user connected");
   console.log("joinedRoom: " + socket.accountUid);
+  // console.log(next);
   messagingHandler(io, socket);
+  console.log("connected clients", Object.keys(io.sockets.sockets));
+  // console.log(io.sockets.clients(socket.accountUid));
 
   socket.on("connect_error", (err) => {
     console.log(err.message); // prints the message associated with the error
-    next();
+  });
+
+  socket.on("disconnect", (reason) => {
+    socket.leave(socket.accountUid);
+    console.log("user disconnected");
+    console.log("leftRoom: " + socket.accountUid);
+    console.log("reason: " + reason);
   });
 });
 
