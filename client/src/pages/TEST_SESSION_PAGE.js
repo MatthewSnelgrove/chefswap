@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Typewriter from "../components/Homepage/Typewriter";
-import StyledBtn from "../components/Homepage/StyledBtn";
 import "./styles/AboutPage.scss";
 import useSocketSetup from "../utils/useSocketSetup";
 import socket from "../utils/socket";
@@ -13,11 +12,12 @@ function TEST_SESSION_PAGE() {
   }, []);
   useSocketSetup();
 
-  const sendUserMessage = () => {
+  const sendMessage = () => {
+    console.log("sending message", Date.now());
     socket.emit(
-      "sendUserMessage",
+      "sendMessage",
       {
-        reveiverUid: "fa4632e6-c4f8-44d4-9408-cfb4f8499d01",
+        receiverUid: "fa4632e6-c4f8-44d4-9408-cfb4f8499d01",
         content: "test message",
       },
       (response) => {
@@ -25,9 +25,6 @@ function TEST_SESSION_PAGE() {
       }
     );
   };
-  socket.on("receiveUserMessage", (message) => {
-    console.log(message);
-  });
 
   return (
     <>
@@ -41,10 +38,9 @@ function TEST_SESSION_PAGE() {
             Chefswap helps users across Canada connect with each other through a
             love for cooking and eating!
           </div>
-          <button onClick={sendUserMessage}>Send Message</button>
+          <button onClick={sendMessage}>Send Message</button>
         </main>
       </div>
-      <body>this is text</body>
 
       <div className="product-demo-section"></div>
     </>
