@@ -12,7 +12,7 @@ export default (instance, event) => {
   const errors = validator.validate(instance, schema).errors;
   if (errors.length > 0) {
     //return custom errors
-    return validationErrorHandler(errors, event);
+    throw validationErrorHandler(errors, event);
   }
   //extract only wanted properties
   return { content: instance.content, receiverUid: instance.receiverUid };

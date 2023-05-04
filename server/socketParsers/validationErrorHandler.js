@@ -1,3 +1,10 @@
+class ValidationError extends Error {
+  constructor(errors) {
+    super();
+    this.errors = errors;
+  }
+}
+
 export default (validationErrors, event) => {
   const errors = validationErrors.map((error) => ({
     code: "ERRINPUTVAL",
@@ -7,5 +14,5 @@ export default (validationErrors, event) => {
       error.message
     }`,
   }));
-  return { errors: errors };
+  return new ValidationError(errors);
 };
