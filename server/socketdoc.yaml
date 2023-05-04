@@ -14,24 +14,23 @@ channels:
       summary: Send message related data to the server
       message:
         oneOf:
-          - $ref: "#/components/messages/SendUserMessage"
+          - $ref: "#/components/messages/SendMessage"
           - $ref: "#/components/messages/GetMessages"
           - $ref: "#/components/messages/GetConversations"
     subscribe:
       summary: Listen for message related data from the server
       message:
         oneOf:
-          - $ref: "#/components/messages/ReceiveUserMessage"
-          - $ref: "#/components/messages/ReceiveSystemMessage"
+          - $ref: "#/components/messages/ReceiveMessage"
 components:
   messages:
-    SendUserMessage:
-      name: sendUserMessage
+    SendMessage:
+      name: sendMessage
       contentType: application/json
       payload:
         type: object
         required:
-          - receiverUid
+          - conversationUid
           - content
         properties:
           receiverUid:
@@ -41,19 +40,21 @@ components:
             $ref: "#/components/schemas/messageContent"
       x-ack:
         args:
-          $ref: "#/components/schemas/userMessagePayload"
+          oneOf:
+            - $ref: "#/components/schemas/messagePayload"
+            - $ref: "#/components/schemas/errorPayload"
     GetMessages:
       name: getMessages
-      summary: Get past messages between account with uid messagerUid. Use timestampKey and limit for pagination.
+      summary: Get past messages in a conversation. Use timestampKey and limit for pagination.
       contentType: application/json
       payload:
         type: object
         required:
-          - messagerUid
+          - conversationUid
           - timestampKey
           - limit
         properties:
-          messagerUid:
+          conversationUid:
             type: string
             format: uuid
           timestampKey:
@@ -68,10 +69,10 @@ components:
           type: array
           items:
             oneOf:
-              - $ref: "#/components/schemas/userMessagePayload"
-              - $ref: "#/components/schemas/systemMessagePayload"
+              - $ref: "#/components/schemas/messagePayload"
+              - $ref: "#/components/schemas/errorPayload"
     GetConversations:
-      name: getConversationss
+      name: getConversations
       summary: Get all current conversations of signed in account
       contentType: application/json
       x-ack:
@@ -79,54 +80,26 @@ components:
           type: array
           items:
             - $ref: "#/components/schemas/conversation"
-    ReceiveUserMessage:
+    ReceiveMessage:
       name: receiveUserMessage
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/userMessagePayload"
-    ReceiveSystemMessage:
-      name: receiveSystemMessage
-      contentType: application/json
-      payload:
-        $ref: "#/components/schemas/systemMessagePayload"
+        $ref: "#/components/schemas/messagePayload"
   schemas:
-    userMessagePayload:
+    messagePayload:
       required:
         - messageUid
-        - senderUid
-        - receiverUid
+        - conversationUid
         - content
         - timestamp
       properties:
         messageUid:
           type: string
           format: uuid
-        senderUid:
+        conversationUid:
           type: string
           format: uuid
         receiverUid:
-          type: string
-          format: uuid
-        content:
-          $ref: "#/components/schemas/messageContent"
-        timestamp:
-          type: string
-          format: date-time
-    systemMessagePayload:
-      required:
-        - messageUid
-        - account1Uid
-        - account2Uid
-        - content
-        - timestamp
-      properties:
-        messageUid:
-          type: string
-          format: uuid
-        account1Uid:
-          type: string
-          format: uuid
-        account2Uid:
           type: string
           format: uuid
         content:
@@ -139,7 +112,6 @@ components:
         - conversationUid
         - account1Uid
         - account2Uid
-        - lastMessageUid
       properties:
         conversationUid:
           type: string
@@ -150,9 +122,29 @@ components:
         account2Uid:
           type: string
           format: uuid
-        lastMessageUid:
-          type: string
-          format: uuid
     messageContent:
       type: string
       maxLength: 300
+    errorPayload:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            required:
+              - code
+              - event
+              - message
+              - detail
+            properties:
+              code:
+                type: string
+              event:
+                type: string
+              message:
+                type: string
+              detail:
+                type: string
