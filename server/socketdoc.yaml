@@ -11,11 +11,17 @@ servers:
 channels:
   /:
     publish:
-      summary: Send message related data to the server
+      summary: Send message related data to the server. Use the x-ack property to listen for a response.
       message:
         oneOf:
-          - $ref: "#/components/messages/SendMessage"
-          - $ref: "#/components/messages/GetMessages"
+          - $ref: "#/components/messages/SendGroupMessage"
+          - $ref: "#/components/messages/SendDmMessage"
+          - $ref: "#/components/messages/GetGroupMessages"
+          - $ref: "#/components/messages/GetDmMessages"
+          - $ref: "#/components/messages/CreateGroup"
+          # - $ref: "#/components/messages/AddToGroup"
+          - $ref: "#/components/messages/LeaveGroup"
+          - $ref: "#/components/messages/DeactivateConversation"
           - $ref: "#/components/messages/GetConversations"
     subscribe:
       summary: Listen for message related data from the server
@@ -24,37 +30,39 @@ channels:
           - $ref: "#/components/messages/ReceiveMessage"
 components:
   messages:
-    SendMessage:
-      name: sendMessage
+    SendGroupMessage:
+      name: sendGroupMessage
       contentType: application/json
       payload:
-        type: object
-        required:
-          - conversationUid
-          - content
-        properties:
-          receiverUid:
-            type: string
-            format: uuid
-          content:
-            $ref: "#/components/schemas/messageContent"
+        $ref: "#/components/schemas/groupMessagePayload"
       x-ack:
         args:
           oneOf:
-            - $ref: "#/components/schemas/messagePayload"
+            - $ref: "#/components/schemas/groupMessagePayload"
             - $ref: "#/components/schemas/errorPayload"
-    GetMessages:
-      name: getMessages
-      summary: Get past messages in a conversation. Use timestampKey and limit for pagination.
+    SendDmMessage:
+      name: sendDmMessage
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/dmMessagePayload"
+      x-ack:
+        args:
+          oneOf:
+            - $ref: "#/components/schemas/dmMessagePayload"
+            - $ref: "#/components/schemas/errorPayload"
+    GetGroupMessages:
+      name: getGroupMessages
+      summary: Get past messages in a group. Use timestampKey and limit for pagination.
       contentType: application/json
       payload:
         type: object
+        description: Get messages for a group conversation
         required:
-          - conversationUid
+          - groupUid
           - timestampKey
           - limit
         properties:
-          conversationUid:
+          groupUid:
             type: string
             format: uuid
           timestampKey:
@@ -69,8 +77,100 @@ components:
           type: array
           items:
             oneOf:
-              - $ref: "#/components/schemas/messagePayload"
+              - $ref: "#/components/schemas/groupMessagePayload"
               - $ref: "#/components/schemas/errorPayload"
+    GetDmMessages:
+      name: getDmMessages
+      summary: Get past messages in a dm. Use timestampKey and limit for pagination.
+      contentType: application/json
+      payload:
+        type: object
+        description: Get messages for a dm conversation
+        required:
+          - dmAccountUid
+          - timestampKey
+          - limit
+        properties:
+          dmAccountUid:
+            type: string
+            format: uuid
+          timestampKey:
+            type: string
+            format: date-time
+          limit:
+            type: number
+            format: integer
+            minimum: 1
+      x-ack:
+        args:
+          type: array
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/dmMessagePayload"
+              - $ref: "#/components/schemas/errorPayload"
+    CreateGroup:
+      name: createGroup
+      summary: Create a new group. Automatically added to active conversations.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - accounts
+        properties:
+          accounts:
+            description: other accounts to add to group dm. Logged-in account is automatically added.
+            type: array
+            items:
+              type: string
+              format: uuid
+      x-ack:
+        args:
+          oneOf:
+            - $ref: "#/components/schemas/group"
+            - $ref: "#/components/schemas/errorPayload"
+    LeaveGroup:
+      name: leaveGroup
+      summary: Leave a group. Account will no longer be a part of the group and will not be able to send or receive messages in the group.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - groupUid
+        properties:
+          groupUid:
+            type: string
+            format: uuid
+      x-ack:
+        args:
+          oneOf:
+            - $ref: "#/components/schemas/group"
+            - $ref: "#/components/schemas/errorPayload"
+    DeactivateConversation:
+      name: deactivateConversation
+      summary: Deactivate a conversation for an account. No longer appears in their active conversations. Any messages sent in a conversation will automatically reactivate the conversation for all participants. Accepts either he groupUid or accountUid of dm account.
+      contentType: application/json
+      payload:
+        oneOf:
+          - type: object
+            required:
+              - groupUid
+            properties:
+              groupUid:
+                type: string
+                format: uuid
+          - type: object
+            required:
+              - dmAccountUid
+            properties:
+              dmAccountUid:
+                type: string
+                format: uuid
+      x-ack:
+        args:
+          oneOf:
+            - $ref: "#/components/schemas/group"
+            - $ref: "#/components/schemas/dmAccount"
+            - $ref: "#/components/schemas/errorPayload"
     GetConversations:
       name: getConversations
       summary: Get all current conversations of signed in account
@@ -79,49 +179,93 @@ components:
         args:
           type: array
           items:
-            - $ref: "#/components/schemas/conversation"
+            oneOf:
+              - $ref: "#/components/schemas/group"
+              - $ref: "#/components/schemas/dmAccount"
     ReceiveMessage:
       name: receiveUserMessage
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/messagePayload"
+        oneOf:
+          - $ref: "#/components/schemas/groupMessagePayload"
+          - $ref: "#/components/schemas/dmMessagePayload"
   schemas:
-    messagePayload:
+    groupMessagePayload:
+      type: object
       required:
         - messageUid
-        - conversationUid
+        - groupUid
         - content
         - timestamp
       properties:
         messageUid:
+          readOnly: true
           type: string
           format: uuid
-        conversationUid:
-          type: string
-          format: uuid
-        receiverUid:
+        groupUid:
           type: string
           format: uuid
         content:
           $ref: "#/components/schemas/messageContent"
         timestamp:
+          readOnly: true
           type: string
           format: date-time
-    conversation:
+    dmMessagePayload:
+      type: object
       required:
-        - conversationUid
-        - account1Uid
-        - account2Uid
+        - messageUid
+        - dmAccountUid
+        - content
+        - timestamp
       properties:
-        conversationUid:
+        messageUid:
+          readOnly: true
           type: string
           format: uuid
-        account1Uid:
+        dmAccountUid:
           type: string
           format: uuid
-        account2Uid:
+        content:
+          $ref: "#/components/schemas/messageContent"
+        timestamp:
+          readOnly: true
+          type: string
+          format: date-time
+    group:
+      type: object
+      required:
+        - groupUid
+        - groupName
+        - accounts
+        - lastMessage
+      properties:
+        groupUid:
           type: string
           format: uuid
+        groupName:
+          type: string
+          maxLength: 100
+        accounts:
+          type: array
+          items:
+            type: string
+            format: uuid
+        lastMessage:
+          readOnly: true
+          $ref: "#/components/schemas/groupMessagePayload"
+    dmAccount:
+      type: object
+      required:
+        - dmAccountUid
+        - lastMessage
+      properties:
+        dmAccountUid:
+          type: string
+          format: uuid
+        lastMessage:
+          readOnly: true
+          $ref: "#/components/schemas/dmMessagePayload"
     messageContent:
       type: string
       maxLength: 300
