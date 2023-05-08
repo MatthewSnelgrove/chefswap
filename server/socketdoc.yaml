@@ -31,6 +31,7 @@ channels:
 components:
   messages:
     SendGroupMessage:
+      messageId: sendGroupMessage
       name: sendGroupMessage
       contentType: application/json
       payload:
@@ -41,6 +42,7 @@ components:
             - $ref: "#/components/schemas/groupMessagePayload"
             - $ref: "#/components/schemas/errorPayload"
     SendDmMessage:
+      messageId: sendDmMessage
       name: sendDmMessage
       contentType: application/json
       payload:
@@ -51,6 +53,7 @@ components:
             - $ref: "#/components/schemas/dmMessagePayload"
             - $ref: "#/components/schemas/errorPayload"
     GetGroupMessages:
+      messageId: getGroupMessages
       name: getGroupMessages
       summary: Get past messages in a group. Use timestampKey and limit for pagination.
       contentType: application/json
@@ -80,6 +83,7 @@ components:
               - $ref: "#/components/schemas/groupMessagePayload"
               - $ref: "#/components/schemas/errorPayload"
     GetDmMessages:
+      messageId: getDmMessages
       name: getDmMessages
       summary: Get past messages in a dm. Use timestampKey and limit for pagination.
       contentType: application/json
@@ -109,6 +113,7 @@ components:
               - $ref: "#/components/schemas/dmMessagePayload"
               - $ref: "#/components/schemas/errorPayload"
     CreateGroup:
+      messageId: createGroup
       name: createGroup
       summary: Create a new group. Automatically added to active conversations.
       contentType: application/json
@@ -129,6 +134,7 @@ components:
             - $ref: "#/components/schemas/group"
             - $ref: "#/components/schemas/errorPayload"
     LeaveGroup:
+      messageId: leaveGroup
       name: leaveGroup
       summary: Leave a group. Account will no longer be a part of the group and will not be able to send or receive messages in the group.
       contentType: application/json
@@ -146,6 +152,7 @@ components:
             - $ref: "#/components/schemas/group"
             - $ref: "#/components/schemas/errorPayload"
     DeactivateConversation:
+      messageId: deactivateConversation
       name: deactivateConversation
       summary: Deactivate a conversation for an account. No longer appears in their active conversations. Any messages sent in a conversation will automatically reactivate the conversation for all participants. Accepts either he groupUid or accountUid of dm account.
       contentType: application/json
@@ -172,6 +179,7 @@ components:
             - $ref: "#/components/schemas/dmAccount"
             - $ref: "#/components/schemas/errorPayload"
     GetConversations:
+      messageId: getConversations
       name: getConversations
       summary: Get all current conversations of signed in account
       contentType: application/json
@@ -183,6 +191,7 @@ components:
               - $ref: "#/components/schemas/group"
               - $ref: "#/components/schemas/dmAccount"
     ReceiveMessage:
+      messageId: receiveMessage
       name: receiveUserMessage
       contentType: application/json
       payload:
