@@ -15,7 +15,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@apideck/better-ajv-errors": "^0.3.6",
+    "@asyncapi/parser": "^2.0.0",
     "@google-cloud/storage": "^6.4.2",
+    "ajv": "^8.12.0",
+    "ajv-keywords": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "camelize": "^1.0.0",
     "connect-pg-simple": "^7.0.0",
