@@ -72,8 +72,7 @@ components:
             type: string
             format: date-time
           limit:
-            type: number
-            format: integer
+            type: integer
             minimum: 1
       x-ack:
         args:
@@ -102,8 +101,7 @@ components:
             type: string
             format: date-time
           limit:
-            type: number
-            format: integer
+            type: integer
             minimum: 1
       x-ack:
         args:
@@ -192,7 +190,7 @@ components:
               - $ref: "#/components/schemas/dmAccount"
     ReceiveMessage:
       messageId: receiveMessage
-      name: receiveUserMessage
+      name: receiveMessage
       contentType: application/json
       payload:
         oneOf:
