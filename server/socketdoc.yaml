@@ -284,18 +284,51 @@ components:
         errors:
           type: array
           items:
-            type: object
-            required:
-              - code
-              - event
-              - message
-              - detail
-            properties:
-              code:
-                type: string
-              event:
-                type: string
-              message:
-                type: string
-              detail:
-                type: string
+            allOf:
+              - $ref: "#/components/schemas/commonError"
+              - oneOf:
+                  - $ref: "#/components/schemas/validationError"
+                  - $ref: "#/components/schemas/businessError"
+                  - $ref: "#/components/schemas/serverError"
+    commonError:
+      type: object
+      required:
+        - errorType
+        - event
+        - message
+        - detail
+      properties:
+        errorType:
+          type: string
+          enum:
+            - validation
+            - business
+            - server
+        event:
+          type: string
+        message:
+          type: string
+        detail:
+          type: string
+    validationError:
+      type: object
+      required:
+        - path
+      properties:
+        errorType:
+          type: string
+          const: "validation"
+        path:
+          type: string
+    businessError:
+      type: object
+      properties:
+        errorType:
+          type: string
+          const: "business"
+    serverError:
+      type: object
+      properties:
+        errorType:
+          type: string
+          const: "server"
