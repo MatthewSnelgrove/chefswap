@@ -202,6 +202,7 @@ components:
       required:
         - messageUid
         - groupUid
+        - senderUid
         - content
         - timestamp
       properties:
@@ -210,6 +211,10 @@ components:
           type: string
           format: uuid
         groupUid:
+          type: string
+          format: uuid
+        senderUid:
+          readOnly: true
           type: string
           format: uuid
         content:
@@ -223,6 +228,7 @@ components:
       required:
         - messageUid
         - dmAccountUid
+        - senderUid
         - content
         - timestamp
       properties:
@@ -231,6 +237,10 @@ components:
           type: string
           format: uuid
         dmAccountUid:
+          type: string
+          format: uuid
+        senderUid:
+          readOnly: true
           type: string
           format: uuid
         content:
