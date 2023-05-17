@@ -197,58 +197,48 @@ components:
           - $ref: "#/components/schemas/groupMessagePayload"
           - $ref: "#/components/schemas/dmMessagePayload"
   schemas:
+    commonMessage:
+      type: object
+      required:
+        - messageUid
+        - content
+        - timestamp
+      properties:
+        messageUid:
+          readOnly: true
+          type: string
+          format: uuid
+        senderUid:
+          readOnly: true
+          type: string
+          format: uuid
+        content:
+          type: string
+          maxLength: 300
+        timestamp:
+          readOnly: true
+          type: string
+          format: date-time
     groupMessagePayload:
-      type: object
-      required:
-        - messageUid
-        - groupUid
-        - senderUid
-        - content
-        - timestamp
-      properties:
-        messageUid:
-          readOnly: true
-          type: string
-          format: uuid
-        groupUid:
-          type: string
-          format: uuid
-        senderUid:
-          readOnly: true
-          type: string
-          format: uuid
-        content:
-          $ref: "#/components/schemas/messageContent"
-        timestamp:
-          readOnly: true
-          type: string
-          format: date-time
+      allOf:
+        - $ref: "#/components/schemas/commonMessage"
+        - type: object
+          required:
+            - groupUid
+          properties:
+            groupUid:
+              type: string
+              format: uuid
     dmMessagePayload:
-      type: object
-      required:
-        - messageUid
-        - dmAccountUid
-        - senderUid
-        - content
-        - timestamp
-      properties:
-        messageUid:
-          readOnly: true
-          type: string
-          format: uuid
-        dmAccountUid:
-          type: string
-          format: uuid
-        senderUid:
-          readOnly: true
-          type: string
-          format: uuid
-        content:
-          $ref: "#/components/schemas/messageContent"
-        timestamp:
-          readOnly: true
-          type: string
-          format: date-time
+      allOf:
+        - $ref: "#/components/schemas/commonMessage"
+        - type: object
+          required:
+            - dmAccountUid
+          properties:
+            dmAccountUid:
+              type: string
+              format: uuid
     group:
       type: object
       required:
@@ -258,6 +248,7 @@ components:
         - lastMessage
       properties:
         groupUid:
+          readOnly: true
           type: string
           format: uuid
         groupName:
@@ -283,9 +274,6 @@ components:
         lastMessage:
           readOnly: true
           $ref: "#/components/schemas/dmMessagePayload"
-    messageContent:
-      type: string
-      maxLength: 300
     errorPayload:
       type: object
       required:
