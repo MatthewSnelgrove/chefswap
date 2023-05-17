@@ -74,6 +74,7 @@ import { router as swapsRouter } from "./routes/swaps.js";
 app.use("/api/v1/swaps", swapsRouter);
 import { router as ratingsRouter } from "./routes/ratings.js";
 import messagingHandler from "./socketEventHandlers/messagingHandler.js";
+import { validateMessageByEvent } from "./socketValidation/ajvSetup.js";
 app.use("/api/v1/ratings", ratingsRouter);
 
 app.use((err, req, res, next) => {
@@ -127,14 +128,14 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   socket.accountUid = socket.request.session.accountUid;
   socket.join(socket.accountUid);
-  console.log(socket.rooms);
   console.log("a user connected");
   console.log("joinedRoom: " + socket.accountUid);
-  // console.log(next);
+  socket.use(validateMessageByEvent);
+  socket.on("error", (err) => {
+    console.log("socket error: ", err);
+    socket.emit("error", err);
+  });
   messagingHandler(io, socket);
-  console.log("connected clients", Object.keys(io.sockets.sockets));
-  // console.log(io.sockets.clients(socket.accountUid));
-
   socket.on("connect_error", (err) => {
     console.log(err.message); // prints the message associated with the error
   });
