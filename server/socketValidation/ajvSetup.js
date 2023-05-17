@@ -23,7 +23,7 @@ const parser = new Parser();
 const { document } = await fromFile(parser, "./server/socketdoc.yaml").parse();
 
 const schema = document._json;
-export const messageValidatorById = new Map();
+export const messageValidatorByEvent = new Map();
 Object.keys(schema.channels).forEach((channelName) => {
   //publish
   Object.keys(schema.channels[channelName].publish.message.oneOf).forEach(
@@ -31,7 +31,7 @@ Object.keys(schema.channels).forEach((channelName) => {
       const message =
         schema.channels[channelName].publish.message.oneOf[messageIndex];
       const validator = publishAjv.compile(message.payload || {});
-      messageValidatorById.set(message.messageId, validator);
+      messageValidatorByEvent.set(message.messageId, validator);
     }
   );
   // no publish validation currently
@@ -46,7 +46,7 @@ Object.keys(schema.channels).forEach((channelName) => {
   // );
 });
 
-export function formatSocketErrors(ajvErrors, event) {
+function formatSocketErrors(ajvErrors, event) {
   // for each ajvError, push custom error to errors array
   const errors = ajvErrors.map((error) => {
     return {
@@ -59,4 +59,27 @@ export function formatSocketErrors(ajvErrors, event) {
   });
 
   return { errors: errors };
+}
+
+export function validateMessageByEvent([event, instance], next) {
+  console.log("validateMessageByEvent", event, instance);
+  const validator = messageValidatorByEvent.get(event);
+  if (!validator) {
+    const error = {
+      errorType: "business",
+      event: event,
+      message: `event not found`,
+      detail: `event ${event} was not found`,
+    };
+    next({ errors: [error] });
+    return;
+  }
+  const result = validator(instance);
+  if (!result) {
+    const formattedErrors = formatSocketErrors(validator.errors, event);
+    // console.log("socketErrors", formattedErrors);
+    next(formattedErrors);
+    return;
+  }
+  next();
 }
