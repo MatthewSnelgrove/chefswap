@@ -3,7 +3,10 @@ import Ajv, { KeywordCxt } from "ajv";
 import addFormats from "ajv-formats";
 import ajvKeywords from "ajv-keywords";
 import { betterAjvErrors } from "@apideck/better-ajv-errors";
-import { addReadOnlyKeyword, addRequiredKeyword } from "./ajvKeywords.js";
+import {
+  addReadOnlyKeyword,
+  addRequiredKeyword,
+} from "../socketValidation/ajvKeywords.js";
 
 const ajvOptions = {
   allErrors: true,
@@ -11,39 +14,45 @@ const ajvOptions = {
   unicodeRegExp: false,
 };
 
-//can add publishAjv for validating server messages
-//may change names to reflect server callback being validated as write despite being for subscribe events
+const writeAjv = new Ajv(ajvOptions);
+addFormats(writeAjv);
+addRequiredKeyword(writeAjv, "read");
+addReadOnlyKeyword(writeAjv);
 
-const publishAjv = new Ajv(ajvOptions);
-addFormats(publishAjv);
-addRequiredKeyword(publishAjv, "read");
-addReadOnlyKeyword(publishAjv);
+const readAjv = new Ajv(ajvOptions);
+addFormats(readAjv);
+addRequiredKeyword(readAjv, "write");
+addReadOnlyKeyword(readAjv);
 
 const parser = new Parser();
 const { document } = await fromFile(parser, "./server/socketdoc.yaml").parse();
 
 const schema = document._json;
-export const messageValidatorByEvent = new Map();
+export const payloadValidatorByEvent = new Map();
+export const ackValidatorByEvent = new Map();
 Object.keys(schema.channels).forEach((channelName) => {
   //publish
   Object.keys(schema.channels[channelName].publish.message.oneOf).forEach(
     (messageIndex) => {
       const message =
         schema.channels[channelName].publish.message.oneOf[messageIndex];
-      const validator = publishAjv.compile(message.payload || {});
-      messageValidatorByEvent.set(message.messageId, validator);
+      const payloadValidator = writeAjv.compile(message.payload || {});
+      payloadValidatorByEvent.set(message.messageId, payloadValidator);
+      const ackValidator = readAjv.compile(message.x - ack.args || {});
+      ackValidatorByEvent.set(message.messageId, ackValidator);
     }
   );
-  // no publish validation currently
-  // subscribe
-  // Object.keys(schema.channels[channelName].subscribe.message.oneOf).forEach(
-  //   (messageIndex) => {
-  //     const message =
-  //       schema.channels[channelName].subscribe.message.oneOf[messageIndex];
-  //     const validator = subscribeAjv.compile(message.payload || {});
-  //     messageValidatorById.set(message.messageId, validator);
-  //   }
-  // );
+  //subscribe
+  Object.keys(schema.channels[channelName].subscribe.message.oneOf).forEach(
+    (messageIndex) => {
+      const message =
+        schema.channels[channelName].subscribe.message.oneOf[messageIndex];
+      const payloadValidator = readAjv.compile(message.payload || {});
+      payloadValidatorByEvent.set(message.messageId, payloadValidator);
+      const ackValidator = writeAjv.compile(message.x - ack.args || {});
+      ackValidatorByEvent.set(message.messageId, ackValidator);
+    }
+  );
 });
 
 function formatSocketErrors(ajvErrors, event) {
@@ -62,8 +71,7 @@ function formatSocketErrors(ajvErrors, event) {
 }
 
 export function validateMessageByEvent([event, instance], next) {
-  console.log("validateMessageByEvent", event, instance);
-  const validator = messageValidatorByEvent.get(event);
+  const validator = writeMessageValidatorByEvent.get(event);
   if (!validator) {
     const error = {
       errorType: "business",
@@ -77,7 +85,6 @@ export function validateMessageByEvent([event, instance], next) {
   const result = validator(instance);
   if (!result) {
     const formattedErrors = formatSocketErrors(validator.errors, event);
-    // console.log("socketErrors", formattedErrors);
     next(formattedErrors);
     return;
   }

@@ -74,7 +74,7 @@ import { router as swapsRouter } from "./routes/swaps.js";
 app.use("/api/v1/swaps", swapsRouter);
 import { router as ratingsRouter } from "./routes/ratings.js";
 import messagingHandler from "./socketEventHandlers/messagingHandler.js";
-import { validateMessageByEvent } from "./socketValidation/socketValidator.js";
+import { validateMessageByEvent } from "./socketMiddlewares/socketValidator.js";
 app.use("/api/v1/ratings", ratingsRouter);
 
 app.use((err, req, res, next) => {

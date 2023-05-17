@@ -4,7 +4,7 @@ import { bucket } from "../configServices/cloudStorageConfig.js";
 import snakeize from "snakeize";
 import { BusinessError, accountNotFound } from "../utils/errors.js";
 import stripNulls from "../utils/stripNulls.js";
-import { validateMessageByEvent } from "../socketValidation/socketValidator.js";
+import { validateMessageByEvent } from "../socketMiddlewares/socketValidator.js";
 export default (io, socket) => {
   const sendDmMessage = async (message, callback) => {
     console.log("received socket event sendDmMessage");
