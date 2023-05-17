@@ -1,12 +1,10 @@
 import { Parser, fromFile } from "@asyncapi/parser";
-import Ajv, { KeywordCxt } from "ajv";
+import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import ajvKeywords from "ajv-keywords";
-import { betterAjvErrors } from "@apideck/better-ajv-errors";
 import {
   addReadOnlyKeyword,
   addRequiredKeyword,
-} from "../socketValidation/ajvKeywords.js";
+} from "../utils/ajvKeywords.js";
 
 const ajvOptions = {
   allErrors: true,
@@ -38,7 +36,7 @@ Object.keys(schema.channels).forEach((channelName) => {
         schema.channels[channelName].publish.message.oneOf[messageIndex];
       const payloadValidator = writeAjv.compile(message.payload || {});
       payloadValidatorByEvent.set(message.messageId, payloadValidator);
-      const ackValidator = readAjv.compile(message.x - ack.args || {});
+      const ackValidator = readAjv.compile(message["x-ack.args"] || {});
       ackValidatorByEvent.set(message.messageId, ackValidator);
     }
   );
@@ -49,7 +47,7 @@ Object.keys(schema.channels).forEach((channelName) => {
         schema.channels[channelName].subscribe.message.oneOf[messageIndex];
       const payloadValidator = readAjv.compile(message.payload || {});
       payloadValidatorByEvent.set(message.messageId, payloadValidator);
-      const ackValidator = writeAjv.compile(message.x - ack.args || {});
+      const ackValidator = writeAjv.compile(message["x-ack.args"] || {});
       ackValidatorByEvent.set(message.messageId, ackValidator);
     }
   );
@@ -70,8 +68,8 @@ function formatSocketErrors(ajvErrors, event) {
   return { errors: errors };
 }
 
-export function validateMessageByEvent([event, instance], next) {
-  const validator = writeMessageValidatorByEvent.get(event);
+function validateByValidator(validator, instance, next, callback) {
+  const event = validator.schema["x-parser-schema-id"];
   if (!validator) {
     const error = {
       errorType: "business",
@@ -79,14 +77,27 @@ export function validateMessageByEvent([event, instance], next) {
       message: `event not found`,
       detail: `event ${event} was not found`,
     };
-    next({ errors: [error] });
+    next([{ errors: [error] }, callback]);
     return;
   }
   const result = validator(instance);
   if (!result) {
     const formattedErrors = formatSocketErrors(validator.errors, event);
-    next(formattedErrors);
+    next([formattedErrors, callback]);
     return;
   }
   next();
+}
+
+//for 1. validating user-created payload on publish events
+//AND 2. validating server-created payload on subscribe events
+export function validatePayloadByEvent([event, instance, callback], next) {
+  const validator = payloadValidatorByEvent.get(event);
+  validateByValidator(validator, instance, next, callback);
+}
+//ONLY for validating server-created ack on publish events
+//user-created acks on subscribe events are not validated or won't exist
+export function validateAckByEvent([event, instance, callback], next) {
+  const validator = ackValidatorByEvent.get(event);
+  validateByValidator(validator, instance, next, callback);
 }

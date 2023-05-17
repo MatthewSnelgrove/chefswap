@@ -13,7 +13,11 @@ import { sessionMiddleware } from "./configServices/sessionConfig.js";
 import { wrap } from "./configServices/sessionConfig.js";
 import { corsConfig } from "./configServices/corsConfig.js";
 import { BusinessError } from "./utils/errors.js";
-// import * as iii from "./openapi.yaml";
+import messagingHandler from "./socketEventHandlers/messagingHandler.js";
+import {
+  validatePayloadByEvent,
+  validateAckByEvent,
+} from "./socketMiddlewares/socketValidator.js";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
 const PORT = process.env.PORT || 3001;
@@ -73,8 +77,6 @@ app.use("/api/v1/accounts", accountsRouter);
 import { router as swapsRouter } from "./routes/swaps.js";
 app.use("/api/v1/swaps", swapsRouter);
 import { router as ratingsRouter } from "./routes/ratings.js";
-import messagingHandler from "./socketEventHandlers/messagingHandler.js";
-import { validateMessageByEvent } from "./socketMiddlewares/socketValidator.js";
 app.use("/api/v1/ratings", ratingsRouter);
 
 app.use((err, req, res, next) => {
@@ -130,10 +132,12 @@ io.on("connection", (socket) => {
   socket.join(socket.accountUid);
   console.log("a user connected");
   console.log("joinedRoom: " + socket.accountUid);
-  socket.use(validateMessageByEvent);
-  socket.on("error", (err) => {
+  socket.use(validatePayloadByEvent);
+  socket.on("error", ([err, callback]) => {
     console.log("socket error: ", err);
-    socket.emit("error", err);
+    if (callback) {
+      callback(err);
+    }
   });
   messagingHandler(io, socket);
   socket.on("connect_error", (err) => {
