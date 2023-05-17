@@ -15,7 +15,7 @@ function TEST_SESSION_PAGE() {
   const sendMessage = () => {
     console.log("sending message", Date.now());
     socket.emit(
-      "sendMessage",
+      "sendDmMessage",
       {
         receiverUid: "fa4632e6-c4f8-44d4-9408-cfb4f8499d01",
         content: "test message",
