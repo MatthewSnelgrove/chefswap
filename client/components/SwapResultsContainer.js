@@ -21,54 +21,57 @@ export default class SwapResultsContainer extends Component {
     const numLoadedUsers = this.props.numLoadedUsers;
     const innerRefData = this.props.innerRefData;
 
-    const exUserJSX = searchState.map((user, index) => (
-      <SwapListing
-        innerRef={index + 1 == numLoadedUsers ? lastUser : null}
-        innerRefData={index + 1 == numLoadedUsers ? innerRefData : null}
-        pfpLink={user.pfpLink}
-        username={user.username}
-        distance={user.distance}
-        rating={user.avg_rating}
-        cuisineSpecialities={user.cuisineSpecialities}
-        key={user.username}
-        accountUid={user.accountUid}
-        numRatings={user.numRatings}
-        finalColJsx={
-          <>
-            <button
-              style={{ border: "0px" }}
-              onClick={(e) => {
-                this.createNewSwapRequest(
-                  this.props.user,
-                  user.accountUid,
-                  user.username,
-                  searchDispatch
-                );
-              }}
-            >
-              <img
-                className={styles.small_swap_button}
-                src="/swap.svg"
-                style={{ height: "80px" }}
-              ></img>
-            </button>
-            <button
-              className={styles.swap_button}
-              onClick={(e) => {
-                this.createNewSwapRequest(
-                  this.props.user,
-                  user.accountUid,
-                  user.username,
-                  searchDispatch
-                );
-              }}
-            >
-              <span className={styles.swap_text}>Send Swap Request</span>
-            </button>
-          </>
-        }
-      />
-    ));
+    const exUserJSX = searchState.map(
+      (user, index) =>
+        user.username !== this.props.user.username && (
+          <SwapListing
+            innerRef={index + 1 == numLoadedUsers ? lastUser : null}
+            innerRefData={index + 1 == numLoadedUsers ? innerRefData : null}
+            pfpLink={user.pfpLink}
+            username={user.username}
+            distance={user.distance}
+            rating={user.avg_rating}
+            cuisineSpecialities={user.cuisineSpecialities}
+            key={user.username}
+            accountUid={user.accountUid}
+            numRatings={user.numRatings}
+            finalColJsx={
+              <>
+                <button
+                  style={{ border: "0px" }}
+                  onClick={(e) => {
+                    this.createNewSwapRequest(
+                      this.props.user,
+                      user.accountUid,
+                      user.username,
+                      searchDispatch
+                    );
+                  }}
+                >
+                  <img
+                    className={styles.small_swap_button}
+                    src="/swap.svg"
+                    style={{ height: "80px" }}
+                  ></img>
+                </button>
+                <button
+                  className={styles.swap_button}
+                  onClick={(e) => {
+                    this.createNewSwapRequest(
+                      this.props.user,
+                      user.accountUid,
+                      user.username,
+                      searchDispatch
+                    );
+                  }}
+                >
+                  <span className={styles.swap_text}>Send Swap Request</span>
+                </button>
+              </>
+            }
+          />
+        )
+    );
 
     return (
       <div className={styles.swap_results_container}>
