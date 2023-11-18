@@ -25,7 +25,7 @@ function LoggedIn(props) {
 
   return (
     <nav
-      className={`navbar navbar-expand-sm navbar-fixed ${styles.navbar_fixed}`}
+      className={`navbar navbar-expand-md navbar-fixed ${styles.navbar_fixed}`}
     >
       <div className="container-fluid">
         <div className="navbar-brand">
