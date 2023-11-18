@@ -3,7 +3,6 @@ import EditListLink from "../../components/EditListLink";
 import OnlyLoggedIn from "../../components/OnlyLoggedIn";
 import styles from "../../styles/UserEditPage.module.css";
 import EditProfile from "../../components/EditProfile";
-import EditPassword from "../../components/EditPassword";
 import EditGallery from "../../components/EditGallery";
 import EditPersonal from "../../components/EditPersonal";
 import Head from "next/head";
@@ -23,7 +22,6 @@ function UserEditPage() {
 
   const editComponentMap = {
     profile: <EditProfile />,
-    password: <EditPassword />,
     gallery: <EditGallery />,
     personal: <EditPersonal />,
   };
@@ -45,15 +43,6 @@ function UserEditPage() {
               onClick={() => setTabSelected("profile")}
               display="Edit Profile"
               smallImg="/person.svg"
-            />
-            <EditListLink
-              // curSelected={props.name}
-              // link={pages.editPassword}
-              // listType="EditPassword"
-              selected={tabSelected === "password"}
-              onClick={() => setTabSelected("password")}
-              display="Change Password"
-              smallImg="/lock.svg"
             />
             <EditListLink
               // curSelected={props.name}

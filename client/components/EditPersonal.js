@@ -1,6 +1,10 @@
 import { React, useState, useEffect } from "react";
 import { fetchSpecific } from "../utils/fetchFunctions";
-import { changeAddress, changeEmail } from "../utils/changeFunctions";
+import {
+  changeAddress,
+  changeEmail,
+  changePassword,
+} from "../utils/changeFunctions";
 import Select from "react-select";
 import { useUser } from "./useUser";
 import ProfilePicture from "./ProfilePicture";
@@ -12,6 +16,7 @@ import {
   validateOptionalAddress,
   validatePostalCode,
   validateProvince,
+  validatePassword,
 } from "../utils/validationFunctions";
 import { toast } from "react-toastify";
 import styles from "./styles/EditPassword.module.scss";
@@ -46,9 +51,10 @@ function cleanEmptyJSON(JSON) {
   );
 }
 
-function EditPersonal(props) {
+function EditPersonal() {
   // State holding all fields needed for specific form
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [address, setAddress] = useState({
     address1: "",
     address2: "",
@@ -60,6 +66,7 @@ function EditPersonal(props) {
 
   // State holding if fields clicked
   const [emailClicked, setEmailClicked] = useState(false);
+  const [passwordClicked, setPasswordClicked] = useState(false);
   const [addressClicked, setAddressClicked] = useState({
     address1: false,
     address2: false,
@@ -71,11 +78,15 @@ function EditPersonal(props) {
 
   // State holding form error message
   const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [addressError, setAddressError] = useState("");
 
   // Handles input change and updates state
   function handleEmailChange(field) {
     setEmail(field.email);
+  }
+  function handlePasswordChange(field) {
+    setPassword(field.password);
   }
   function handleAddressChange(field) {
     setAddress({
@@ -88,6 +99,9 @@ function EditPersonal(props) {
   function handleEmailBlur() {
     setEmailClicked(true);
   }
+  function handlePasswordBlur() {
+    setPasswordClicked(true);
+  }
   function handleAddressBlur(field) {
     setAddressClicked({
       ...addressClicked,
@@ -98,6 +112,7 @@ function EditPersonal(props) {
   // Handle input errors
   let errors = {};
   errors.email = validateEmail(email);
+  errors.password = validatePassword(password);
   errors.address = {};
   errors.address.address1 = validateAddress(address.address1);
   errors.address.address2 = validateOptionalAddress(address.address2);
@@ -118,12 +133,12 @@ function EditPersonal(props) {
       // Set form error
       setEmailError(`Error found in email: ${errors.email.msg}`);
     } else {
-      // Handle API call to change password
+      // Handle API call to change email
       let emailPromise = changeEmail(uid, { email: email });
 
       emailPromise
         .then((res) => {
-          console.log(res.status);
+          console.log(res);
           if (res.status === 200) {
             toast.success(`Successfully changed email`, {
               position: toast.POSITION.TOP_RIGHT,
@@ -148,6 +163,49 @@ function EditPersonal(props) {
     }
   }
 
+  // Handle password submit
+  function handlePasswordSubmit(e, uid) {
+    e.preventDefault();
+
+    if (errors.password.error) {
+      // Focus on first input with error
+      document.getElementById("password").focus();
+
+      // Set form error
+      setPasswordError(`Error found in password: ${errors.password.msg}`);
+    } else {
+      // Handle API call to change email
+      let passwordPromise = changePassword(uid, password);
+
+      passwordPromise
+        .then((res) => {
+          console.log(res.status);
+          // Matches all 200 status codes because changing password returns 204 code (?)
+          if (/^20[0-9]$/.test(res.status)) {
+            toast.success(`Successfully changed password`, {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+          } else return res.json();
+        })
+        .then((json) => {
+          // Logs not needed
+          console.log(json);
+          console.log(json[0].detail);
+
+          // Scroll to form error message
+          document
+            .getElementById("form-error-msg")
+            .scrollIntoView({ behavior: "smooth" });
+
+          // Set form error from server
+          setPasswordError(json[0].detail);
+        })
+        .catch((err) => {
+          console.log("Unexpected error in passwordPromise: " + err);
+        });
+    }
+  }
+
   // Handle address submit
   function handleAddressSubmit(e, uid) {
     e.preventDefault();
@@ -168,7 +226,7 @@ function EditPersonal(props) {
       // Set form error
       setAddressError(`Error found in address: ${errors.address.msg}`);
     } else {
-      // Handle API call to change password
+      // Handle API call to change address
       let addressPromise = changeAddress(uid, cleanEmptyJSON(address));
 
       addressPromise
@@ -271,6 +329,55 @@ function EditPersonal(props) {
             style={{ marginTop: "20px" }}
           >
             Change Email
+          </button>
+        </form>
+
+        <div
+          className={styles.input_error_msg}
+          id="form-error-msg"
+          style={{
+            visibility: !emailError ? "hidden" : "visible",
+            width: "90%",
+            fontSize: "1em",
+            textAlign: "center",
+          }}
+        >
+          {emailError}
+        </div>
+
+        <div
+          className={styles.info_text}
+          style={{ fontWeight: "600", marginTop: "25px" }}
+        >
+          Change Password
+        </div>
+        <div className={styles.info_text}>
+          You can change your password without changing your address
+        </div>
+
+        <form
+          onSubmit={(e) => handlePasswordSubmit(e, user.accountUid)}
+          style={{ width: "100%" }}
+        >
+          <div style={{ marginTop: "30px", width: "80%", marginLeft: "-10px" }}>
+            <CredentialField
+              type="password"
+              label="Password"
+              id="password"
+              size={100}
+              value={password}
+              onChange={handlePasswordChange}
+              onBlur={handlePasswordBlur}
+              clicked={passwordClicked}
+              error={errors.password}
+              required
+            />
+          </div>
+          <button
+            className={fieldStyles.submitBtn}
+            style={{ marginTop: "20px" }}
+          >
+            Change Password
           </button>
         </form>
 
