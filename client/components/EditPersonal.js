@@ -303,7 +303,7 @@ function EditPersonal() {
           Change Email
         </div>
         <div className={styles.info_text}>
-          You can change your email without changing your address
+          You can change your email without changing your other information
         </div>
 
         <form
@@ -352,7 +352,7 @@ function EditPersonal() {
           Change Password
         </div>
         <div className={styles.info_text}>
-          You can change your password without changing your address
+          You can change your password without changing your other information
         </div>
 
         <form
@@ -405,7 +405,7 @@ function EditPersonal() {
           Change Address
         </div>
         <div className={styles.info_text}>
-          You can change your address without changing your email
+          You can change your address without changing your other information
         </div>
 
         <form
