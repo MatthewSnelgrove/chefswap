@@ -7,6 +7,7 @@ import { useUser } from "./useUser";
 import ProfilePicture from "./ProfilePicture";
 import global_vars from "../utils/config.js";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 function Navbar() {
   const user = useUser();
@@ -20,6 +21,7 @@ function Navbar() {
 
 function LoggedIn(props) {
   const user = props.user;
+  const pathname = usePathname();
 
   return (
     <nav
@@ -45,13 +47,36 @@ function LoggedIn(props) {
         <div className="collapse navbar-collapse" id="navbarNavDropdown">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <div className={`nav-link ${styles.nav_link}`}>
+              <div
+                className={`nav-link ${
+                  pathname.includes("/my-swaps")
+                    ? styles.current_nav_link
+                    : styles.nav_link
+                }`}
+              >
                 <Link href="/my-swaps">My Swaps</Link>
               </div>
             </li>
             <li className="nav-item">
-              <div className={`nav-link ${styles.nav_link}`}>
+              <div
+                className={`nav-link ${
+                  pathname.includes("/find-swap")
+                    ? styles.current_nav_link
+                    : styles.nav_link
+                }`}
+              >
                 <Link href="/find-swap">Find a Swap</Link>
+              </div>
+            </li>
+            <li className="nav-item">
+              <div
+                className={`nav-link ${
+                  pathname.includes("/my-messages")
+                    ? styles.current_nav_link
+                    : styles.nav_link
+                }`}
+              >
+                <Link href="/my-messages">Messages</Link>
               </div>
             </li>
           </ul>
