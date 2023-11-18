@@ -274,55 +274,57 @@ function Signup() {
                 error={errors.city}
               />
 
-              <Select
-                className="province-dropdown"
-                classNamePrefix="province-dropdown"
-                options={provinces}
-                isClearable={true}
-                isSearchable={true}
-                placeholder={<div>Province *</div>}
-                name="province"
-                required
-                onChange={() => {
-                  setTimeout(() => {
-                    let province =
-                      document.getElementsByName("province")[0].value;
-                    console.log(`Province: ${province}`);
-                    handleFieldChange({ province: province });
-                  }, 100);
-                }}
-                onBlur={() => {
-                  handleFieldBlur("province");
-                }}
-                styles={{
-                  control: (styles) => {
-                    return {
-                      ...styles,
-                      ":focus": {
-                        boxShadow: "0 0 0 1px #FB8C00",
-                        borderColor: "#FB8C00",
-                      },
-                    };
-                  },
-                  option: (
-                    styles,
-                    { data, isDisabled, isFocused, isSelected }
-                  ) => {
-                    return {
-                      ...styles,
-                      backgroundColor: isSelected
-                        ? "#FFA726"
-                        : isFocused
-                        ? "#ffa8262f"
-                        : "white",
-                      ":active": {
-                        ...styles[":active"],
-                        backgroundColor: "#ffa8266d",
-                      },
-                    };
-                  },
-                }}
-              />
+              <div style={{ width: "86%" }}>
+                <Select
+                  className="province-dropdown"
+                  classNamePrefix="province-dropdown"
+                  options={provinces}
+                  isClearable={true}
+                  isSearchable={true}
+                  placeholder={<div>Province *</div>}
+                  name="province"
+                  required
+                  onChange={() => {
+                    setTimeout(() => {
+                      let province =
+                        document.getElementsByName("province")[0].value;
+                      console.log(`Province: ${province}`);
+                      handleFieldChange({ province: province });
+                    }, 100);
+                  }}
+                  onBlur={() => {
+                    handleFieldBlur("province");
+                  }}
+                  styles={{
+                    control: (styles) => {
+                      return {
+                        ...styles,
+                        ":focus": {
+                          boxShadow: "0 0 0 1px #FB8C00",
+                          borderColor: "#FB8C00",
+                        },
+                      };
+                    },
+                    option: (
+                      styles,
+                      { data, isDisabled, isFocused, isSelected }
+                    ) => {
+                      return {
+                        ...styles,
+                        backgroundColor: isSelected
+                          ? "#FFA726"
+                          : isFocused
+                          ? "#ffa8262f"
+                          : "white",
+                        ":active": {
+                          ...styles[":active"],
+                          backgroundColor: "#ffa8266d",
+                        },
+                      };
+                    },
+                  }}
+                />
+              </div>
 
               <div
                 className={fieldStyles.input_error_msg}
