@@ -61,7 +61,8 @@ export async function getStaticProps({ params }) {
   if (similarUsers.length === 0) return { notFound: true };
 
   const user = similarUsers[0].profile;
-  if (user.username !== id) return { notFound: true };
+  // TODO: page crashes when username doesn't exist in db
+  if (user?.username !== id) return { notFound: true };
 
   return {
     props: { user },
