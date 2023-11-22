@@ -11,121 +11,551 @@ servers:
 channels:
   /:
     publish:
-      operationId: sendMesssage
-      summary: Send message related data to the server
+      summary: Send message related data to the server. Use the x-ack property to listen for a response.
       message:
         oneOf:
-          - $ref: "#/components/messages/SendUserMessage"
           - $ref: "#/components/messages/GetMessages"
+          - $ref: "#/components/messages/SendMessage"
+          - $ref: "#/components/messages/EditMessage"
+          - $ref: "#/components/messages/DeleteMessage"
+          - $ref: "#/components/messages/ReadMessages"
+          - $ref: "#/components/messages/GetConversations"
+          - $ref: "#/components/messages/JoinConversation"
+          - $ref: "#/components/messages/LeaveConversation"
     subscribe:
-      operationId: listenForMessage
       summary: Listen for message related data from the server
       message:
         oneOf:
-          - $ref: "#/components/messages/ReceiveUserMessage"
-          - $ref: "#/components/messages/ReceiveSystemMessage"
+          - $ref: "#/components/messages/ReceiveMessage"
+          - $ref: "#/components/messages/ReceiveMessageEdit"
+          - $ref: "#/components/messages/ReceiveMessageDelete"
+          - $ref: "#/components/messages/ReceiveReadMessages"
+          - $ref: "#/components/messages/ReceiveConversationActivation"
 components:
   messages:
-    SendUserMessage:
-      name: sendUserMessage
+    GetMessages:
+      messageId: getMessages
+      name: getMessages
+      summary: Get past messages in a conversation. Use idKey and limit for pagination.
+      contentType: application/json
+      payload:
+        type: object
+        description: Get messages for a conversation
+        required:
+          - messagerUid
+          - limit
+        properties:
+          messagerId:
+            type: string
+            format: uuid
+          curMessageId:
+            type: string
+            format: uuid
+          limit:
+            type: integer
+            minimum: 1
+      x-ack:
+        args:
+          oneOf:
+            - type: object
+              required:
+                - messages
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Message"
+            - $ref: "#/components/schemas/ErrorPayload"
+    SendMessage:
+      messageId: sendMessage
+      name: sendMessage
       contentType: application/json
       payload:
         type: object
         required:
-          - receiver_uid
-          - content
+          - message
         properties:
-          receiver_uid:
-            type: string
-            format: uuid
-          content:
-            $ref: "#/components/schemas/messageContent"
+          parentMessageId:
+            $ref: "#/components/schemas/MongoId"
+          message:
+            $ref: "#/components/schemas/SimpleMessagePayload"
       x-ack:
         args:
-          $ref: "#/components/schemas/userMessagePayload"
-    GetMessages:
-      name: getMessages
-      summary: Get past messages between account with uid messagerUid. Use timestampKey and limit for pagination.
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/ErrorPayload"
+    EditMessage:
+      messageId: editMessage
+      name: editMessage
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - messageId
+          - content
+        properties:
+          messageId:
+            $ref: "#/components/schemas/MongoId"
+          content:
+            type: string
+            maxLength: 1000
+          mentions:
+            type: array
+            items:
+              $ref: "#/components/schemas/MongoId"
+      x-ack:
+        args:
+          oneOf:
+            - $ref: "#/components/schemas/MessagePayload"
+            - $ref: "#/components/schemas/ErrorPayload"
+    ReactToMessage:
+      messageId: reactToMessage
+      name: reactToMessage
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - messageId
+          - reaction
+        properties:
+          messageId:
+            $ref: "#/components/schemas/MongoId"
+          reaction:
+            type: string
+            # TODO: add emoji validation (regex or enum)
+      x-ack:
+        args:
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/ErrorPayload"
+    DeleteMessage:
+      messageId: deleteMessage
+      name: deleteMessage
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - messageId
+        properties:
+          messageId:
+            $ref: "#/components/schemas/MongoId"
+      x-ack:
+        args:
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/ErrorPayload"
+    ReadMessages:
+      messageId: readMessages
+      name: readMessages
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - groupId
+        properties:
+          groupId:
+            $ref: "#/components/schemas/MongoId"
+      x-ack:
+        args:
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/ErrorPayload"
+    GetConversations:
+      messageId: getConverstations
+      name: getConverstations
+      summary: Get all converstations that the signed in account is a part of
+      contentType: application/json
+      x-ack:
+        args:
+          oneOf:
+            - type: object
+              required:
+                - converstations
+              properties:
+                conversations:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Conversation"
+            - $ref: "#/components/schemas/ErrorPayload"
+    JoinConversation:
+      messageId: joinConversation
+      name: joinConversation
+      summary: Join a new conversation
       contentType: application/json
       payload:
         type: object
         required:
           - messagerUid
-          - timestampKey
-          - limit
         properties:
           messagerUid:
             type: string
             format: uuid
-          timestampKey:
-            type: string
-            format: date-time
-          limit:
-            type: number
-            format: integer
-            minimum: 1
       x-ack:
         args:
+          oneOf:
+            - $ref: "#/components/schemas/Conversation"
+            - $ref: "#/components/schemas/ErrorPayload"
+    LeaveConversation:
+      messageId: leaveConversation
+      name: leaveConversation
+      summary: Leave a conversation
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - messagerUid
+        properties:
+          messagerUid:
+            type: string
+            format: uuid
+      x-ack: 
+        args:
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/ErrorPayload"
+    GetGroupUsers:
+      messageId: getGroupUsers
+      name: getGroupUsers
+      summary: Get all users in a group.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - groupId
+        properties:
+          groupId:
+            $ref: "#/components/schemas/MongoId"
+      x-ack:
+        args:
+          oneOf:
+            - type: object
+              required:
+                - users
+              properties:
+                users:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: "#/components/schemas/SimpleUser"
+                      - type: object
+                        properties:
+                          roles:
+                            $ref: "#/components/schemas/GroupRoles"
+            - $ref: "#/components/schemas/ErrorPayload"
+    AddToGroup:
+      messageId: addToGroup
+      name: addToGroup
+      summary: Add a user to a group.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - groupId
+          - userId
+        properties:
+          groupId:
+            $ref: "#/components/schemas/MongoId"
+          userId:
+            $ref: "#/components/schemas/MongoId"
+      x-ack:
+        args:
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/ErrorPayload"
+    RemoveFromGroup:
+      messageId: removeFromGroup
+      name: removeFromGroup
+      summary: Remove a user from a group.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - groupId
+          - userId
+        properties:
+          groupId:
+            $ref: "#/components/schemas/MongoId"
+          userId:
+            $ref: "#/components/schemas/MongoId"
+      x-ack:
+        args:
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/ErrorPayload"
+    LeaveGroup:
+      messageId: leaveGroup
+      name: leaveGroup
+      summary: Leave a group.
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - groupId
+        properties:
+          groupId:
+            $ref: "#/components/schemas/MongoId"
+      x-ack:
+        args:
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/ErrorPayload"
+    ReceiveMessage:
+      messageId: receiveMessage
+      name: receiveMessage
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/MessagePayload"
+    ReceiveMessageEdit:
+      messageId: receiveMessageEdit
+      name: receiveMessageEdit
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/MessagePayload"
+    ReceiveMessageReact:
+      messageId: receiveMessageReact
+      name: receiveMessageReact
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/MessagePayload"
+    ReceiveMessageDelete:
+      messageId: receiveMessageDelete
+      name: receiveMessageDelete
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - messageId
+        properties:
+          messageId:
+            $ref: "#/components/schemas/MongoId"
+    ReceiveReadMessages:
+      messageId: receiveReadMessages
+      name: receiveReadMessages
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - message
+          - readBy
+        properties:
+          message:
+            $ref: "#/components/schemas/SimpleMessagePayload"
+          readBy:
+            $ref: "#/components/schemas/SimpleUser"
+    ReceiveGroupInvite:
+      messageId: receiveGroupInvite
+      name: receiveGroupInvite
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - group
+          - user
+        properties:
+          group:
+            $ref: "#/components/schemas/SimpleGroup"
+          user:
+            $ref: "#/components/schemas/SimpleUser"
+    ReceiveGroupRemoval:
+      messageId: receiveGroupRemoval
+      name: receiveGroupRemoval
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - group
+          - user
+        properties:
+          group:
+            $ref: "#/components/schemas/SimpleGroup"
+          user:
+            $ref: "#/components/schemas/SimpleUser"
+    ReceiveConversationActivation:
+      messageId: receiveConversationActivation
+      name: receiveConversationActivation
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - conversation
+        properties:
+          conversation:
+            $ref: "#/components/schemas/Conversation"
+  schemas:
+    MessagePayload:
+      type: object
+      required:
+        - messageUid
+        - senderUid
+        - converstaionUid
+        - content
+        - createdTimestamp
+      properties:
+        messageUid:
+          $ref: 
+        sender:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/SimpleUser"
+        content:
+          type: string
+          maxLength: 1000
+        mentions:
           type: array
           items:
-            oneOf:
-              - $ref: "#/components/schemas/userMessagePayload"
-              - $ref: "#/components/schemas/systemMessagePayload"
-    ReceiveUserMessage:
-      name: receiveUserMessage
-      contentType: application/json
-      payload:
-        $ref: "#/components/schemas/userMessagePayload"
-    ReceiveSystemMessage:
-      name: receiveSystemMessage
-      contentType: application/json
-      payload:
-        $ref: "#/components/schemas/systemMessagePayload"
-  schemas:
-    userMessagePayload:
+            $ref: "#/components/schemas/SimpleUser"
+        attachment:
+          type: string
+          format: uri
+        reactions:
+          readOnly: true
+          allOf:
+            - type: array
+              items:
+                type: object
+                required:
+                  - emoji
+                  - users
+                properties:
+                  emoji:
+                    type: string
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SimpleUser"
+        createdAt:
+          readOnly: true
+          allOf:
+            - type: string
+              format: date-time
+        updatedAt:
+          readOnly: true
+          allOf:
+            - type: string
+              format: date-time
+    User:
+      allOf:
+        - $ref: "#/components/schemas/SimpleUser"
+        - type: object
+          required:
+            - groups
+          properties:
+            groups:
+              type: array
+              items:
+                type: object
+                required:
+                  - group
+                  - roles
+                  - lastReadMessage
+                properties:
+                  group:
+                    $ref: "#/components/schemas/SimpleGroup"
+                  roles:
+                    $ref: "#/components/schemas/GroupRoles"
+                  lastReadMessage:
+                    $ref: "#/components/schemas/SimpleMessagePayload"
+    SimpleUser:
+      type: object
       required:
-        - message_uid
-        - sender_uid
-        - receiver_uid
-        - content
-        - timestamp
+        - _id
+        - username
+        - email
+        - profilePicture
       properties:
-        message_uid:
+        _id:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/MongoId"
+        username:
           type: string
-          format: uuid
-        sender_uid:
+          maxLength: 100
+        email:
           type: string
-          format: uuid
-        receiver_uid:
+          maxLength: 100
+        profilePicture:
           type: string
-          format: uuid
-        content:
-          $ref: "#/components/schemas/messageContent"
-        timestamp:
+          format: uri
+        phoneNumber:
           type: string
-          format: date-time
-    systemMessagePayload:
+        bio:
+          type: string
+          maxLength: 300
+    Conversation:
+      type: object
       required:
-        - message_uid
-        - account1_uid
-        - account2_uid
-        - content
-        - timestamp
+        - messagerUid
       properties:
-        message_uid:
+        messagerUid:
           type: string
           format: uuid
-        account1_uid:
-          type: string
-          format: uuid
-        account2_uid:
-          type: string
-          format: uuid
-        content:
-          $ref: "#/components/schemas/messageContent"
-        timestamp:
-          type: string
-          format: date-time
-    messageContent:
+        messagerSeen:
+          type: boolean
+        mySeen:
+          type: boolean
+    ErrorPayload:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/components/schemas/CommonError"
+              - oneOf:
+                  - $ref: "#/components/schemas/ValidationError"
+                  - $ref: "#/components/schemas/BusinessError"
+                  - $ref: "#/components/schemas/ServerError"
+    GroupRoles:
+      type: array
+      items:
+        type: string
+        enum:
+          - admin
+          - member
+    MongoId:
       type: string
-      maxLength: 300
+      # some format?
+    CommonError:
+      type: object
+      required:
+        - errorType
+        - event
+        - message
+        - detail
+      properties:
+        errorType:
+          type: string
+          enum:
+            - validation
+            - business
+            - server
+        event:
+          type: string
+        message:
+          type: string
+        detail:
+          type: string
+    ValidationError:
+      type: object
+      required:
+        - path
+      properties:
+        errorType:
+          type: string
+          const: "validation"
+        path:
+          type: string
+    BusinessError:
+      type: object
+      properties:
+        errorType:
+          type: string
+          const: "business"
+    ServerError:
+      type: object
+      properties:
+        errorType:
+          type: string
+          const: "server"

@@ -55,3 +55,6 @@ export const ratingNotFound = new BusinessError({
   message: "rating not found",
   detail: "rating with specified accountUid and swapperUid not found",
 });
+
+
+
