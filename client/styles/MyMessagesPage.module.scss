@@ -1,0 +1,236 @@
+.container {
+  margin-top: var(--navbar-height);
+  display: flex;
+  height: calc(100vh - var(--navbar-height));
+
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+  }
+
+  // button {
+  //   border: 0;
+  //   background: none;
+  //   cursor: pointer;
+  // }
+}
+
+.sidebar {
+  // need min-width before collapsing
+  border-right: 1px solid black;
+  height: 100%;
+  z-index: 100;
+}
+
+.sidebar_header {
+  padding: 15px 25px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid gray;
+  box-shadow: 0 4px 6px -2px gray;
+}
+
+.title_row {
+  display: flex;
+  gap: 50px;
+  align-items: flex-end;
+}
+
+.title {
+  font-size: 2.5em;
+  font-weight: 700;
+}
+
+.options, .recipient_more_options {
+  border: 0;
+  background: 0;
+  padding: 0;
+}
+
+.search {
+  margin-top: 20px;
+  position: relative;
+}
+
+.search_input {
+  border-radius: 15px;
+  padding: 7px 15px;
+  padding-left: 40px;
+  background-color: rgb(244, 244, 244);
+}
+
+.search_icon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+}
+
+// TODO: Verify this works
+.conversations {
+  overflow-y: auto;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.content_header {
+  width: 100%;
+}
+
+.recipient_row {
+  // If changing height or vertical padding, change corresponding profile picture sizes
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 40px;
+  background-color: var(--cs-cream-1);
+  border-bottom: 1px solid gray;
+  box-shadow: 0 4px 6px -2px gray;
+  position: relative;
+}
+
+.recipient_info {
+  display: flex;
+  gap: 20px;
+  height: 100%;
+  align-items: center;
+}
+
+.recipient_photo {
+  border-radius: 999px;
+  border: 1px solid black;
+  overflow: hidden;
+}
+
+.recipient_name {
+  font-size: 1.8em;
+  font-weight: 600;
+}
+
+.swap_request {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 40px;
+  background-color: rgb(236, 236, 236);
+  border-bottom: 1px solid black;
+  z-index: 9;
+}
+
+.swap_graphic_text {
+  display: flex;
+  gap: 20px;
+}
+
+.swap_text {
+}
+
+.swap_requester, .context_user {
+  font-weight: 500;
+}
+
+.swap_options {
+  display: flex;
+  gap: 15px;
+}
+
+.swap_accept, .swap_decline {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background-color: var(--cs-orange-5);
+  border: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.swap_decline {
+  background-color: gray;
+}
+.swap_accept:hover, .swap_decline:hover, .add_media_button:hover, .send_button:hover {
+  filter: brightness(0.9);
+  transition: filter 0.15s;
+}
+.swap_accept:active, .swap_decline:active, .add_media_button:active, .send_button:active {
+  filter: brightness(0.75);
+  transition: filter 0.1s;
+}
+
+.messages_area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 40px;
+  // TODO: remove bg after development
+  background-color: rgb(250, 250, 250);
+}
+
+.input_container {
+  height: fit-content;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.add_media_button, .send_button {
+  width: 50px;
+  height: 50px;
+  border-radius: 999px;
+  background-color: rgb(207, 207, 207);
+  padding: 0;
+  border: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.send_button {
+  background-color: var(--cs-orange-5);
+  width: 55px;
+  height: 55px;
+  padding-left: 5px;
+}
+
+.input_section {
+  position: relative;
+}
+
+.input_context {
+  position: absolute;
+  z-index: 10;
+  bottom: 100%;
+  left: 25px;
+  width: calc(100% - 50px);
+  height: 35px;
+  background-color: rgb(220, 220, 220);
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.input_context_close {
+  padding: 0;
+  border: 0;
+  background-color: gray;
+  width: 25px;
+  height: 25px;
+  border-radius: 999px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat_input {
+  width: 500px;
+  padding: 13px 25px;
+  border-radius: 20px;
+  font-size: 1.08em;
+  background-color: rgb(244, 244, 244);
+}
