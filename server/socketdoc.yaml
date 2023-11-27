@@ -18,7 +18,7 @@ channels:
           - $ref: "#/components/messages/SendMessage"
           - $ref: "#/components/messages/EditMessage"
           - $ref: "#/components/messages/DeleteMessage"
-          - $ref: "#/components/messages/ReadMessages"
+          - $ref: "#/components/messages/ReadMessage"
           - $ref: "#/components/messages/GetConversations"
           - $ref: "#/components/messages/JoinConversation"
           - $ref: "#/components/messages/LeaveConversation"
@@ -29,7 +29,7 @@ channels:
           - $ref: "#/components/messages/ReceiveMessage"
           - $ref: "#/components/messages/ReceiveMessageEdit"
           - $ref: "#/components/messages/ReceiveMessageDelete"
-          - $ref: "#/components/messages/ReceiveReadMessages"
+          - $ref: "#/components/messages/ReceiveReadMessage"
           - $ref: "#/components/messages/ReceiveConversationActivation"
 components:
   messages:
@@ -65,7 +65,7 @@ components:
                   type: array
                   items:
                     $ref: "#/components/schemas/Message"
-            - $ref: "#/components/schemas/ErrorPayload"
+            - $ref: "#/components/schemas/Error"
     SendMessage:
       messageId: sendMessage
       name: sendMessage
@@ -75,15 +75,13 @@ components:
         required:
           - message
         properties:
-          parentMessageId:
-            $ref: "#/components/schemas/MongoId"
           message:
-            $ref: "#/components/schemas/SimpleMessagePayload"
+            $ref: "#/components/schemas/Message"
       x-ack:
         args:
           oneOf:
             - type: object # empty ack object
-            - $ref: "#/components/schemas/ErrorPayload"
+            - $ref: "#/components/schemas/Error"
     EditMessage:
       messageId: editMessage
       name: editMessage
@@ -91,43 +89,19 @@ components:
       payload:
         type: object
         required:
-          - messageId
+          - messageUid
           - content
         properties:
-          messageId:
-            $ref: "#/components/schemas/MongoId"
+          messageUid:
+            type: string
+            format: uuid
           content:
-            type: string
-            maxLength: 1000
-          mentions:
-            type: array
-            items:
-              $ref: "#/components/schemas/MongoId"
+            - $ref: "#/components/schemas/MessageContent"
       x-ack:
         args:
           oneOf:
-            - $ref: "#/components/schemas/MessagePayload"
-            - $ref: "#/components/schemas/ErrorPayload"
-    ReactToMessage:
-      messageId: reactToMessage
-      name: reactToMessage
-      contentType: application/json
-      payload:
-        type: object
-        required:
-          - messageId
-          - reaction
-        properties:
-          messageId:
-            $ref: "#/components/schemas/MongoId"
-          reaction:
-            type: string
-            # TODO: add emoji validation (regex or enum)
-      x-ack:
-        args:
-          oneOf:
-            - type: object # empty ack object
-            - $ref: "#/components/schemas/ErrorPayload"
+            - $ref: "#/components/schemas/Message"
+            - $ref: "#/components/schemas/Error"
     DeleteMessage:
       messageId: deleteMessage
       name: deleteMessage
@@ -135,48 +109,50 @@ components:
       payload:
         type: object
         required:
-          - messageId
+          - messageUid
         properties:
-          messageId:
-            $ref: "#/components/schemas/MongoId"
+          messageUid:
+            type: string
+            format: uuid
       x-ack:
         args:
           oneOf:
             - type: object # empty ack object
-            - $ref: "#/components/schemas/ErrorPayload"
-    ReadMessages:
-      messageId: readMessages
-      name: readMessages
+            - $ref: "#/components/schemas/Error"
+    ReadMessage:
+      messageId: readMessage
+      name: readMessage
       contentType: application/json
       payload:
         type: object
         required:
-          - groupId
+          - messageUid
         properties:
-          groupId:
-            $ref: "#/components/schemas/MongoId"
+          messageUid:
+            type: string
+            format: uuid
       x-ack:
         args:
           oneOf:
             - type: object # empty ack object
-            - $ref: "#/components/schemas/ErrorPayload"
+            - $ref: "#/components/schemas/Error"
     GetConversations:
-      messageId: getConverstations
-      name: getConverstations
-      summary: Get all converstations that the signed in account is a part of
+      messageId: getConversations
+      name: getConversations
+      summary: Get all conversations that the signed in account is a part of
       contentType: application/json
       x-ack:
         args:
           oneOf:
             - type: object
               required:
-                - converstations
+                - conversations
               properties:
                 conversations:
                   type: array
                   items:
                     $ref: "#/components/schemas/Conversation"
-            - $ref: "#/components/schemas/ErrorPayload"
+            - $ref: "#/components/schemas/Error"
     JoinConversation:
       messageId: joinConversation
       name: joinConversation
@@ -194,7 +170,7 @@ components:
         args:
           oneOf:
             - $ref: "#/components/schemas/Conversation"
-            - $ref: "#/components/schemas/ErrorPayload"
+            - $ref: "#/components/schemas/Error"
     LeaveConversation:
       messageId: leaveConversation
       name: leaveConversation
@@ -208,115 +184,23 @@ components:
           messagerUid:
             type: string
             format: uuid
-      x-ack: 
-        args:
-          oneOf:
-            - type: object # empty ack object
-            - $ref: "#/components/schemas/ErrorPayload"
-    GetGroupUsers:
-      messageId: getGroupUsers
-      name: getGroupUsers
-      summary: Get all users in a group.
-      contentType: application/json
-      payload:
-        type: object
-        required:
-          - groupId
-        properties:
-          groupId:
-            $ref: "#/components/schemas/MongoId"
-      x-ack:
-        args:
-          oneOf:
-            - type: object
-              required:
-                - users
-              properties:
-                users:
-                  type: array
-                  items:
-                    allOf:
-                      - $ref: "#/components/schemas/SimpleUser"
-                      - type: object
-                        properties:
-                          roles:
-                            $ref: "#/components/schemas/GroupRoles"
-            - $ref: "#/components/schemas/ErrorPayload"
-    AddToGroup:
-      messageId: addToGroup
-      name: addToGroup
-      summary: Add a user to a group.
-      contentType: application/json
-      payload:
-        type: object
-        required:
-          - groupId
-          - userId
-        properties:
-          groupId:
-            $ref: "#/components/schemas/MongoId"
-          userId:
-            $ref: "#/components/schemas/MongoId"
       x-ack:
         args:
           oneOf:
             - type: object # empty ack object
-            - $ref: "#/components/schemas/ErrorPayload"
-    RemoveFromGroup:
-      messageId: removeFromGroup
-      name: removeFromGroup
-      summary: Remove a user from a group.
-      contentType: application/json
-      payload:
-        type: object
-        required:
-          - groupId
-          - userId
-        properties:
-          groupId:
-            $ref: "#/components/schemas/MongoId"
-          userId:
-            $ref: "#/components/schemas/MongoId"
-      x-ack:
-        args:
-          oneOf:
-            - type: object # empty ack object
-            - $ref: "#/components/schemas/ErrorPayload"
-    LeaveGroup:
-      messageId: leaveGroup
-      name: leaveGroup
-      summary: Leave a group.
-      contentType: application/json
-      payload:
-        type: object
-        required:
-          - groupId
-        properties:
-          groupId:
-            $ref: "#/components/schemas/MongoId"
-      x-ack:
-        args:
-          oneOf:
-            - type: object # empty ack object
-            - $ref: "#/components/schemas/ErrorPayload"
+            - $ref: "#/components/schemas/Error"
     ReceiveMessage:
       messageId: receiveMessage
       name: receiveMessage
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/MessagePayload"
+        $ref: "#/components/schemas/Message"
     ReceiveMessageEdit:
       messageId: receiveMessageEdit
       name: receiveMessageEdit
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/MessagePayload"
-    ReceiveMessageReact:
-      messageId: receiveMessageReact
-      name: receiveMessageReact
-      contentType: application/json
-      payload:
-        $ref: "#/components/schemas/MessagePayload"
+        $ref: "#/components/schemas/Message"
     ReceiveMessageDelete:
       messageId: receiveMessageDelete
       name: receiveMessageDelete
@@ -324,52 +208,22 @@ components:
       payload:
         type: object
         required:
-          - messageId
+          - messageUid
         properties:
-          messageId:
-            $ref: "#/components/schemas/MongoId"
-    ReceiveReadMessages:
-      messageId: receiveReadMessages
-      name: receiveReadMessages
+          messageUid:
+            type: string
+            format: uuid
+    ReceiveReadMessage:
+      messageId: receiveReadMessage
+      name: receiveReadMessage
       contentType: application/json
       payload:
         type: object
         required:
           - message
-          - readBy
         properties:
           message:
-            $ref: "#/components/schemas/SimpleMessagePayload"
-          readBy:
-            $ref: "#/components/schemas/SimpleUser"
-    ReceiveGroupInvite:
-      messageId: receiveGroupInvite
-      name: receiveGroupInvite
-      contentType: application/json
-      payload:
-        type: object
-        required:
-          - group
-          - user
-        properties:
-          group:
-            $ref: "#/components/schemas/SimpleGroup"
-          user:
-            $ref: "#/components/schemas/SimpleUser"
-    ReceiveGroupRemoval:
-      messageId: receiveGroupRemoval
-      name: receiveGroupRemoval
-      contentType: application/json
-      payload:
-        type: object
-        required:
-          - group
-          - user
-        properties:
-          group:
-            $ref: "#/components/schemas/SimpleGroup"
-          user:
-            $ref: "#/components/schemas/SimpleUser"
+            $ref: "#/components/schemas/Message"
     ReceiveConversationActivation:
       messageId: receiveConversationActivation
       name: receiveConversationActivation
@@ -382,118 +236,85 @@ components:
           conversation:
             $ref: "#/components/schemas/Conversation"
   schemas:
-    MessagePayload:
+    Message:
       type: object
       required:
         - messageUid
         - senderUid
-        - converstaionUid
         - content
-        - createdTimestamp
+        - createTimestamp
+        - editTimestamp
+        - seen
       properties:
         messageUid:
-          $ref: 
-        sender:
           readOnly: true
           allOf:
-            - $ref: "#/components/schemas/SimpleUser"
+            type: string
+            format: uuid
+        senderUid:
+          readOnly: true
+          allOf:
+            type: string
+            format: uuid
         content:
-          type: string
-          maxLength: 1000
-        mentions:
-          type: array
-          items:
-            $ref: "#/components/schemas/SimpleUser"
-        attachment:
-          type: string
-          format: uri
-        reactions:
-          readOnly: true
-          allOf:
-            - type: array
-              items:
-                type: object
-                required:
-                  - emoji
-                  - users
-                properties:
-                  emoji:
-                    type: string
-                  users:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/SimpleUser"
-        createdAt:
+          - $ref: "#/components/schemas/MessageContent"
+        createTimestamp:
           readOnly: true
           allOf:
             - type: string
               format: date-time
-        updatedAt:
+        editTimestamp:
           readOnly: true
           allOf:
             - type: string
               format: date-time
-    User:
-      allOf:
-        - $ref: "#/components/schemas/SimpleUser"
-        - type: object
-          required:
-            - groups
-          properties:
-            groups:
-              type: array
-              items:
-                type: object
-                required:
-                  - group
-                  - roles
-                  - lastReadMessage
-                properties:
-                  group:
-                    $ref: "#/components/schemas/SimpleGroup"
-                  roles:
-                    $ref: "#/components/schemas/GroupRoles"
-                  lastReadMessage:
-                    $ref: "#/components/schemas/SimpleMessagePayload"
-    SimpleUser:
-      type: object
-      required:
-        - _id
-        - username
-        - email
-        - profilePicture
-      properties:
-        _id:
-          readOnly: true
+        parentMessageUid:
           allOf:
-            - $ref: "#/components/schemas/MongoId"
-        username:
-          type: string
-          maxLength: 100
-        email:
-          type: string
-          maxLength: 100
-        profilePicture:
-          type: string
-          format: uri
-        phoneNumber:
-          type: string
-        bio:
-          type: string
-          maxLength: 300
+            type: string
+            format: uuid
+        seen:
+          type: boolean
+    MessageContent:
+      type: string
+      maxLength: 300
     Conversation:
       type: object
       required:
-        - messagerUid
+        - messager
       properties:
-        messagerUid:
+        messager:
+          readOnly: true
+          allOf:
+            $ref: "#/components/schemas/CondensedAccount"
+        lastMessage:
+          readOnly: true
+          allOf:
+            $ref: "#/components/schemas/Message"
+    CondensedAccount:
+      type: object
+      description: condensed account information related to messaging
+      required:
+        - accountUid
+        - username
+      properties:
+        accountUid:
           type: string
           format: uuid
-        messagerSeen:
-          type: boolean
-        mySeen:
-          type: boolean
-    ErrorPayload:
+        username:
+          $ref: "#/components/schemas/Username"
+        pfpLink:
+          $ref: "#/components/schemas/ImageLink"
+    Username:
+      type: string
+      minLength: 3
+      maxLength: 80
+      pattern: '[^!*''();:@&=+$,/?%#[\]\s]{3,80}' #can't conatain any url reserved characters
+    ImageLink:
+      nullable: true
+      type: string
+      description: link to image in google cloud storage
+      pattern: '^https:\/\/storage\.googleapis\.com\/.+$'
+    Error:
       type: object
       required:
         - errors
@@ -507,16 +328,6 @@ components:
                   - $ref: "#/components/schemas/ValidationError"
                   - $ref: "#/components/schemas/BusinessError"
                   - $ref: "#/components/schemas/ServerError"
-    GroupRoles:
-      type: array
-      items:
-        type: string
-        enum:
-          - admin
-          - member
-    MongoId:
-      type: string
-      # some format?
     CommonError:
       type: object
       required:
