@@ -56,5 +56,10 @@ export const ratingNotFound = new BusinessError({
   detail: "rating with specified accountUid and swapperUid not found",
 });
 
+export const sameUidMessages = new BusinessError({
+  status: 400,
+  message: "same logged in uid for messaging",
+  detail: "sent in uid from payload same as logged in uid",
+});
 
 
