@@ -1,5 +1,6 @@
 import React from "react";
 import OnlyLoggedIn from "../../components/OnlyLoggedIn";
+import Conversation from "../../components/Conversation";
 import Head from "next/head";
 import styles from "../../styles/MyMessagesPage.module.scss";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -9,8 +10,62 @@ import CheckIcon from "@mui/icons-material/CheckRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 
 function MyMessagesPage() {
+  // Mock message data in the format: {content: string, createTimestamp: string, editTimestamp: string | null}
+  const mockMessages = [
+    {
+      content: "Hello!",
+      createTimestamp: "2021-10-01T00:00:00.000Z",
+      editTimestamp: null,
+    },
+    {
+      content: "Hi!",
+      createTimestamp: "2021-10-01T00:00:00.000Z",
+      editTimestamp: null,
+    },
+    {
+      content: "How are you?",
+      createTimestamp: "2021-10-01T00:00:00.000Z",
+      editTimestamp: null,
+    },
+    {
+      content: "Good, you?",
+      createTimestamp: "2021-10-01T00:00:00.000Z",
+      editTimestamp: null,
+    },
+    {
+      content: "I'm good too!",
+      createTimestamp: "2021-10-01T00:00:00.000Z",
+      editTimestamp: null,
+    },
+  ];
+
+  // Mock conversation data in the format: {messager: string, lastMessage: string}
+  const mockConversations = [
+    {
+      messager: "User0",
+      lastMessage: "Lorem ipsum",
+    },
+    {
+      messager: "User1",
+      lastMessage: "Lorem ipsum",
+    },
+    {
+      messager: "User2",
+      lastMessage: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    },
+    {
+      messager: "User3",
+      lastMessage: "Lorem ipsum",
+    },
+    {
+      messager: "User4",
+      lastMessage: "Lorem ipsum",
+    },
+  ];
+
   // TODO: Add notification to webpage title (e.g., (1) Chefswap | Messages)
   return (
     <>
@@ -20,6 +75,7 @@ function MyMessagesPage() {
 
       <OnlyLoggedIn>
         <div className={styles.container}>
+          {/* TODO: Make sidebar a drawer when screen too small */}
           <div className={styles.sidebar}>
             <div className={styles.sidebar_header}>
               <div className={styles.title_row}>
@@ -41,7 +97,8 @@ function MyMessagesPage() {
             </div>
 
             <div className={styles.conversations}>
-              {/* TODO: Populate with conversation data */}
+              <Conversation />
+              <Conversation />
             </div>
           </div>
 
@@ -49,8 +106,12 @@ function MyMessagesPage() {
             <div className={styles.content_header}>
               <div className={styles.recipient_row}>
                 <div className={styles.recipient_info}>
+                  {/* TODO: Make this toggle drawer */}
+                  <button className={styles.toggle_recipients_drawer}>
+                    <MenuRoundedIcon fontSize="large" />
+                  </button>
                   <div className={styles.recipient_photo}>
-                    {/* Change image sizes if container css changes */}
+                    {/* Change image sizes if css changes */}
                     <Image src="/corn.jpg" width={55} height={55} />
                   </div>
                   <h2 className={styles.recipient_name}>Corn</h2>
@@ -95,7 +156,7 @@ function MyMessagesPage() {
                   </div>
                   {/* TODO: Make this button close the chat context */}
                   <button className={styles.input_context_close}>
-                    <CloseRoundedIcon sx={{ color: "white", fontSize: 21 }} />
+                    <CloseRoundedIcon sx={{ color: "white", fontSize: 18 }} />
                   </button>
                 </div>
                 <input

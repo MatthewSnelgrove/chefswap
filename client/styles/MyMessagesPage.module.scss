@@ -22,10 +22,11 @@
 }
 
 .sidebar_header {
-  padding: 15px 25px;
-  padding-bottom: 30px;
+  padding: 10px 25px;
+  padding-bottom: 25px;
   border-bottom: 1px solid gray;
   box-shadow: 0 4px 6px -2px gray;
+  z-index: 9;
 }
 
 .title_row {
@@ -46,7 +47,7 @@
 }
 
 .search {
-  margin-top: 20px;
+  margin-top: 15px;
   position: relative;
 }
 
@@ -55,6 +56,7 @@
   padding: 7px 15px;
   padding-left: 40px;
   background-color: rgb(244, 244, 244);
+  font-size: 0.9em;
 }
 
 .search_icon {
@@ -96,6 +98,13 @@
   gap: 20px;
   height: 100%;
   align-items: center;
+}
+
+.toggle_recipients_drawer {
+  border: 0;
+  background: 0;
+  padding: 0;
+  margin-left: -20px;
 }
 
 .recipient_photo {
@@ -219,8 +228,8 @@
   padding: 0;
   border: 0;
   background-color: gray;
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   border-radius: 999px;
   display: flex;
   justify-content: center;
@@ -229,8 +238,21 @@
 
 .chat_input {
   width: 500px;
-  padding: 13px 25px;
+  padding: 10px 25px;
   border-radius: 20px;
   font-size: 1.08em;
   background-color: rgb(244, 244, 244);
+}
+
+// MEDIA QUERIES
+@media (max-width: 1200px) {
+  .chat_input {
+    width: 400px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .chat_input {
+    width: 300px;
+  }
 }
