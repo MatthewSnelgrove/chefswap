@@ -42,10 +42,10 @@ components:
         type: object
         description: Get messages for a conversation
         required:
-          - messagerUid
+          - interlocutorUid
           - limit
         properties:
-          messagerId:
+          interlocutorUid:
             type: string
             format: uuid
           curMessageId:
@@ -96,7 +96,7 @@ components:
             type: string
             format: uuid
           content:
-            - $ref: "#/components/schemas/MessageContent"
+            $ref: "#/components/schemas/MessageContent"
       x-ack:
         args:
           oneOf:
@@ -161,9 +161,9 @@ components:
       payload:
         type: object
         required:
-          - messagerUid
+          - interlocutorUid
         properties:
-          messagerUid:
+          interlocutorUid:
             type: string
             format: uuid
       x-ack:
@@ -179,9 +179,9 @@ components:
       payload:
         type: object
         required:
-          - messagerUid
+          - interlocutorUid
         properties:
-          messagerUid:
+          interlocutorUid:
             type: string
             format: uuid
       x-ack:
@@ -240,24 +240,27 @@ components:
       type: object
       required:
         - messageUid
+        - interlocutorUid
         - senderUid
         - content
         - createTimestamp
         - editTimestamp
-        - seen
       properties:
         messageUid:
           readOnly: true
           allOf:
-            type: string
-            format: uuid
+            - type: string
+              format: uuid
+        interlocutorUid:
+          type: string
+          format: uuid
         senderUid:
           readOnly: true
           allOf:
-            type: string
-            format: uuid
+            - type: string
+              format: uuid
         content:
-          - $ref: "#/components/schemas/MessageContent"
+          $ref: "#/components/schemas/MessageContent"
         createTimestamp:
           readOnly: true
           allOf:
@@ -270,26 +273,28 @@ components:
               format: date-time
         parentMessageUid:
           allOf:
-            type: string
-            format: uuid
-        seen:
-          type: boolean
+            - type: string
+              format: uuid
     MessageContent:
       type: string
       maxLength: 300
     Conversation:
       type: object
       required:
-        - messager
+        - interlocutor
       properties:
-        messager:
+        interlocutor:
           readOnly: true
           allOf:
-            $ref: "#/components/schemas/CondensedAccount"
+            - $ref: "#/components/schemas/CondensedAccount"
         lastMessage:
           readOnly: true
           allOf:
-            $ref: "#/components/schemas/Message"
+            - $ref: "#/components/schemas/Message"
+        lastSeenMessage:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/Message"
     CondensedAccount:
       type: object
       description: condensed account information related to messaging
@@ -310,7 +315,6 @@ components:
       maxLength: 80
       pattern: '[^!*''();:@&=+$,/?%#[\]\s]{3,80}' #can't conatain any url reserved characters
     ImageLink:
-      nullable: true
       type: string
       description: link to image in google cloud storage
       pattern: '^https:\/\/storage\.googleapis\.com\/.+$'

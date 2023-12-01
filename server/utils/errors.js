@@ -62,4 +62,14 @@ export const sameUidMessages = new BusinessError({
   detail: "sent in uid from payload same as logged in uid",
 });
 
+export const conversationNotFound = new BusinessError({
+  status: 404,
+  message: "conversation not found",
+  detail: "conversation with specified interlocutorUid and accountUid not found"
+})
 
+export const messageNotFound = new BusinessError({
+  status: 404,
+  message: "message not found",
+  detail: "message with specified messageUid"
+})
