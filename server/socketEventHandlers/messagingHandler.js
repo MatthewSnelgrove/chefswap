@@ -7,7 +7,7 @@ import {
   sameUidMessages,
 } from "../utils/errors.js";
 
-function getUid(socket) {
+export function getUid(socket) {
   return socket.request.session.accountUid;
 }
 
@@ -24,6 +24,20 @@ export default (io, socket) => {
   async function getMessages(payload, callback) {
     const loggedUid = getUid(socket);
     const { interlocutorUid, curMessageId, limit } = payload;
+
+    const { rows: conversation } = camelize(
+      await pool.query(
+        ` SELECT conversation.*
+          FROM conversation
+          WHERE (lo_account_uid = $1 AND hi_account_uid = $2) OR (lo_account_uid = $2 AND hi_account_uid = $1)`,
+        [loggedUid, interlocutorUid]
+      )
+    );
+
+    if (!conversation.length) {
+      callback(conversationNotFound);
+      return;
+    }
 
     const { rows } = camelize(
       await pool.query(
