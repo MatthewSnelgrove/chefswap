@@ -13,7 +13,11 @@ import { sessionMiddleware } from "./configServices/sessionConfig.js";
 import { wrap } from "./configServices/sessionConfig.js";
 import { corsConfig } from "./configServices/corsConfig.js";
 import { BusinessError } from "./utils/errors.js";
-// import * as iii from "./openapi.yaml";
+import messagingHandler from "./socketEventHandlers/messagingHandler.js";
+import {
+  validatePayloadByEvent,
+  validateAckByEvent,
+} from "./socketMiddlewares/socketValidator.js";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
 const PORT = process.env.PORT || 3001;
@@ -73,7 +77,6 @@ app.use("/api/v1/accounts", accountsRouter);
 import { router as swapsRouter } from "./routes/swaps.js";
 app.use("/api/v1/swaps", swapsRouter);
 import { router as ratingsRouter } from "./routes/ratings.js";
-import messagingHandler from "./socketEventHandlers/messagingHandler.js";
 app.use("/api/v1/ratings", ratingsRouter);
 
 app.use((err, req, res, next) => {
@@ -102,8 +105,8 @@ app.use((err, req, res, next) => {
     console.log("err is unknown system error");
     res.status(500).json({
       path: req.originalUrl,
-      message: "unknown server error",
-      detail: "request caused an unknown error on the server",
+      message: "internal server error",
+      detail: "request caused an internal error on the server",
     });
   }
 });
@@ -124,16 +127,28 @@ io.use((socket, next) => {
   next();
 });
 
-io.on("connection", (socket, next) => {
+io.on("connection", (socket) => {
   socket.accountUid = socket.request.session.accountUid;
   socket.join(socket.accountUid);
   console.log("a user connected");
   console.log("joinedRoom: " + socket.accountUid);
+  socket.use(validatePayloadByEvent);
+  socket.on("error", ([err, callback]) => {
+    console.log("socket error: ", err);
+    if (callback) {
+      callback(err);
+    }
+  });
   messagingHandler(io, socket);
-
   socket.on("connect_error", (err) => {
     console.log(err.message); // prints the message associated with the error
-    next();
+  });
+
+  socket.on("disconnect", (reason) => {
+    socket.leave(socket.accountUid);
+    console.log("user disconnected");
+    console.log("leftRoom: " + socket.accountUid);
+    console.log("reason: " + reason);
   });
 });
 
