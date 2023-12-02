@@ -14,267 +14,311 @@ channels:
       summary: Send message related data to the server. Use the x-ack property to listen for a response.
       message:
         oneOf:
-          - $ref: "#/components/messages/SendGroupMessage"
-          - $ref: "#/components/messages/SendDmMessage"
-          - $ref: "#/components/messages/GetGroupMessages"
-          - $ref: "#/components/messages/GetDmMessages"
-          - $ref: "#/components/messages/CreateGroup"
-          # - $ref: "#/components/messages/AddToGroup"
-          - $ref: "#/components/messages/LeaveGroup"
-          - $ref: "#/components/messages/DeactivateConversation"
+          - $ref: "#/components/messages/GetMessages"
+          - $ref: "#/components/messages/SendMessage"
+          - $ref: "#/components/messages/EditMessage"
+          - $ref: "#/components/messages/DeleteMessage"
+          - $ref: "#/components/messages/ReadMessage"
           - $ref: "#/components/messages/GetConversations"
+          - $ref: "#/components/messages/JoinConversation"
+          - $ref: "#/components/messages/LeaveConversation"
     subscribe:
       summary: Listen for message related data from the server
       message:
         oneOf:
           - $ref: "#/components/messages/ReceiveMessage"
+          - $ref: "#/components/messages/ReceiveMessageEdit"
+          - $ref: "#/components/messages/ReceiveMessageDelete"
+          - $ref: "#/components/messages/ReceiveReadMessage"
+          - $ref: "#/components/messages/ReceiveConversationActivation"
 components:
   messages:
-    SendGroupMessage:
-      messageId: sendGroupMessage
-      name: sendGroupMessage
-      contentType: application/json
-      payload:
-        $ref: "#/components/schemas/groupMessagePayload"
-      x-ack:
-        args:
-          oneOf:
-            - $ref: "#/components/schemas/groupMessagePayload"
-            - $ref: "#/components/schemas/errorPayload"
-    SendDmMessage:
-      messageId: sendDmMessage
-      name: sendDmMessage
-      contentType: application/json
-      payload:
-        $ref: "#/components/schemas/dmMessagePayload"
-      x-ack:
-        args:
-          oneOf:
-            - $ref: "#/components/schemas/dmMessagePayload"
-            - $ref: "#/components/schemas/errorPayload"
-    GetGroupMessages:
-      messageId: getGroupMessages
-      name: getGroupMessages
-      summary: Get past messages in a group. Use timestampKey and limit for pagination.
+    GetMessages:
+      messageId: getMessages
+      name: getMessages
+      summary: Get past messages in a conversation. Use idKey and limit for pagination.
       contentType: application/json
       payload:
         type: object
-        description: Get messages for a group conversation
+        description: Get messages for a conversation
         required:
-          - groupUid
-          - timestampKey
+          - interlocutorUid
           - limit
         properties:
-          groupUid:
+          interlocutorUid:
             type: string
             format: uuid
-          timestampKey:
+          curMessageId:
             type: string
-            format: date-time
+            format: uuid
           limit:
             type: integer
             minimum: 1
       x-ack:
         args:
-          type: array
-          items:
-            oneOf:
-              - $ref: "#/components/schemas/groupMessagePayload"
-              - $ref: "#/components/schemas/errorPayload"
-    GetDmMessages:
-      messageId: getDmMessages
-      name: getDmMessages
-      summary: Get past messages in a dm. Use timestampKey and limit for pagination.
-      contentType: application/json
-      payload:
-        type: object
-        description: Get messages for a dm conversation
-        required:
-          - dmAccountUid
-          - timestampKey
-          - limit
-        properties:
-          dmAccountUid:
-            type: string
-            format: uuid
-          timestampKey:
-            type: string
-            format: date-time
-          limit:
-            type: integer
-            minimum: 1
-      x-ack:
-        args:
-          type: array
-          items:
-            oneOf:
-              - $ref: "#/components/schemas/dmMessagePayload"
-              - $ref: "#/components/schemas/errorPayload"
-    CreateGroup:
-      messageId: createGroup
-      name: createGroup
-      summary: Create a new group. Automatically added to active conversations.
+          oneOf:
+            - type: object
+              required:
+                - messages
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Message"
+            - $ref: "#/components/schemas/Error"
+    SendMessage:
+      messageId: sendMessage
+      name: sendMessage
       contentType: application/json
       payload:
         type: object
         required:
-          - accounts
+          - message
         properties:
-          accounts:
-            description: other accounts to add to group dm. Logged-in account is automatically added.
-            type: array
-            items:
-              type: string
-              format: uuid
+          message:
+            $ref: "#/components/schemas/Message"
       x-ack:
         args:
           oneOf:
-            - $ref: "#/components/schemas/group"
-            - $ref: "#/components/schemas/errorPayload"
-    LeaveGroup:
-      messageId: leaveGroup
-      name: leaveGroup
-      summary: Leave a group. Account will no longer be a part of the group and will not be able to send or receive messages in the group.
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/Error"
+    EditMessage:
+      messageId: editMessage
+      name: editMessage
       contentType: application/json
       payload:
         type: object
         required:
-          - groupUid
+          - messageUid
+          - content
         properties:
-          groupUid:
+          messageUid:
+            type: string
+            format: uuid
+          content:
+            $ref: "#/components/schemas/MessageContent"
+      x-ack:
+        args:
+          oneOf:
+            - $ref: "#/components/schemas/Message"
+            - $ref: "#/components/schemas/Error"
+    DeleteMessage:
+      messageId: deleteMessage
+      name: deleteMessage
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - messageUid
+        properties:
+          messageUid:
             type: string
             format: uuid
       x-ack:
         args:
           oneOf:
-            - $ref: "#/components/schemas/group"
-            - $ref: "#/components/schemas/errorPayload"
-    DeactivateConversation:
-      messageId: deactivateConversation
-      name: deactivateConversation
-      summary: Deactivate a conversation for an account. No longer appears in their active conversations. Any messages sent in a conversation will automatically reactivate the conversation for all participants. Accepts either he groupUid or accountUid of dm account.
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/Error"
+    ReadMessage:
+      messageId: readMessage
+      name: readMessage
       contentType: application/json
       payload:
-        oneOf:
-          - type: object
-            required:
-              - groupUid
-            properties:
-              groupUid:
-                type: string
-                format: uuid
-          - type: object
-            required:
-              - dmAccountUid
-            properties:
-              dmAccountUid:
-                type: string
-                format: uuid
+        type: object
+        required:
+          - messageUid
+        properties:
+          messageUid:
+            type: string
+            format: uuid
       x-ack:
         args:
           oneOf:
-            - $ref: "#/components/schemas/group"
-            - $ref: "#/components/schemas/dmAccount"
-            - $ref: "#/components/schemas/errorPayload"
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/Error"
     GetConversations:
       messageId: getConversations
       name: getConversations
-      summary: Get all current conversations of signed in account
+      summary: Get all conversations that the signed in account is a part of
       contentType: application/json
       x-ack:
         args:
-          type: array
-          items:
-            oneOf:
-              - $ref: "#/components/schemas/group"
-              - $ref: "#/components/schemas/dmAccount"
+          oneOf:
+            - type: object
+              required:
+                - conversations
+              properties:
+                conversations:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Conversation"
+            - $ref: "#/components/schemas/Error"
+    JoinConversation:
+      messageId: joinConversation
+      name: joinConversation
+      summary: Join a new conversation
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - interlocutorUid
+        properties:
+          interlocutorUid:
+            type: string
+            format: uuid
+      x-ack:
+        args:
+          oneOf:
+            - $ref: "#/components/schemas/Conversation"
+            - $ref: "#/components/schemas/Error"
+    LeaveConversation:
+      messageId: leaveConversation
+      name: leaveConversation
+      summary: Leave a conversation
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - interlocutorUid
+        properties:
+          interlocutorUid:
+            type: string
+            format: uuid
+      x-ack:
+        args:
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/Error"
     ReceiveMessage:
       messageId: receiveMessage
       name: receiveMessage
       contentType: application/json
       payload:
-        oneOf:
-          - $ref: "#/components/schemas/groupMessagePayload"
-          - $ref: "#/components/schemas/dmMessagePayload"
+        $ref: "#/components/schemas/Message"
+    ReceiveMessageEdit:
+      messageId: receiveMessageEdit
+      name: receiveMessageEdit
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/Message"
+    ReceiveMessageDelete:
+      messageId: receiveMessageDelete
+      name: receiveMessageDelete
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - messageUid
+        properties:
+          messageUid:
+            type: string
+            format: uuid
+    ReceiveReadMessage:
+      messageId: receiveReadMessage
+      name: receiveReadMessage
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - message
+        properties:
+          message:
+            $ref: "#/components/schemas/Message"
+    ReceiveConversationActivation:
+      messageId: receiveConversationActivation
+      name: receiveConversationActivation
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - conversation
+        properties:
+          conversation:
+            $ref: "#/components/schemas/Conversation"
   schemas:
-    commonMessage:
+    Message:
       type: object
       required:
         - messageUid
+        - interlocutorUid
+        - senderUid
         - content
-        - timestamp
+        - createTimestamp
+        - editTimestamp
       properties:
         messageUid:
           readOnly: true
+          allOf:
+            - type: string
+              format: uuid
+        interlocutorUid:
           type: string
           format: uuid
         senderUid:
           readOnly: true
-          type: string
-          format: uuid
+          allOf:
+            - type: string
+              format: uuid
         content:
-          type: string
-          maxLength: 300
-        timestamp:
+          $ref: "#/components/schemas/MessageContent"
+        createTimestamp:
           readOnly: true
-          type: string
-          format: date-time
-    groupMessagePayload:
-      allOf:
-        - $ref: "#/components/schemas/commonMessage"
-        - type: object
-          required:
-            - groupUid
-          properties:
-            groupUid:
-              type: string
+          allOf:
+            - type: string
+              format: date-time
+        editTimestamp:
+          readOnly: true
+          allOf:
+            - type: string
+              format: date-time
+        parentMessageUid:
+          allOf:
+            - type: string
               format: uuid
-    dmMessagePayload:
-      allOf:
-        - $ref: "#/components/schemas/commonMessage"
-        - type: object
-          required:
-            - dmAccountUid
-          properties:
-            dmAccountUid:
-              type: string
-              format: uuid
-    group:
+    MessageContent:
+      type: string
+      maxLength: 300
+    Conversation:
       type: object
       required:
-        - groupUid
-        - groupName
-        - accounts
-        - lastMessage
+        - interlocutor
       properties:
-        groupUid:
+        interlocutor:
           readOnly: true
-          type: string
-          format: uuid
-        groupName:
-          type: string
-          maxLength: 100
-        accounts:
-          type: array
-          items:
-            type: string
-            format: uuid
+          allOf:
+            - $ref: "#/components/schemas/CondensedAccount"
         lastMessage:
           readOnly: true
-          $ref: "#/components/schemas/groupMessagePayload"
-    dmAccount:
+          allOf:
+            - $ref: "#/components/schemas/Message"
+        lastSeenMessage:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/Message"
+    CondensedAccount:
       type: object
+      description: condensed account information related to messaging
       required:
-        - dmAccountUid
-        - lastMessage
+        - accountUid
+        - username
       properties:
-        dmAccountUid:
+        accountUid:
           type: string
           format: uuid
-        lastMessage:
-          readOnly: true
-          $ref: "#/components/schemas/dmMessagePayload"
-    errorPayload:
+        username:
+          $ref: "#/components/schemas/Username"
+        pfpLink:
+          $ref: "#/components/schemas/ImageLink"
+    Username:
+      type: string
+      minLength: 3
+      maxLength: 80
+      pattern: '[^!*''();:@&=+$,/?%#[\]\s]{3,80}' #can't conatain any url reserved characters
+    ImageLink:
+      type: string
+      description: link to image in google cloud storage
+      pattern: '^https:\/\/storage\.googleapis\.com\/.+$'
+    Error:
       type: object
       required:
         - errors
@@ -283,12 +327,12 @@ components:
           type: array
           items:
             allOf:
-              - $ref: "#/components/schemas/commonError"
+              - $ref: "#/components/schemas/CommonError"
               - oneOf:
-                  - $ref: "#/components/schemas/validationError"
-                  - $ref: "#/components/schemas/businessError"
-                  - $ref: "#/components/schemas/serverError"
-    commonError:
+                  - $ref: "#/components/schemas/ValidationError"
+                  - $ref: "#/components/schemas/BusinessError"
+                  - $ref: "#/components/schemas/ServerError"
+    CommonError:
       type: object
       required:
         - errorType
@@ -308,7 +352,7 @@ components:
           type: string
         detail:
           type: string
-    validationError:
+    ValidationError:
       type: object
       required:
         - path
@@ -318,13 +362,13 @@ components:
           const: "validation"
         path:
           type: string
-    businessError:
+    BusinessError:
       type: object
       properties:
         errorType:
           type: string
           const: "business"
-    serverError:
+    ServerError:
       type: object
       properties:
         errorType:
