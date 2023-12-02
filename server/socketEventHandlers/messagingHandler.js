@@ -1,5 +1,6 @@
 import { pool } from "../configServices/dbConfig.js";
 import camelize from "camelize";
+import { generateImageLink } from "../utils/imageHelpers.js";
 import {
   conversationNotFound,
   messageNotFound,
@@ -295,7 +296,7 @@ export default (io, socket) => {
       const interlocutor = {
         accountUid: row.interlocutorUid,
         username: row.interlocutorUsername,
-        pfpName: row.interlocutorPfpName,
+        pfpLink: generateImageLink(row.interlocutorPfpName),
       };
       const lastMessage = row.latestMessageUid
         ? {
@@ -397,8 +398,9 @@ export default (io, socket) => {
         [payload.interlocutorUid]
       )
     ).rows;
+    userData.pfpLink = generateImageLink(userData.pfpName);
+    delete userData.pfpName;
     callback(userData);
-    //code
   }
 
   socket.on("getMessages", getMessages);
