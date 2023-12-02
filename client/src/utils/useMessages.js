@@ -16,16 +16,16 @@ const useMessages = (interlocutorUid, curMessageId = null, limit = 3) => {
     console.log(messages);
     // console.log(conversations);
 
-    // if (!socketRef.current) {
-    //   return;
-    // }
+    if (!socketRef.current) {
+      return;
+    }
     // // if (!socketRef.current || conversations.length === 0 ) { return }
 
     // // socketRef.current.emit("JoinConversation", {interlocutorUid: "9405b073-70ee-4a5d-a2bd-dbfc3709846c"}, (d) => {})
     // // socketRef.current.emit("LeaveConversation", { interlocutorUid:  "9405b073-70ee-4a5d-a2bd-dbfc3709846c"}, (d) => {console.log(d)})
 
     // socketRef.current.emit(
-    //   "SendMessage",
+    //   "sendMessage",
     //   {
     //     message: {
     //       interlocutorUid: "9405b073-70ee-4a5d-a2bd-dbfc3709846c",
@@ -37,6 +37,16 @@ const useMessages = (interlocutorUid, curMessageId = null, limit = 3) => {
     //     console.log(d);
     //   }
     // );
+
+    socketRef.current.emit(
+      "deleteMessage",
+      {
+        messageUid: "5061b55b-a365-4894-a702-1d208f7b0e04",
+      },
+      (d) => {
+        console.log(d);
+      }
+    );
   }, [messages]);
 
   useEffect(() => {
@@ -46,9 +56,9 @@ const useMessages = (interlocutorUid, curMessageId = null, limit = 3) => {
 
     socketRef.current = socket;
 
-    socketRef.current.emit("GetConversations", setConversations);
+    socketRef.current.emit("getConversations", setConversations);
     socketRef.current.emit(
-      "GetMessages",
+      "getMessages",
       {
         interlocutorUid: interlocutorUid,
         limit: limit,

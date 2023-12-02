@@ -20,7 +20,7 @@ function getMinMax(uid1, uid2) {
 
 export default (io, socket) => {
   // need to add seen field to messages based on sent time of message vs sent time of last read message
-  async function GetMessages(payload, callback) {
+  async function getMessages(payload, callback) {
     const loggedUid = getUid(socket);
     const { interlocutorUid, curMessageId, limit } = payload;
 
@@ -59,10 +59,10 @@ export default (io, socket) => {
     callback({ messages: rows });
   }
 
-  async function ReadMessages(payload, callback) {
+  async function readMessages(payload, callback) {
     const loggedUid = getUid(socket);
 
-    const findConversation = camelize(
+    const [findConversation] = camelize(
       await pool.query(
         `SELECT conversation.* FROM message  
         JOIN conversation USING (conversation_uid)
@@ -76,24 +76,21 @@ export default (io, socket) => {
       return;
     }
 
+    console.log(findConversation);
     const updateConvSeen = camelize(
       //need to check logged in user is acutally part of conversation
       await pool.query(
-        "UPDATE conversation SET $1 = $2 WHERE conversation_uid = $3",
-        [
-          loggedUid === findConversation.hi_account_uid
-            ? "hi_account_uid"
-            : "lo_account_uid",
-          payload.messageUid,
-          findConversation.conversation_uid,
-        ]
+        `UPDATE conversation SET ${
+          loggedUid === findConversation.hiAccountUid ? "hi_seen" : "lo_seen"
+        } = $1 WHERE conversation_uid = $2`,
+        [payload.messageUid, findConversation.conversationUid]
       )
     );
 
     callback(updateConvSeen);
   }
 
-  async function SendMessage(payload, callback) {
+  async function sendMessage(payload, callback) {
     const message = payload.message;
     const loggedUid = getUid(socket);
 
@@ -116,7 +113,7 @@ export default (io, socket) => {
         `INSERT INTO message (sender_uid, conversation_uid, content, parent_message_uid) 
           VALUES ($1, $2, $3, $4)`,
         [
-          message.senderUid,
+          loggedUid,
           findConversation[0].conversationUid,
           message.content,
           message.parentMessageUid,
@@ -127,7 +124,7 @@ export default (io, socket) => {
     callback(insertMessage);
   }
 
-  async function EditMessage(payload, callback) {
+  async function editMessage(payload, callback) {
     const loggedUid = getUid(socket);
 
     const findConversation = camelize(
@@ -150,37 +147,76 @@ export default (io, socket) => {
         [payload.content, payload.messageUid]
       )
     ).rows;
-
     callback(updateConversation);
   }
 
-  async function DeleteMessage(payload, callback) {
+  async function deleteMessage(payload, callback) {
     const loggedUid = getUid(socket);
     const messageUid = payload.messageUid;
 
-    const { actuallySent } = camelize(
+    const message = camelize(
       await pool.query(
-        `SELECT sender_uid FROM conversation WHERE message_uid = $1`,
-        [messageUid]
+        `SELECT message_uid, conversation_uid, create_timestamp FROM message WHERE message_uid = $1 AND sender_uid = $2`,
+        [messageUid, loggedUid]
       )
-    );
+    ).rows;
+    console.log(message);
 
-    if (!(actuallySent.sender_uid === loggedUid)) {
+    if (!message.length) {
       //not the actually user who sent it or not found
       callback(messageNotFound);
       return;
     }
 
-    const { rows } = camelize(
-      await pool.query(`DELETE * FROM message WHERE message_uid = $1`, [
-        messageUid,
-      ])
+    // if message has replies, replace their reply_message_id with their own message_id
+    await pool.query(
+      `UPDATE message SET parent_message_uid = message_uid WHERE parent_message_uid = $1`,
+      [messageUid]
     );
 
-    callback(rows);
+    // if message is a seen message, replace the conversation's seen message with the previous message sent by the sender
+    await pool.query(
+      `UPDATE conversation SET 
+        lo_seen = (
+          CASE
+            WHEN lo_seen = $1 THEN (
+              SELECT message_uid
+              FROM message
+              WHERE sender_uid = $2 AND
+                conversation_uid = $3 AND
+                create_timestamp < (SELECT create_timestamp FROM message WHERE message_uid = $1)
+              ORDER BY create_timestamp DESC LIMIT 1
+            )
+            ELSE lo_seen
+          END
+        ), 
+        hi_seen = (
+          CASE
+            WHEN hi_seen = $1 THEN (
+              SELECT message_uid
+              FROM message
+              WHERE sender_uid = $2 AND
+                conversation_uid = $3 AND
+                create_timestamp < (SELECT create_timestamp FROM message WHERE message_uid = $1)
+              ORDER BY create_timestamp DESC LIMIT 1
+            )
+            ELSE hi_seen
+          END
+        )
+        WHERE conversation_uid = $3`,
+      [messageUid, loggedUid, message[0].conversationUid]
+    );
+
+    camelize(
+      await pool.query(
+        `DELETE FROM message WHERE message_uid = $1 RETURNING message_uid`,
+        [messageUid]
+      )
+    );
+    callback({});
   }
 
-  async function GetConversations(callback) {
+  async function getConversations(callback) {
     const loggedUid = getUid(socket);
 
     const { rows } = camelize(
@@ -255,7 +291,6 @@ export default (io, socket) => {
       )
     );
 
-    console.log(rows);
     const formattedRes = rows.map((row) => {
       const interlocutor = {
         accountUid: row.interlocutorUid,
@@ -290,13 +325,12 @@ export default (io, socket) => {
         lastSeenMessage: lastSeenMessage,
       };
     });
-    console.log(formattedRes);
     callback(formattedRes);
   }
 
   //I dont think I need any error checking stuff here
   //Also think its fine to trust messagerId because its only changing based off of getUid func
-  async function LeaveConversation(payload, callback) {
+  async function leaveConversation(payload, callback) {
     const loggedUid = getUid(socket);
 
     const [maxUid, minUid] = getMinMax(payload.interlocutorUid, loggedUid);
@@ -320,7 +354,7 @@ export default (io, socket) => {
     callback(rows);
   }
 
-  async function JoinConversation(payload, callback) {
+  async function joinConversation(payload, callback) {
     const loggedUid = getUid(socket);
 
     if (payload.interlocutorUid == loggedUid) {
@@ -367,12 +401,12 @@ export default (io, socket) => {
     //code
   }
 
-  socket.on("GetMessages", GetMessages);
-  socket.on("SendMessage", SendMessage);
-  socket.on("EditMessage", EditMessage);
-  socket.on("DeleteMessage", DeleteMessage);
-  socket.on("ReadMessages", ReadMessages);
-  socket.on("GetConversations", GetConversations);
-  socket.on("LeaveConversation", LeaveConversation);
-  socket.on("JoinConversation", JoinConversation);
+  socket.on("getMessages", getMessages);
+  socket.on("sendMessage", sendMessage);
+  socket.on("editMessage", editMessage);
+  socket.on("deleteMessage", deleteMessage);
+  socket.on("readMessages", readMessages);
+  socket.on("getConversations", getConversations);
+  socket.on("leaveConversation", leaveConversation);
+  socket.on("joinConversation", joinConversation);
 };
