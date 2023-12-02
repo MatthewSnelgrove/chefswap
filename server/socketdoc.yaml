@@ -244,7 +244,6 @@ components:
         - senderUid
         - content
         - createTimestamp
-        - editTimestamp
       properties:
         messageUid:
           readOnly: true
@@ -272,9 +271,8 @@ components:
             - type: string
               format: date-time
         parentMessageUid:
-          allOf:
-            - type: string
-              format: uuid
+          type: string
+          format: uuid
     MessageContent:
       type: string
       maxLength: 300
