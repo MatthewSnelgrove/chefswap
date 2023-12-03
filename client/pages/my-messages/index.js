@@ -11,34 +11,70 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import MessageV2 from "../../components/Message2";
+import { useUser } from "../../components/useUser";
 
 function MyMessagesPage() {
-  // Mock message data in the format: {content: string, createTimestamp: string, editTimestamp: string | null}
+  const user = useUser();
+  // Mock message data in the format: {messageUid, interlocutorUid, senderUid, content, createTimestamp, editTimestamp, parentMessageUid}
   const mockMessages = [
     {
-      content: "Hello!",
+      messageUid: "0",
+      interlocutorUid: "0",
+      senderUid: "0",
+      content:
+        "Lorem ipsum daidh ush aisudh sh sha diaush suaidh aiush asiu haiu his",
       createTimestamp: "2021-10-01T00:00:00.000Z",
       editTimestamp: null,
+      parentMessageUid: null,
+    },
+
+    {
+      messageUid: "1",
+      interlocutorUid: "0",
+      senderUid: "1",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      createTimestamp: "2021-10-01T00:00:00.000Z",
+      editTimestamp: "2021-10-01T00:00:00.000Z",
+      parentMessageUid: 0,
+    },
+
+    {
+      messageUid: "2",
+      interlocutorUid: "0",
+      senderUid: "0",
+      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      createTimestamp: "2021-10-01T00:00:00.000Z",
+      editTimestamp: null,
+      parentMessageUid: 1,
+    },
+
+    {
+      messageUid: "3",
+      interlocutorUid: "0",
+      senderUid: "1",
+      content: "Lorem ipsum indeed my friend!",
+      createTimestamp: "2021-10-01T00:00:00.000Z",
+      editTimestamp: null,
+      parentMessageUid: null,
     },
     {
-      content: "Hi!",
+      messageUid: "4",
+      interlocutorUid: "0",
+      senderUid: "1",
+      content: "!!",
       createTimestamp: "2021-10-01T00:00:00.000Z",
       editTimestamp: null,
+      parentMessageUid: null,
     },
     {
-      content: "How are you?",
+      messageUid: "5",
+      interlocutorUid: "0",
+      senderUid: "1",
+      content: "yes",
       createTimestamp: "2021-10-01T00:00:00.000Z",
       editTimestamp: null,
-    },
-    {
-      content: "Good, you?",
-      createTimestamp: "2021-10-01T00:00:00.000Z",
-      editTimestamp: null,
-    },
-    {
-      content: "I'm good too!",
-      createTimestamp: "2021-10-01T00:00:00.000Z",
-      editTimestamp: null,
+      parentMessageUid: null,
     },
   ];
 
@@ -141,7 +177,16 @@ function MyMessagesPage() {
               </div>
             </div>
 
-            <div className={styles.messages_area}></div>
+            <div className={styles.messages_area}>
+              {/* TODO: Render loading skeleton if messages are not loaded */}
+              {/* TODO: Infinite scroll */}
+              <MessageV2 data={mockMessages[0]} />
+              <MessageV2 data={mockMessages[1]} />
+              <MessageV2 data={mockMessages[2]} />
+              <MessageV2 data={mockMessages[3]} />
+              <MessageV2 data={mockMessages[4]} />
+              <MessageV2 data={mockMessages[5]} />
+            </div>
 
             <div className={styles.input_container}>
               <button className={styles.add_media_button}>
