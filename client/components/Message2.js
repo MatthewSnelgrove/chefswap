@@ -38,29 +38,29 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
       onMouseOut={() => setHovering(false)}
     >
       <div
-        className={styles.timestamp}
-        title={dateTimeString}
+        className={styles.options}
         style={hovering ? { visibility: "visible" } : { visibility: "hidden" }}
       >
-        {time}
+        <button className={styles.edit_option}>
+          <EditRoundedIcon />
+        </button>
+        <button className={styles.reply_option}>
+          <ReplyRoundedIcon />
+        </button>
+        <button className={styles.delete_option}>
+          <DeleteRoundedIcon />
+        </button>
       </div>
 
       <div className={styles.right}>
         <div
-          className={styles.options}
+          className={styles.timestamp}
+          title={dateTimeString}
           style={
             hovering ? { visibility: "visible" } : { visibility: "hidden" }
           }
         >
-          <button className={styles.edit_option}>
-            <EditRoundedIcon />
-          </button>
-          <button className={styles.reply_option}>
-            <ReplyRoundedIcon />
-          </button>
-          <button className={styles.delete_option}>
-            <DeleteRoundedIcon />
-          </button>
+          {time}
         </div>
 
         <div className={styles.right_bubble_column}>
@@ -124,23 +124,23 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
         </div>
 
         <div
-          className={styles.options}
+          className={styles.timestamp}
+          title={dateTimeString}
           style={
             hovering ? { visibility: "visible" } : { visibility: "hidden" }
           }
         >
-          <button className={styles.reply_option}>
-            <ReplyRoundedIcon />
-          </button>
+          {time}
         </div>
       </div>
 
       <div
-        className={styles.timestamp}
-        title={dateTimeString}
+        className={styles.options}
         style={hovering ? { visibility: "visible" } : { visibility: "hidden" }}
       >
-        {time}
+        <button className={styles.reply_option}>
+          <ReplyRoundedIcon />
+        </button>
       </div>
     </div>
   );

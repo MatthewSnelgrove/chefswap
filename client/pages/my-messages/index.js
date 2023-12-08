@@ -34,8 +34,8 @@ function MyMessagesPage() {
       interlocutorUid: "0",
       senderUid: "1",
       content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      createTimestamp: "2021-10-01T00:00:00.000Z",
-      editTimestamp: "2021-10-01T00:00:00.000Z",
+      createTimestamp: "2021-10-01T04:59:00.000Z",
+      editTimestamp: "2021-10-01T04:59:00.000Z",
       parentMessageUid: 0,
     },
 
