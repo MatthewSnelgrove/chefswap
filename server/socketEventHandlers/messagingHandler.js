@@ -59,10 +59,18 @@ export default (io, socket) => {
             message."content",
             message.create_timestamp,
             message.edit_timestamp,
-            message.parent_message_uid
+            message.parent_message_uid,
+            parent_message.sender_uid AS parent_message_sender_uid,
+            parent_message."content" AS parent_message_content,
+            parent_message.create_timestamp AS parent_message_create_timestamp,
+            parent_message.edit_timestamp AS parent_message_edit_timestamp,
+            parent_message.parent_message_uid AS parent_message_parent_message_uid
         FROM
             message
         JOIN conversation USING (conversation_uid)
+        LEFT JOIN message AS parent_message ON (
+          message.parent_message_uid = parent_message.message_uid
+        )
         WHERE message.create_timestamp < (
            SELECT create_timestamp FROM message WHERE COALESCE (message_uid = $3, true) ORDER BY create_timestamp DESC LIMIT 1
         )
@@ -71,7 +79,32 @@ export default (io, socket) => {
         [loggedUid, interlocutorUid, curMessageId, limit]
       )
     );
-    callback({ messages: rows });
+    const formattedMessages = rows.map((row) => {
+      const message = {
+        messageUid: row.messageUid,
+        interlocutorUid: interlocutorUid,
+        senderUid: row.senderUid,
+        content: row.content,
+        createTimestamp: row.createTimestamp,
+        editTimestamp: row.editTimestamp,
+      };
+      const parentMessage = row.parentMessageUid
+        ? {
+            messageUid: row.parentMessageUid,
+            interlocutorUid: interlocutorUid,
+            senderUid: row.parentMessageSenderUid,
+            content: row.parentMessageContent,
+            createTimestamp: row.parentMessageCreateTimestamp,
+            editTimestamp: row.parentMessageEditTimestamp,
+            parentMessageUid: row.parentMessageParentMessageUid,
+          }
+        : null;
+      return {
+        message: message,
+        parentMessage: parentMessage,
+      };
+    });
+    callback({ messages: formattedMessages });
   }
 
   async function readMessages(payload, callback) {
@@ -91,7 +124,6 @@ export default (io, socket) => {
       return;
     }
 
-    console.log(findConversation);
     const updateConvSeen = camelize(
       //need to check logged in user is acutally part of conversation
       await pool.query(
@@ -106,7 +138,7 @@ export default (io, socket) => {
   }
 
   async function sendMessage(payload, callback) {
-    const message = payload.message;
+    const message = payload;
     const loggedUid = getUid(socket);
 
     const [maxUid, minUid] = getMinMax(message.interlocutorUid, loggedUid);
@@ -136,6 +168,25 @@ export default (io, socket) => {
       )
     );
 
+    const bothSeen = camelize(
+      await pool.query(
+        `UPDATE conversation SET lo_active = true, hi_active = true WHERE conversation_uid = $1`,
+        [findConversation[0].conversationUid]
+      )
+    );
+
+    const messageBack = {
+      messageUid: insertMessage.messageUid,
+      interlocutorUid: message.interlocutorUid,
+      senderUid: loggedUid,
+      content: message.content,
+      createTimestamp: insertMessage.createTimestamp,
+      editTimestamp: insertMessage.editTimestamp,
+    };
+    io.to(findConversation[0].conversationUid).emit(
+      "receiveMessage",
+      messageBack
+    );
     callback(insertMessage);
   }
 
@@ -175,7 +226,6 @@ export default (io, socket) => {
         [messageUid, loggedUid]
       )
     ).rows;
-    console.log(message);
 
     if (!message.length) {
       //not the actually user who sent it or not found

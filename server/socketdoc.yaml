@@ -64,19 +64,21 @@ components:
                 messages:
                   type: array
                   items:
-                    $ref: "#/components/schemas/Message"
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        $ref: "#/components/schemas/Message"
+                      parentMessage:
+                        $ref: "#/components/schemas/Message"
             - $ref: "#/components/schemas/Error"
     SendMessage:
       messageId: sendMessage
       name: sendMessage
       contentType: application/json
       payload:
-        type: object
-        required:
-          - message
-        properties:
-          message:
-            $ref: "#/components/schemas/Message"
+        $ref: "#/components/schemas/Message"
       x-ack:
         args:
           oneOf:
