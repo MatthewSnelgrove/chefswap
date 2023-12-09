@@ -13,22 +13,42 @@ const useMessages = (interlocutorUid, curMessageId = null, limit = 3) => {
   }
 
   useEffect(() => {
+    if (!socketRef.current) {
+      return;
+    }
+
+    socketRef.current.emit(
+      "sendMessage",
+      {
+        interlocutorUid: interlocutorUid,
+        content: "X D X D X D X D",
+        parentMessageUid: "fae2faac-ce03-49ed-9d91-5786069cee5f",
+      },
+      (d) => {}
+    );
+  }, [messages]);
+
+  useEffect(() => {
     if (!user) {
       return;
     }
 
     socketRef.current = socket;
-
     socketRef.current.emit("getConversations", setConversations);
     socketRef.current.emit(
       "getMessages",
       {
         interlocutorUid: interlocutorUid,
         limit: limit,
-        curMessageId: curMessageId,
       },
-      setMessages
+      (messages) => {
+        setMessages(messages.messages);
+      }
     );
+
+    socketRef.current.on("receiveMessage", (message) => {
+      console.log(message);
+    });
   }, [user]);
 
   return { conversations, messages, useSocketOperation };

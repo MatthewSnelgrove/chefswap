@@ -13,11 +13,13 @@ import { sessionMiddleware } from "./configServices/sessionConfig.js";
 import { wrap } from "./configServices/sessionConfig.js";
 import { corsConfig } from "./configServices/corsConfig.js";
 import { BusinessError } from "./utils/errors.js";
-import messagingHandler from "./socketEventHandlers/messagingHandler.js";
-import {
-  validatePayloadByEvent,
-  validateAckByEvent,
-} from "./socketMiddlewares/socketValidator.js";
+import camelize from "camelize";
+import messagingHandler, {
+  getUid,
+} from "./socketEventHandlers/messagingHandler.js";
+import { pool } from "./configServices/dbConfig.js";
+import { validatePayloadByEvent } from "./socketMiddlewares/socketValidator.js";
+// import * as iii from "./openapi.yaml";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
 const PORT = process.env.PORT || 3001;
@@ -105,8 +107,8 @@ app.use((err, req, res, next) => {
     console.log("err is unknown system error");
     res.status(500).json({
       path: req.originalUrl,
-      message: "internal server error",
-      detail: "request caused an internal error on the server",
+      message: "unknown server error",
+      detail: "request caused an unknown error on the server",
     });
   }
 });
@@ -127,28 +129,49 @@ io.use((socket, next) => {
   next();
 });
 
-io.on("connection", (socket) => {
-  socket.accountUid = socket.request.session.accountUid;
+io.use(async (socket, next) => {
+  socket.accountUid = getUid(socket);
   socket.join(socket.accountUid);
   console.log("a user connected");
   console.log("joinedRoom: " + socket.accountUid);
+  // socket.use(validatePayloadByEvent);
+
+  const findConversation = camelize(
+    await pool.query(
+      `SELECT conversation_uid FROM conversation
+      WHERE lo_account_uid = $1 OR hi_account_uid = $1`,
+      [socket.accountUid]
+    )
+  ).rows;
+
+  findConversation.forEach((conversation) => {
+    socket.join(conversation.conversationUid);
+    console.log("user joined: " + conversation.conversationUid);
+  });
+  next();
+});
+
+io.on("connection", async (socket, next) => {
+  socket.accountUid = getUid(socket);
+
+  // socket.use((event, next) => {
+  //   console.log("received event", event);
+  //   next();
+  // });
+
   socket.use(validatePayloadByEvent);
+  messagingHandler(io, socket);
+
+  socket.on("connect_error", (err) => {
+    console.log(err.message); // prints the message associated with the error
+    next();
+  });
+
   socket.on("error", ([err, callback]) => {
     console.log("socket error: ", err);
     if (callback) {
       callback(err);
     }
-  });
-  messagingHandler(io, socket);
-  socket.on("connect_error", (err) => {
-    console.log(err.message); // prints the message associated with the error
-  });
-
-  socket.on("disconnect", (reason) => {
-    socket.leave(socket.accountUid);
-    console.log("user disconnected");
-    console.log("leftRoom: " + socket.accountUid);
-    console.log("reason: " + reason);
   });
 });
 
