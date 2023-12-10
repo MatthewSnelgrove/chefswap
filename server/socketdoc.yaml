@@ -196,7 +196,14 @@ components:
       name: receiveMessage
       contentType: application/json
       payload:
-        $ref: "#/components/schemas/Message"
+        type: object
+        required:
+          - message
+        properties:
+          message:
+            $ref: "#/components/schemas/Message"
+          parentMessage:
+            $ref: "#/components/schemas/Message"
     ReceiveMessageEdit:
       messageId: receiveMessageEdit
       name: receiveMessageEdit

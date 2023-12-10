@@ -155,6 +155,29 @@ export default (io, socket) => {
       return;
     }
 
+    const parentMessage = message.parentMessageUid
+      ? camelize(
+          await pool.query(
+            ` SELECT 
+                message.sender_uid AS parent_message_sender_uid,
+                message."content" AS parent_message_content,
+                message.create_timestamp AS parent_message_create_timestamp,
+                message.edit_timestamp AS parent_message_edit_timestamp,
+                message.parent_message_uid AS parent_message_parent_message_uid
+              FROM message 
+              WHERE message_uid = $1`,
+            [message.parentMessageUid]
+          )
+        ).rows
+      : null;
+
+    if (message.parentMessageUid && parentMessage.length === 0) {
+      callback(messageNotFound);
+      return;
+    }
+
+    parentMessage[0].interlocutorUid = message.interlocutorUid;
+
     const insertMessage = camelize(
       await pool.query(
         `INSERT INTO message (sender_uid, conversation_uid, content, parent_message_uid) 
@@ -176,13 +199,17 @@ export default (io, socket) => {
     );
 
     const messageBack = {
-      messageUid: insertMessage.messageUid,
-      interlocutorUid: message.interlocutorUid,
-      senderUid: loggedUid,
-      content: message.content,
-      createTimestamp: insertMessage.createTimestamp,
-      editTimestamp: insertMessage.editTimestamp,
+      message: {
+        messageUid: insertMessage.messageUid,
+        interlocutorUid: message.interlocutorUid,
+        senderUid: loggedUid,
+        content: message.content,
+        createTimestamp: insertMessage.createTimestamp,
+        editTimestamp: insertMessage.editTimestamp,
+      },
+      parentMessage: parentMessage ? parentMessage[0] : null,
     };
+
     io.to(findConversation[0].conversationUid).emit(
       "receiveMessage",
       messageBack
