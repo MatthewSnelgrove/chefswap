@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import OnlyLoggedIn from "../../components/OnlyLoggedIn";
 import Conversation from "../../components/Conversation";
 import Head from "next/head";
@@ -15,7 +15,43 @@ import MessageV2 from "../../components/Message2";
 import { useUser } from "../../components/useUser";
 
 function MyMessagesPage() {
+  // USER DATA
   const user = useUser();
+
+  /*********** CONVERSATION DATA ***********/
+
+  // Mock conversation data in the format: {messager: string, lastMessage: string}
+  const mockConversations = [
+    {
+      messager: "User0",
+      lastMessage: "Lorem ipsum",
+    },
+    {
+      messager: "User1",
+      lastMessage: "Lorem ipsum",
+    },
+    {
+      messager: "User2",
+      lastMessage: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    },
+    {
+      messager: "User3",
+      lastMessage: "Lorem ipsum",
+    },
+    {
+      messager: "User4",
+      lastMessage: "Lorem ipsum",
+    },
+  ];
+
+  /**
+   * CURRENT SELECTED CONVERSATION
+   * UID of current selected user conversation
+   */
+  const [currentConversation, setCurrentConversation] = useState("");
+
+  /*********** MESSAGE DATA ***********/
+
   // Mock message data in the format: {messageUid, interlocutorUid, senderUid, content, createTimestamp, editTimestamp, parentMessageUid}
   const mockMessages = [
     {
@@ -78,29 +114,127 @@ function MyMessagesPage() {
     },
   ];
 
-  // Mock conversation data in the format: {messager: string, lastMessage: string}
-  const mockConversations = [
-    {
-      messager: "User0",
-      lastMessage: "Lorem ipsum",
-    },
-    {
-      messager: "User1",
-      lastMessage: "Lorem ipsum",
-    },
-    {
-      messager: "User2",
-      lastMessage: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    },
-    {
-      messager: "User3",
-      lastMessage: "Lorem ipsum",
-    },
-    {
-      messager: "User4",
-      lastMessage: "Lorem ipsum",
-    },
-  ];
+  /**
+   * CHAT STATE
+   * 0 - chatting
+   * 1 - replying to msg
+   * 2 - editing your msg
+   */
+  const [chatState, setChatState] = useState(0);
+
+  useEffect(() => {
+    function handleEsc(e) {
+      if (e.key === "Escape") {
+        clearChatState();
+      }
+    }
+    const messageArea = document.querySelector(`.${styles.messages_area}`);
+    const chatInput = document.querySelector(`.${styles.chat_input}`);
+
+    if (chatState !== 0) {
+      // Allow user to press escape to stop replying or editing
+      window.addEventListener("keydown", handleEsc);
+      // Add padding to let user notice layout shift
+      messageArea.style.paddingBottom = "50px";
+      messageArea.scrollBy(0, 20);
+
+      // Scroll textbar to rightmost, focus textbar
+      chatInput.scrollLeft = chatInput.scrollWidth;
+      chatInput.focus();
+    } else {
+      if (messageArea) {
+        messageArea.scrollBy(0, -20);
+        messageArea.style.paddingBottom = "30px";
+      }
+    }
+    return () => window.removeEventListener("keydown", handleEsc, true);
+  }, [chatState]);
+
+  /**
+   * SELECTED MESSAGE STATE
+   * Selected message being edited or replied to (message data)
+   */
+  const [selectedMessage, setSelectedMessage] = useState(null);
+
+  /**
+   * Clears chat state and selected message
+   */
+  function clearChatState() {
+    if (chatState === 2) setChatText("");
+    setChatState(0);
+    setSelectedMessage(null);
+  }
+
+  /**
+   * Starts replying to a message and updates chat state accordingly
+   */
+  function startReplying(parentMessageData) {
+    if (chatState === 2) setChatText("");
+    setChatState(1);
+    setSelectedMessage(parentMessageData);
+  }
+
+  function sendReply() {
+    // TODO: Implement with Socket
+  }
+
+  /**
+   * Starts editing a message and updates chat state accordingly
+   */
+  function startEditing(parentMessageData) {
+    if (parentMessageData.senderUid === parentMessageData.interlocutorUid) {
+      console.log("Cannot edit other user's message"); // TODO: REMOVE AFTER TESTING
+      return;
+    }
+    setChatState(2);
+    setSelectedMessage(parentMessageData);
+    setChatText(parentMessageData.content);
+  }
+
+  function sendEdit() {
+    // TODO: Implement with Socket
+  }
+
+  function startDeleting(parentMessageData) {
+    if (parentMessageData.senderUid === parentMessageData.interlocutorUid) {
+      console.log("Cannot delete other user's message"); // TODO: REMOVE AFTER TESTING
+      return;
+    }
+    // TODO: Render confirmation popup?
+  }
+
+  function deleteMessage(parentMessageData) {
+    // TODO: Implement with Socket
+  }
+
+  // Chat bar text
+  const [chatText, setChatText] = useState("");
+
+  // Handle chat text change
+  function handleChatTextChange(e) {
+    setChatText(e.target.value);
+  }
+
+  /**
+   * Handles when user clicks send button
+   */
+  function handleSend() {
+    if (chatText === "") return;
+
+    // SEND CHAT
+    if (chatState === 0) {
+      // TODO: Implement with Socket
+    }
+    // SEND REPLY
+    else if (chatState === 1) {
+      sendReply();
+    }
+    // SEND EDIT
+    else if (chatState === 2) {
+      sendEdit();
+    }
+    clearChatState();
+  }
 
   // TODO: Add notification to webpage title (e.g., (1) Chefswap | Messages)
   return (
@@ -180,12 +314,42 @@ function MyMessagesPage() {
             <div className={styles.messages_area}>
               {/* TODO: Render loading skeleton if messages are not loaded */}
               {/* TODO: Infinite scroll */}
-              <MessageV2 data={mockMessages[0]} />
-              <MessageV2 data={mockMessages[1]} />
-              <MessageV2 data={mockMessages[2]} />
-              <MessageV2 data={mockMessages[3]} />
-              <MessageV2 data={mockMessages[4]} />
-              <MessageV2 data={mockMessages[5]} />
+              <MessageV2
+                data={mockMessages[0]}
+                onEdit={startEditing}
+                onReply={startReplying}
+                onDelete={startDeleting}
+              />
+              <MessageV2
+                data={mockMessages[1]}
+                onEdit={startEditing}
+                onReply={startReplying}
+                onDelete={startDeleting}
+              />
+              <MessageV2
+                data={mockMessages[2]}
+                onEdit={startEditing}
+                onReply={startReplying}
+                onDelete={startDeleting}
+              />
+              <MessageV2
+                data={mockMessages[3]}
+                onEdit={startEditing}
+                onReply={startReplying}
+                onDelete={startDeleting}
+              />
+              <MessageV2
+                data={mockMessages[4]}
+                onEdit={startEditing}
+                onReply={startReplying}
+                onDelete={startDeleting}
+              />
+              <MessageV2
+                data={mockMessages[5]}
+                onEdit={startEditing}
+                onReply={startReplying}
+                onDelete={startDeleting}
+              />
             </div>
 
             <div className={styles.input_container}>
@@ -193,24 +357,33 @@ function MyMessagesPage() {
                 <AddRoundedIcon sx={{ color: "#5A5A5A", fontSize: 45 }} />
               </button>
               <div className={styles.input_section}>
-                <div className={styles.input_context}>
-                  {/* TODO: Render conditionally */}
-                  <div className={styles.input_context_text}>
-                    Replying to{" "}
-                    <span className={styles.context_user}>User0</span>
+                {chatState !== 0 && (
+                  <div className={styles.input_context}>
+                    <div className={styles.input_context_text}>
+                      {chatState === 0 && ""}
+                      {chatState === 1 && "Replying to: "}
+                      {chatState === 2 && "Editing message: "}
+                      {/* TODO: Render context name conditionally */}
+                      <span className={styles.context_user}>User0</span>
+                    </div>
+                    <button
+                      className={styles.input_context_close}
+                      onClick={() => clearChatState()}
+                    >
+                      <CloseRoundedIcon sx={{ color: "white", fontSize: 18 }} />
+                    </button>
                   </div>
-                  {/* TODO: Make this button close the chat context */}
-                  <button className={styles.input_context_close}>
-                    <CloseRoundedIcon sx={{ color: "white", fontSize: 18 }} />
-                  </button>
-                </div>
+                )}
+
                 <input
                   className={styles.chat_input}
                   type="text"
                   placeholder="Send a message..."
+                  value={chatText}
+                  onChange={handleChatTextChange}
                 />
               </div>
-              <button className={styles.send_button}>
+              <button className={styles.send_button} onClick={handleSend}>
                 <SendRoundedIcon sx={{ color: "white", fontSize: 35 }} />
               </button>
             </div>

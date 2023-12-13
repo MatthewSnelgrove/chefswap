@@ -41,13 +41,13 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
         className={styles.options}
         style={hovering ? { visibility: "visible" } : { visibility: "hidden" }}
       >
-        <button className={styles.edit_option}>
+        <button className={styles.edit_option} onClick={() => onEdit(data)}>
           <EditRoundedIcon />
         </button>
-        <button className={styles.reply_option}>
+        <button className={styles.reply_option} onClick={() => onReply(data)}>
           <ReplyRoundedIcon />
         </button>
-        <button className={styles.delete_option}>
+        <button className={styles.delete_option} onClick={() => onDelete(data)}>
           <DeleteRoundedIcon />
         </button>
       </div>
@@ -138,7 +138,7 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
         className={styles.options}
         style={hovering ? { visibility: "visible" } : { visibility: "hidden" }}
       >
-        <button className={styles.reply_option}>
+        <button className={styles.reply_option} onClick={() => onReply(data)}>
           <ReplyRoundedIcon />
         </button>
       </div>
