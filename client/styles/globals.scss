@@ -1,0 +1,94 @@
+// Filled icons settings from Google Material Icons
+.symbol-fill {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+.carousel-control-prev-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E") !important;
+ }
+ 
+.carousel-control-next-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E") !important;
+}
+
+.full-contain {
+  position: absolute;
+  margin-top: var(--navbar-height);
+  width: 100%;
+}
+
+.base-btn-lightblue {
+  background-color: var(--cs-lightblue-1);
+  border-radius: 10px;
+  color: var(--cs-white-1);
+  border: 0px;
+  cursor: pointer;
+}
+
+.base-btn {
+  border: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: var(--cs-lightblue-1);
+  border-radius: 10px;
+  color: var(--cs-white-1);
+  cursor: pointer;
+}
+
+.navbar-margin {
+  margin-top: var(--navbar-height);
+}
+
+a, a:visited {
+  color: inherit;
+  text-decoration: none;
+}
+
+:root {
+  --image-background-colour: rgba(205, 201, 201, 0.911);
+  --hover-colour : darkgrey;
+  --image-colour: rgba(71, 71, 71, 0.783);
+  --cs-white-1: #FFFFFF;
+  --cs-black-1: rgba(0, 0, 0, 1);
+  --cs-black-2: rgb(15, 15, 15);
+  --cs-grey-1: #EBEDF0;
+  --cs-lightblue-1: rgb(0, 149, 246);
+  --cs-red-1: rgb(252, 9, 9);
+  --cs-blue-1: #15002e;
+  --cs-blue-2: #0909a5;
+  --cs-cream-1: #FFFDE7;
+  --cs-cream-2: #F4EEE0;
+  --cs-brown-1: #A1887F;
+  --cs-brown-2: #795548;
+  --cs-brown-3: #5D4037;
+  --cs-brown-4: #3E2723;
+  --cs-orange-1: #FFE0B2;
+  --cs-orange-2: #FFCC80;
+  --cs-orange-3: #FFB74D;
+  --cs-orange-4: #FFA726;
+  --cs-orange-5: #FB8C00;
+  --cs-dark-orange: rgb(149, 80, 1);
+  --cs-green-1: rgba(35, 146, 13, 0.705);
+  --font-bold-1: 500;
+  --navbar-height: 67px;
+  --gallery-img-size: 325px;
+}

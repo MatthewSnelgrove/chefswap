@@ -1,0 +1,31 @@
+$border-divider: rgb(210, 210, 210);
+$conversations-banner: rgb(240, 240, 240);
+
+.people_container {
+  // width: 33%;
+  flex: 1;
+  height: 100%;
+  border-right: 1px solid $border-divider;
+  display: flex;
+  flex-direction: column;
+
+  .people_heading {
+    font-size: 1.4em;
+    font-weight: bold;
+    background-color: $conversations-banner;
+
+    width: 100%;
+    flex: 1.5;
+    min-height: 65px;   // change to scale
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .people_list {
+    padding-top: 8px;
+    flex: 8.5;
+    overflow-y: auto;
+  }
+}

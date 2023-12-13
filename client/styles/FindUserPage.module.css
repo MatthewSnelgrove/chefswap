@@ -1,0 +1,13 @@
+.search_user_container {
+    padding-top: 40px;
+}
+
+.users_container > div {
+    margin-bottom: 10px;
+}
+
+.search_user_container .search_tag {
+    font-size: 30px;
+    width: 30px;
+    height: 30px;
+}
