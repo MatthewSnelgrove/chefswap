@@ -1,3 +1,6 @@
+/**
+ * Deprecated?
+ */
 export default global.config = {
   pages: {
     homepage: "http://localhost:3000/",
@@ -17,5 +20,5 @@ export default global.config = {
     maxQueryLength: 6,
   },
   cuisineItems: ["Indian", "Italian", "Greek", "Pizza", "Thai"],
-  serverUrl: "http://localhost:3001",
+  serverUrl: "https://chefswap-server.fly.dev",
 };

@@ -11,7 +11,7 @@ function UserInfoPage({ user }) {
   // useEffect(() => {
   //   const fetchUser = async () => {
   //     const response = await fetch(
-  //       `http://localhost:3001/api/v1/accounts/?username=${id}`
+  //       `https://chefswap-server.fly.dev/api/v1/accounts/?username=${id}`
   //     );
 
   //     if (!response.ok) {
