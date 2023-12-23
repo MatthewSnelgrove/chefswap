@@ -23,7 +23,7 @@ addRequiredKeyword(readAjv, "write");
 addReadOnlyKeyword(readAjv);
 
 const parser = new Parser();
-const { document } = await fromFile(parser, "./server/socketdoc.yaml").parse();
+const { document } = await fromFile(parser, "./socketdoc.yaml").parse();
 
 const schema = document._json;
 export const payloadValidatorByEvent = new Map();

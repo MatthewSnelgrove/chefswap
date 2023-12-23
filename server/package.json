@@ -55,7 +55,7 @@
     "webpack": "^5.81.0"
   },
   "engines": {
-    "node": "v16.15.1"
+    "node": "v20.10.0"
   },
   "devDependencies": {
     "eslint": "^8.23.1",

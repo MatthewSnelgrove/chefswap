@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
-import { swaggerSpecs } from "./configServices/swaggerConfig.js";
+// import { swaggerSpecs } from "./configServices/swaggerConfig.js";
 import http from "http";
 import { Server } from "socket.io";
 import * as OpenApiValidator from "express-openapi-validator";
@@ -13,6 +13,7 @@ import { sessionMiddleware } from "./configServices/sessionConfig.js";
 import { wrap } from "./configServices/sessionConfig.js";
 import { corsConfig } from "./configServices/corsConfig.js";
 import { BusinessError } from "./utils/errors.js";
+import { HttpError } from "express-openapi-validator/dist/framework/types.js";
 import camelize from "camelize";
 import messagingHandler, {
   getUid,
@@ -35,11 +36,11 @@ app.use(
     extended: true,
   })
 );
-app.use(
-  "/docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpecs, { explorer: true })
-);
+// app.use(
+//   "/docs",
+//   swaggerUi.serve,
+//   swaggerUi.setup(swaggerSpecs, { explorer: true })
+// );
 
 // const uids = [
 //   "36b83756-9a30-4779-a783-f40baad5782d",
@@ -55,7 +56,7 @@ app.use(sessionMiddleware);
 
 app.use(
   OpenApiValidator.middleware({
-    apiSpec: "./server/openapi.yaml",
+    apiSpec: "./openapi.yaml",
     validateRequests: true, // (default)
     validateResponses: false, // false by default
   })
