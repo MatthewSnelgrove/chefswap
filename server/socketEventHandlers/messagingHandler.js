@@ -107,32 +107,48 @@ export default (io, socket) => {
     callback({ messages: formattedMessages });
   }
 
-  async function readMessages(payload, callback) {
+  async function readMessage(payload, callback) {
     const loggedUid = getUid(socket);
 
-    const [findConversation] = camelize(
+    const rows = camelize(
       await pool.query(
-        `SELECT conversation.* FROM message  
+        `SELECT conversation.*, 
+                message.*
+        FROM message  
         JOIN conversation USING (conversation_uid)
-        WHERE message.message_uid = $1 AND (lo_account_uid = $2 OR hi_account_uid = $2)`,
+        WHERE message.message_uid = $1 
+          AND (conversation.lo_account_uid = $2
+                OR conversation.hi_account_uid = $2)`,
         [payload.messageUid, loggedUid]
       )
     ).rows;
 
-    if (findConversation.length === 0) {
-      callback(conversationNotFound);
+    if (rows.length === 0) {
+      callback(messageNotFound);
       return;
     }
+    const messageConv = rows[0];
+
+    const message = {
+      messageUid: messageConv.messageUid,
+      interlocutorUid: messageConv.senderUid,
+      senderUid: messageConv.senderUid,
+      content: messageConv.content,
+      createTimestamp: messageConv.createTimestamp,
+      editTimestamp: messageConv.editTimestamp,
+      parentMessageUid: messageConv.parentMessageUid,
+    };
 
     const updateConvSeen = camelize(
-      //need to check logged in user is acutally part of conversation
       await pool.query(
         `UPDATE conversation SET ${
-          loggedUid === findConversation.hiAccountUid ? "hi_seen" : "lo_seen"
+          loggedUid === messageConv.hiAccountUid ? "hi_seen" : "lo_seen"
         } = $1 WHERE conversation_uid = $2`,
-        [payload.messageUid, findConversation.conversationUid]
+        [payload.messageUid, messageConv.conversationUid]
       )
     );
+
+    io.to(messageConv.conversationUid).emit("receiveReadMessage", message);
 
     callback(updateConvSeen);
   }
@@ -145,7 +161,7 @@ export default (io, socket) => {
 
     const findConversation = camelize(
       await pool.query(
-        `SELECT conversation_uid FROM conversation WHERE hi_account_uid = $1 AND lo_account_uid = $2`,
+        `SELECT conversation_uid, lo_active, hi_active FROM conversation WHERE hi_account_uid = $1 AND lo_account_uid = $2`,
         [maxUid, minUid]
       )
     ).rows;
@@ -155,6 +171,24 @@ export default (io, socket) => {
       return;
     }
 
+    if (!findConversation[0].loActive || !findConversation[0].hiActive) {
+      await pool.query(
+        `UPDATE conversation SET lo_active = true, hi_active = true WHERE conversation_uid = $1`,
+        [findConversation[0].conversationUid]
+      );
+
+      // this is shit
+      await getConversations((conversations) => {
+        const newConversation = conversations.find(
+          (conversation) =>
+            conversation.interlocutor.accountUid === message.interlocutorUid
+        );
+        io.to(message.interlocutorUid).emit(
+          "receiveConversationActivation",
+          newConversation
+        );
+      });
+    }
     const parentMessage = message.parentMessageUid
       ? camelize(
           await pool.query(
@@ -171,12 +205,13 @@ export default (io, socket) => {
         ).rows
       : null;
 
-    if (message.parentMessageUid && parentMessage.length === 0) {
-      callback(messageNotFound);
-      return;
+    if (message.parentMessageUid) {
+      if (parentMessage.length === 0) {
+        callback(messageNotFound);
+        return;
+      }
+      parentMessage[0].interlocutorUid = message.interlocutorUid;
     }
-
-    parentMessage[0].interlocutorUid = message.interlocutorUid;
 
     const insertMessage = camelize(
       await pool.query(
@@ -234,13 +269,20 @@ export default (io, socket) => {
       return;
     }
 
-    const updateConversation = camelize(
+    const updatedMessage = camelize(
       await pool.query(
-        `UPDATE message SET content = $1 WHERE message_uid = $2`,
+        `UPDATE message SET content = $1 WHERE message_uid = $2
+         RETURNING message_uid, sender_uid, content, create_timestamp, edit_timestamp, parent_message_uid`,
         [payload.content, payload.messageUid]
       )
     ).rows;
-    callback(updateConversation);
+
+    io.to(findConversation[0].conversationUid).emit(
+      "receiveMessageEdit",
+      updatedMessage
+    );
+
+    callback(updatedMessage);
   }
 
   async function deleteMessage(payload, callback) {
@@ -267,7 +309,7 @@ export default (io, socket) => {
     );
 
     // if message is a seen message, replace the conversation's seen message with the previous message sent by the sender
-    await pool.query(
+    const interlocutorUid = await pool.query(
       `UPDATE conversation SET 
         lo_seen = (
           CASE
@@ -295,9 +337,14 @@ export default (io, socket) => {
             ELSE hi_seen
           END
         )
-        WHERE conversation_uid = $3`,
+        WHERE conversation_uid = $3
+        RETURNING CASE
+          WHEN lo_account_uid = $2 THEN hi_account_uid
+          WHEN hi_account_uid = $2 THEN lo_account_uid
+          END
+        AS interlocutor_uid`,
       [messageUid, loggedUid, message[0].conversationUid]
-    );
+    ).rows[0].interlocutorUid;
 
     camelize(
       await pool.query(
@@ -305,6 +352,12 @@ export default (io, socket) => {
         [messageUid]
       )
     );
+
+    io.to(message[0].conversationUid).emit("receiveMessageDelete", {
+      messageUid: messageUid,
+      interlocutorUid: interlocutorUid,
+    });
+
     callback({});
   }
 
@@ -498,7 +551,7 @@ export default (io, socket) => {
   socket.on("sendMessage", sendMessage);
   socket.on("editMessage", editMessage);
   socket.on("deleteMessage", deleteMessage);
-  socket.on("readMessages", readMessages);
+  socket.on("readMessage", readMessage);
   socket.on("getConversations", getConversations);
   socket.on("leaveConversation", leaveConversation);
   socket.on("joinConversation", joinConversation);
