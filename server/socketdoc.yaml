@@ -218,8 +218,12 @@ components:
         type: object
         required:
           - messageUid
+          - interlocutorUid
         properties:
           messageUid:
+            type: string
+            format: uuid
+          interlocutorUid:
             type: string
             format: uuid
     ReceiveReadMessage:
@@ -227,23 +231,13 @@ components:
       name: receiveReadMessage
       contentType: application/json
       payload:
-        type: object
-        required:
-          - message
-        properties:
-          message:
-            $ref: "#/components/schemas/Message"
+        $ref: "#/components/schemas/Message"
     ReceiveConversationActivation:
       messageId: receiveConversationActivation
       name: receiveConversationActivation
       contentType: application/json
       payload:
-        type: object
-        required:
-          - conversation
-        properties:
-          conversation:
-            $ref: "#/components/schemas/Conversation"
+        $ref: "#/components/schemas/Conversation"
   schemas:
     Message:
       type: object
