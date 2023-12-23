@@ -48,7 +48,7 @@
     "webpack": "^5.74.0"
   },
   "engines": {
-    "node": "v16.15.1"
+    "node": "v18.12.1"
   },
   "devDependencies": {
     "eslint": "^8.23.1",

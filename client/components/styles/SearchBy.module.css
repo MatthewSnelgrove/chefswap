@@ -1,0 +1,15 @@
+.search_button {
+    background-color: white;
+    border: 0px;
+}
+
+.input_container {
+    display: flex;
+}
+
+.username_search {
+    border-radius: 10px;
+    border: 1px solid black;
+    padding: 0px;
+    box-sizing: border-box;
+  }
