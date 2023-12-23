@@ -1,36 +1,31 @@
 const homepage = "http://localhost:3000/"; // TODO: Change homepage link
+import global_vars from "./config.js";
 
 //TODO: change all of the console.errors to toasts
 export async function fetchLogin(password, username) {
-  const response = await fetch(
-    `https://chefswap-server.fly.dev/api/v1/session`,
-    {
-      method: "POST",
-      mode: "cors",
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    }
-  );
+  const response = await fetch(`${global_vars.serverUrl}/session`, {
+    method: "POST",
+    mode: "cors",
+    body: JSON.stringify({
+      username: username,
+      password: password,
+    }),
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
 
   return response;
 }
 
 export async function fetchUserFromUid(Uid) {
-  return makeRequestWithJSON(
-    `https://chefswap-server.fly.dev/api/v1/accounts/${Uid}`,
-    {
-      method: "GET",
-    }
-  );
+  return makeRequestWithJSON(`${global_vars.serverUrl}/accounts/${Uid}`, {
+    method: "GET",
+  });
 }
 
 export async function fetchUserFromUidWithDistance(Uid, longitude, latitude) {
   return await makeRequestWithJSON(
-    `https://chefswap-server.fly.dev/api/v1/accounts/${Uid}?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}`,
+    `${global_vars.serverUrl}/accounts/${Uid}?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}`,
     {
       method: "GET",
     }
@@ -41,7 +36,7 @@ export async function fetchSpecific(Uid, specific, setFunc) {
   if (setFunc) {
     try {
       const response = await fetch(
-        `https://chefswap-server.fly.dev/api/v1/accounts/${Uid}/${specific}`,
+        `${global_vars.serverUrl}/accounts/${Uid}/${specific}`,
         {
           method: "GET",
           mode: "cors",
@@ -58,7 +53,7 @@ export async function fetchSpecific(Uid, specific, setFunc) {
   }
 
   return await makeRequestWithJSON(
-    `https://chefswap-server.fly.dev/api/v1/accounts/${Uid}/${specific}`,
+    `${global_vars.serverUrl}/accounts/${Uid}/${specific}`,
     {
       method: "GET",
       mode: "cors",
@@ -69,16 +64,13 @@ export async function fetchSpecific(Uid, specific, setFunc) {
 }
 
 export async function signupUser(userObj) {
-  const response = await fetch(
-    "https://chefswap-server.fly.dev/api/v1/accounts",
-    {
-      method: "POST",
-      mode: "cors",
-      body: JSON.stringify(userObj),
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  const response = await fetch("${global_vars.serverUrl}/accounts", {
+    method: "POST",
+    mode: "cors",
+    body: JSON.stringify(userObj),
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+  });
 
   if (!response.ok) {
     return response;
@@ -91,14 +83,11 @@ export async function signupUser(userObj) {
 }
 
 export async function fetchUser() {
-  const response = await fetch(
-    `https://chefswap-server.fly.dev/api/v1/session`,
-    {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    }
-  );
+  const response = await fetch(`${global_vars.serverUrl}/session`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  });
 
   console.log(response);
 
@@ -137,10 +126,10 @@ export async function getAllUsers(latitude, longitude, filter, setFunc) {
 
   try {
     console.log(
-      `https://chefswap-server.fly.dev/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`
+      `${global_vars.serverUrl}/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`
     );
     const response = await fetch(
-      `https://chefswap-server.fly.dev/api/v1/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`
+      `${global_vars.serverUrl}/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`
     );
     const json = await response.json();
     if (setFunc) {
@@ -197,7 +186,7 @@ export async function getAllSwapsOfStatus(accountUid, status, orderBy) {
   }
 
   return await makeRequestWithJSON(
-    `https://chefswap-server.fly.dev/api/v1/swaps/${accountUid}?status=${status}&orderBy=timeDesc`,
+    `${global_vars.serverUrl}/swaps/${accountUid}?status=${status}&orderBy=timeDesc`,
     {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -208,7 +197,7 @@ export async function getAllSwapsOfStatus(accountUid, status, orderBy) {
 
 export async function getRatings(accountUid, swapperUid) {
   return await makeRequestWithJSON(
-    `https://chefswap-server.fly.dev/api/v1/ratings/${accountUid}/${swapperUid}`,
+    `${global_vars.serverUrl}/ratings/${accountUid}/${swapperUid}`,
     {
       method: "GET",
       headers: { "Content-Type": "application/json" },

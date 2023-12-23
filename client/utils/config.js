@@ -20,5 +20,5 @@ export default global.config = {
     maxQueryLength: 6,
   },
   cuisineItems: ["Indian", "Italian", "Greek", "Pizza", "Thai"],
-  serverUrl: "https://chefswap-server.fly.dev",
+  serverUrl: "http://localhost:3001/api/v1",
 };
