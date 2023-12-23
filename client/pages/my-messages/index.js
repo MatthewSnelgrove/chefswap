@@ -14,12 +14,15 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import MessageV2 from "../../components/Message2";
 import { useUser } from "../../components/useUser";
+import Link from "next/link";
 
 function MyMessagesPage() {
   // USER DATA
   const user = useUser();
 
   /*********** CONVERSATION DATA ***********/
+
+  const [conversationsLoading, setConversationsLoading] = useState(true);
 
   // Mock conversation data in the format: {messager: string, lastMessage: string}
   const mockConversations = [
@@ -47,11 +50,13 @@ function MyMessagesPage() {
 
   /**
    * CURRENT SELECTED CONVERSATION
-   * UID of current selected user conversation
+   * Current selected user conversation data (INTERLOCUTOR)
    */
-  const [currentConversation, setCurrentConversation] = useState("");
+  const [currentConversation, setCurrentConversation] = useState(null);
 
   /*********** MESSAGE DATA ***********/
+
+  const [messagesLoading, setMessagesLoading] = useState(true);
 
   // Mock message data in the format: {messageUid, interlocutorUid, senderUid, content, createTimestamp, editTimestamp, parentMessageUid}
   const mockMessages = [
@@ -130,7 +135,6 @@ function MyMessagesPage() {
       }
     }
     const messageArea = document.querySelector(`.${styles.messages_area}`);
-    const chatInput = document.querySelector(`.${styles.chat_input}`);
 
     if (chatState !== 0) {
       // Allow user to press escape to stop replying or editing
@@ -138,10 +142,6 @@ function MyMessagesPage() {
       // Add padding to let user notice layout shift
       messageArea.style.paddingBottom = "50px";
       messageArea.scrollBy(0, 20);
-
-      // Scroll textbar to rightmost, focus textbar
-      chatInput.scrollLeft = chatInput.scrollWidth;
-      chatInput.focus();
     } else {
       if (messageArea) {
         messageArea.scrollBy(0, -20);
@@ -196,6 +196,11 @@ function MyMessagesPage() {
     if (chatState === 2) setChatText("");
     setChatState(1);
     handleSelectedMessageChange(parentMessageData);
+
+    // Scroll textbar to rightmost, focus textbar
+    const chatInput = document.querySelector(`.${styles.chat_input}`);
+    chatInput.scrollLeft = chatInput.scrollWidth;
+    chatInput.focus();
   }
 
   function sendReply() {
@@ -213,6 +218,11 @@ function MyMessagesPage() {
     setChatState(2);
     handleSelectedMessageChange(parentMessageData);
     setChatText(parentMessageData.content);
+
+    // Scroll textbar to rightmost, focus textbar
+    const chatInput = document.querySelector(`.${styles.chat_input}`);
+    chatInput.scrollLeft = chatInput.scrollWidth;
+    chatInput.focus();
   }
 
   function sendEdit() {
@@ -243,6 +253,7 @@ function MyMessagesPage() {
    * Handles when user clicks send button
    */
   function handleSend() {
+    // TODO: Enforce 300 char limit
     if (chatText === "") return;
 
     // SEND CHAT
@@ -279,6 +290,7 @@ function MyMessagesPage() {
                 </button>
               </div>
               <div className={styles.search}>
+                {/* TODO: Search for user should filter users */}
                 <input
                   className={styles.search_input}
                   type="text"
@@ -296,6 +308,7 @@ function MyMessagesPage() {
             </div>
           </div>
 
+          {/* CHAT HEADER + MESSAGES */}
           <div className={styles.content}>
             <div className={styles.content_header}>
               <div className={styles.recipient_row}>
@@ -335,82 +348,102 @@ function MyMessagesPage() {
               </div>
             </div>
 
-            <div className={styles.messages_area}>
-              {/* TODO: Render loading skeleton if messages are not loaded */}
-              {/* TODO: Infinite scroll */}
-              <MessageV2
-                data={mockMessages[0]}
-                onEdit={startEditing}
-                onReply={startReplying}
-                onDelete={startDeleting}
-              />
-              <MessageV2
-                data={mockMessages[1]}
-                onEdit={startEditing}
-                onReply={startReplying}
-                onDelete={startDeleting}
-              />
-              <MessageV2
-                data={mockMessages[2]}
-                onEdit={startEditing}
-                onReply={startReplying}
-                onDelete={startDeleting}
-              />
-              <MessageV2
-                data={mockMessages[3]}
-                onEdit={startEditing}
-                onReply={startReplying}
-                onDelete={startDeleting}
-              />
-              <MessageV2
-                data={mockMessages[4]}
-                onEdit={startEditing}
-                onReply={startReplying}
-                onDelete={startDeleting}
-              />
-              <MessageV2
-                data={mockMessages[5]}
-                onEdit={startEditing}
-                onReply={startReplying}
-                onDelete={startDeleting}
-              />
-            </div>
-
-            <div className={styles.input_container}>
-              <button className={styles.add_media_button}>
-                <AddRoundedIcon sx={{ color: "#5A5A5A", fontSize: 45 }} />
-              </button>
-              <div className={styles.input_section}>
-                {chatState !== 0 && (
-                  <div className={styles.input_context}>
-                    <div className={styles.input_context_text}>
-                      {chatState === 0 && ""}
-                      {chatState === 1 && "Replying to: "}
-                      {chatState === 2 && "Editing message: "}
-                      {/* TODO: Render context name conditionally */}
-                      <span className={styles.context_user}>User0</span>
-                    </div>
-                    <button
-                      className={styles.input_context_close}
-                      onClick={() => clearChatState()}
-                    >
-                      <CloseRoundedIcon sx={{ color: "white", fontSize: 18 }} />
-                    </button>
-                  </div>
-                )}
-
-                <input
-                  className={styles.chat_input}
-                  type="text"
-                  placeholder="Send a message..."
-                  value={chatText}
-                  onChange={handleChatTextChange}
-                />
+            {/* MESSAGES AREA */}
+            {!currentConversation ? (
+              <div className={styles.no_conversation_area}>
+                <div className={styles.nc_graphic}>(graphic)</div>
+                <div className={styles.nc_text}>
+                  Looks like there are no conversations.
+                  <br />
+                  <span className={styles.nc_link}>
+                    <Link href="/find-swap">Find a swap</Link>
+                  </span>{" "}
+                  to start chatting!
+                </div>
               </div>
-              <button className={styles.send_button} onClick={handleSend}>
-                <SendRoundedIcon sx={{ color: "white", fontSize: 35 }} />
-              </button>
-            </div>
+            ) : (
+              <>
+                <div className={styles.messages_area}>
+                  {/* TODO: Render loading skeleton if messages are not loaded */}
+                  {/* TODO: If no messages in conversation, render no messages text */}
+                  {/* TODO: Infinite scroll */}
+                  <MessageV2
+                    data={mockMessages[0]}
+                    onEdit={startEditing}
+                    onReply={startReplying}
+                    onDelete={startDeleting}
+                  />
+                  <MessageV2
+                    data={mockMessages[1]}
+                    onEdit={startEditing}
+                    onReply={startReplying}
+                    onDelete={startDeleting}
+                  />
+                  <MessageV2
+                    data={mockMessages[2]}
+                    onEdit={startEditing}
+                    onReply={startReplying}
+                    onDelete={startDeleting}
+                  />
+                  <MessageV2
+                    data={mockMessages[3]}
+                    onEdit={startEditing}
+                    onReply={startReplying}
+                    onDelete={startDeleting}
+                  />
+                  <MessageV2
+                    data={mockMessages[4]}
+                    onEdit={startEditing}
+                    onReply={startReplying}
+                    onDelete={startDeleting}
+                  />
+                  <MessageV2
+                    data={mockMessages[5]}
+                    onEdit={startEditing}
+                    onReply={startReplying}
+                    onDelete={startDeleting}
+                  />
+                </div>
+
+                <div className={styles.input_container}>
+                  <button className={styles.add_media_button}>
+                    <AddRoundedIcon sx={{ color: "#5A5A5A", fontSize: 45 }} />
+                  </button>
+                  <div className={styles.input_section}>
+                    {chatState !== 0 && (
+                      <div className={styles.input_context}>
+                        <div className={styles.input_context_text}>
+                          {chatState === 0 && ""}
+                          {chatState === 1 && "Replying to: "}
+                          {chatState === 2 && "Editing message: "}
+                          {/* TODO: Render context name conditionally */}
+                          <span className={styles.context_user}>User0</span>
+                        </div>
+                        <button
+                          className={styles.input_context_close}
+                          onClick={() => clearChatState()}
+                        >
+                          <CloseRoundedIcon
+                            sx={{ color: "white", fontSize: 18 }}
+                          />
+                        </button>
+                      </div>
+                    )}
+
+                    <input
+                      className={styles.chat_input}
+                      type="text"
+                      placeholder="Send a message..."
+                      value={chatText}
+                      onChange={handleChatTextChange}
+                    />
+                  </div>
+                  <button className={styles.send_button} onClick={handleSend}>
+                    <SendRoundedIcon sx={{ color: "white", fontSize: 35 }} />
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </OnlyLoggedIn>

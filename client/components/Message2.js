@@ -67,6 +67,7 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
           {data.parentMessageUid !== null && (
             <div className={styles.right_parent_row}>
               {/* TODO: Change reply bubble color based on sender of referenced message */}
+              {/* TODO: Clicking reply should jump to parent message */}
               <button className={styles.right_reply_bubble}>
                 {/* TODO: Load reply content */}
                 <div className={styles.reply_content}>
