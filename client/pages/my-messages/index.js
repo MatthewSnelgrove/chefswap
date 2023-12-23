@@ -3,6 +3,7 @@ import OnlyLoggedIn from "../../components/OnlyLoggedIn";
 import Conversation from "../../components/Conversation";
 import Head from "next/head";
 import styles from "../../styles/MyMessagesPage.module.scss";
+import msgStyles from "../../components/styles/Message2.module.scss";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import SearchIcon from "@mui/icons-material/Search";
 import Image from "next/image";
@@ -157,12 +158,35 @@ function MyMessagesPage() {
   const [selectedMessage, setSelectedMessage] = useState(null);
 
   /**
+   * Handles when a message is selected (being edited or replied to)
+   */
+  function handleSelectedMessageChange(messageData) {
+    const oldMessage = document.getElementById(
+      `message_${selectedMessage?.messageUid}`
+    );
+    const newMessage = document.getElementById(
+      `message_${messageData?.messageUid}`
+    );
+
+    // Remove old message's selected style
+    if (oldMessage) {
+      oldMessage.classList.remove(msgStyles.selected_message_container);
+    }
+
+    if (!newMessage) return;
+    setSelectedMessage(messageData);
+
+    // Add new message's selected style
+    newMessage.classList.add(msgStyles.selected_message_container);
+  }
+
+  /**
    * Clears chat state and selected message
    */
   function clearChatState() {
     if (chatState === 2) setChatText("");
     setChatState(0);
-    setSelectedMessage(null);
+    handleSelectedMessageChange(null);
   }
 
   /**
@@ -171,7 +195,7 @@ function MyMessagesPage() {
   function startReplying(parentMessageData) {
     if (chatState === 2) setChatText("");
     setChatState(1);
-    setSelectedMessage(parentMessageData);
+    handleSelectedMessageChange(parentMessageData);
   }
 
   function sendReply() {
@@ -187,7 +211,7 @@ function MyMessagesPage() {
       return;
     }
     setChatState(2);
-    setSelectedMessage(parentMessageData);
+    handleSelectedMessageChange(parentMessageData);
     setChatText(parentMessageData.content);
   }
 

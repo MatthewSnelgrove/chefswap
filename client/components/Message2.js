@@ -6,11 +6,6 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 
 // data: {messageUid, interlocutorUid, senderUid, content, createTimestamp, editTimestamp, parentMessageUid}
 export default function MessageV2({ data, onReply, onEdit, onDelete }) {
-  if (data === null || data === undefined) {
-    console.log("MessageV2: message data is null"); // test
-    return <></>;
-  }
-
   const [hovering, setHovering] = useState(false);
 
   const isSender = data.interlocutorUid !== data.senderUid;
@@ -28,6 +23,11 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
     minute: "2-digit",
     hour12: true,
   });
+
+  if (data === null || data === undefined) {
+    console.log("MessageV2: message data is null"); // test
+    return <></>;
+  }
 
   return isSender ? (
     // USER'S MESSAGE

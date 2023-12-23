@@ -7,7 +7,8 @@
   padding: 0 50px;
 }
 .left_container:hover, .right_container:hover {
-  background-color: rgb(240, 240, 240);
+  // background-color: rgb(240, 240, 240);
+  backdrop-filter: brightness(0.97);
 }
 .left_container:has(+ .right_container) {
   margin-bottom: 10px;
@@ -15,6 +16,31 @@
 .right_container:has(+ .left_container) {
   margin-bottom: 10px;
 }
+
+.selected_message_container {
+  // use flash_twice
+  animation-duration: 0.3s;
+  animation-name: flash;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+  animation-direction: normal;
+}
+
+@keyframes flash {
+  0% {
+    background-color: white;
+  }
+  33% {
+    background-color: var(--cs-cream-2);
+  }
+  66% {
+    background-color: white;
+  }
+  100% {
+    background-color: var(--cs-cream-2);
+  }
+}
+
 
 .left, .right {
   display: flex;
