@@ -54,6 +54,11 @@ function LoggedIn(props) {
                 <Link href="/find-swap">Find a Swap</Link>
               </div>
             </li>
+            <li className="nav-item">
+              <a className="nav-link" href="/my-messages">
+                Messages
+              </a>
+            </li>
           </ul>
           <ul className="navbar-nav ms-auto pe-3">
             <li className="nav-item dropdown">

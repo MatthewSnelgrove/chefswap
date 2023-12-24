@@ -3,11 +3,17 @@
   border: none;
   border-radius: 50px;
   cursor: pointer;
-
-  font-size: 0.8em;
-  margin-left: 5px;
+  background-color: white;
+  font-weight: 500;
+  font-size: 1.2em;
+  margin-left: 12px;
 }
 
 .interact_btn:active {
   opacity: 0.7;
 }
+
+.interact-btn:hover {
+  background-color: var(--cs-orange-4);
+}
+

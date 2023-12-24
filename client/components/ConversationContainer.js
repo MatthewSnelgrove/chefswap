@@ -1,7 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 import PeopleContainer from "./PeopleContainer";
 import styles from "./styles/ConversationContainer.module.scss";
 import Chatbox from "./Chatbox";
+
 
 /**
  * Container component for entire conversations page (/my-messages)
@@ -16,6 +17,9 @@ export default class ConversationContainer extends Component {
           <Chatbox />
         </div>
       </div>
-    );
-  }
+    </>
+  );
 }
+
+
+export default ConversationContainer;

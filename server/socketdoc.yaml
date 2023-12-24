@@ -1,0 +1,377 @@
+asyncapi: 2.6.0
+info:
+  title: Chefswap Messaging
+  version: 1.0.0
+  description: Messaging websocket api for chefswap
+servers:
+  development:
+    url: ws://localhost:3001
+    protocol: ws
+    description: Development server
+channels:
+  /:
+    publish:
+      summary: Send message related data to the server. Use the x-ack property to listen for a response.
+      message:
+        oneOf:
+          - $ref: "#/components/messages/GetMessages"
+          - $ref: "#/components/messages/SendMessage"
+          - $ref: "#/components/messages/EditMessage"
+          - $ref: "#/components/messages/DeleteMessage"
+          - $ref: "#/components/messages/ReadMessage"
+          - $ref: "#/components/messages/GetConversations"
+          - $ref: "#/components/messages/JoinConversation"
+          - $ref: "#/components/messages/LeaveConversation"
+    subscribe:
+      summary: Listen for message related data from the server
+      message:
+        oneOf:
+          - $ref: "#/components/messages/ReceiveMessage"
+          - $ref: "#/components/messages/ReceiveMessageEdit"
+          - $ref: "#/components/messages/ReceiveMessageDelete"
+          - $ref: "#/components/messages/ReceiveReadMessage"
+          - $ref: "#/components/messages/ReceiveConversationActivation"
+components:
+  messages:
+    GetMessages:
+      messageId: getMessages
+      name: getMessages
+      summary: Get past messages in a conversation. Use idKey and limit for pagination.
+      contentType: application/json
+      payload:
+        type: object
+        description: Get messages for a conversation
+        required:
+          - interlocutorUid
+          - limit
+        properties:
+          interlocutorUid:
+            type: string
+            format: uuid
+          curMessageId:
+            type: string
+            format: uuid
+          limit:
+            type: integer
+            minimum: 1
+      x-ack:
+        args:
+          oneOf:
+            - type: object
+              required:
+                - messages
+              properties:
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - message
+                    properties:
+                      message:
+                        $ref: "#/components/schemas/Message"
+                      parentMessage:
+                        $ref: "#/components/schemas/Message"
+            - $ref: "#/components/schemas/Error"
+    SendMessage:
+      messageId: sendMessage
+      name: sendMessage
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/Message"
+      x-ack:
+        args:
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/Error"
+    EditMessage:
+      messageId: editMessage
+      name: editMessage
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - messageUid
+          - content
+        properties:
+          messageUid:
+            type: string
+            format: uuid
+          content:
+            $ref: "#/components/schemas/MessageContent"
+      x-ack:
+        args:
+          oneOf:
+            - $ref: "#/components/schemas/Message"
+            - $ref: "#/components/schemas/Error"
+    DeleteMessage:
+      messageId: deleteMessage
+      name: deleteMessage
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - messageUid
+        properties:
+          messageUid:
+            type: string
+            format: uuid
+      x-ack:
+        args:
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/Error"
+    ReadMessage:
+      messageId: readMessage
+      name: readMessage
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - messageUid
+        properties:
+          messageUid:
+            type: string
+            format: uuid
+      x-ack:
+        args:
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/Error"
+    GetConversations:
+      messageId: getConversations
+      name: getConversations
+      summary: Get all conversations that the signed in account is a part of
+      contentType: application/json
+      x-ack:
+        args:
+          oneOf:
+            - type: object
+              required:
+                - conversations
+              properties:
+                conversations:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Conversation"
+            - $ref: "#/components/schemas/Error"
+    JoinConversation:
+      messageId: joinConversation
+      name: joinConversation
+      summary: Join a new conversation
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - interlocutorUid
+        properties:
+          interlocutorUid:
+            type: string
+            format: uuid
+      x-ack:
+        args:
+          oneOf:
+            - $ref: "#/components/schemas/Conversation"
+            - $ref: "#/components/schemas/Error"
+    LeaveConversation:
+      messageId: leaveConversation
+      name: leaveConversation
+      summary: Leave a conversation
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - interlocutorUid
+        properties:
+          interlocutorUid:
+            type: string
+            format: uuid
+      x-ack:
+        args:
+          oneOf:
+            - type: object # empty ack object
+            - $ref: "#/components/schemas/Error"
+    ReceiveMessage:
+      messageId: receiveMessage
+      name: receiveMessage
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - message
+        properties:
+          message:
+            $ref: "#/components/schemas/Message"
+          parentMessage:
+            $ref: "#/components/schemas/Message"
+    ReceiveMessageEdit:
+      messageId: receiveMessageEdit
+      name: receiveMessageEdit
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/Message"
+    ReceiveMessageDelete:
+      messageId: receiveMessageDelete
+      name: receiveMessageDelete
+      contentType: application/json
+      payload:
+        type: object
+        required:
+          - messageUid
+          - interlocutorUid
+        properties:
+          messageUid:
+            type: string
+            format: uuid
+          interlocutorUid:
+            type: string
+            format: uuid
+    ReceiveReadMessage:
+      messageId: receiveReadMessage
+      name: receiveReadMessage
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/Message"
+    ReceiveConversationActivation:
+      messageId: receiveConversationActivation
+      name: receiveConversationActivation
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/Conversation"
+  schemas:
+    Message:
+      type: object
+      required:
+        - messageUid
+        - interlocutorUid
+        - senderUid
+        - content
+        - createTimestamp
+      properties:
+        messageUid:
+          readOnly: true
+          allOf:
+            - type: string
+              format: uuid
+        interlocutorUid:
+          type: string
+          format: uuid
+        senderUid:
+          readOnly: true
+          allOf:
+            - type: string
+              format: uuid
+        content:
+          $ref: "#/components/schemas/MessageContent"
+        createTimestamp:
+          readOnly: true
+          allOf:
+            - type: string
+              format: date-time
+        editTimestamp:
+          readOnly: true
+          allOf:
+            - type: string
+              format: date-time
+        parentMessageUid:
+          type: string
+          format: uuid
+    MessageContent:
+      type: string
+      maxLength: 300
+    Conversation:
+      type: object
+      required:
+        - interlocutor
+      properties:
+        interlocutor:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/CondensedAccount"
+        lastMessage:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/Message"
+        lastSeenMessage:
+          readOnly: true
+          allOf:
+            - $ref: "#/components/schemas/Message"
+    CondensedAccount:
+      type: object
+      description: condensed account information related to messaging
+      required:
+        - accountUid
+        - username
+      properties:
+        accountUid:
+          type: string
+          format: uuid
+        username:
+          $ref: "#/components/schemas/Username"
+        pfpLink:
+          $ref: "#/components/schemas/ImageLink"
+    Username:
+      type: string
+      minLength: 3
+      maxLength: 80
+      pattern: '[^!*''();:@&=+$,/?%#[\]\s]{3,80}' #can't conatain any url reserved characters
+    ImageLink:
+      type: string
+      description: link to image in google cloud storage
+      pattern: '^https:\/\/storage\.googleapis\.com\/.+$'
+    Error:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/components/schemas/CommonError"
+              - oneOf:
+                  - $ref: "#/components/schemas/ValidationError"
+                  - $ref: "#/components/schemas/BusinessError"
+                  - $ref: "#/components/schemas/ServerError"
+    CommonError:
+      type: object
+      required:
+        - errorType
+        - event
+        - message
+        - detail
+      properties:
+        errorType:
+          type: string
+          enum:
+            - validation
+            - business
+            - server
+        event:
+          type: string
+        message:
+          type: string
+        detail:
+          type: string
+    ValidationError:
+      type: object
+      required:
+        - path
+      properties:
+        errorType:
+          type: string
+          const: "validation"
+        path:
+          type: string
+    BusinessError:
+      type: object
+      properties:
+        errorType:
+          type: string
+          const: "business"
+    ServerError:
+      type: object
+      properties:
+        errorType:
+          type: string
+          const: "server"
