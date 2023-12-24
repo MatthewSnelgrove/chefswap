@@ -1,0 +1,33 @@
+$border-divider: rgb(210, 210, 210);
+
+.conversation_flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.conversation_container {
+  width: 80vw;
+  height: 80vh;
+
+  border: 2px solid $border-divider;
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  display: flex;
+}
+
+@media (max-width: 660px) {
+  .conversation_container {
+    width: 100vw;
+  }
+
+  .people_container {
+    width: 40%;
+  }
+
+  .switch_button_container {
+    visibility: hidden;
+  }
+}

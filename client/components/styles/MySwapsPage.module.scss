@@ -1,0 +1,77 @@
+.swap_container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.MuiAccordion-region {
+  background-color: rgb(225,227,229);
+}
+
+.MuiPaper-root > div {
+  background-color: var(--cs-grey-1);
+}
+
+.MuiPaper-root {
+  margin-bottom: 10px;
+}
+
+.typography_text_container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.MuiAccordion-region * {
+  font-size: 22px;
+}
+
+.MuiAccordion-region span {
+  
+  font-weight: 500;
+}
+
+.swap_text {
+  font-size: 40px;
+}
+
+.button_wrapper button {
+  border-right: 0px;
+  border-top: 0px;
+  border-bottom: 0px;
+  background-color: var(--image-background-colour);
+  border-radius: 10px;
+  border: 2px solid var(--image-background-colour);
+}
+
+.button_wrapper button:hover {
+  background-color: var(--hover-colour);
+  border: solid 2px var(--hover-colour);
+}
+
+.decline_button:hover span {
+  color: red;
+}
+
+.accept_button:hover span {
+  color: rgb(5, 255, 134);
+}
+
+.button_wrapper {
+  display: flex;
+  /* background-color: var(--image-background-colour); */
+  margin-right: 10px;
+  gap: 2px;
+}
+
+.button_wrapper span {
+  font-size: 45px;
+  padding-top: 5px;
+  color: var(--image-colour);
+  font-weight: 600;
+}
+
+@media (max-width: 990px) {
+  .button_wrapper span {
+      font-size: 35px;
+  }
+}

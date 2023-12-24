@@ -1,0 +1,67 @@
+@import "../../styles/variables";
+
+.cred_modal_container {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  
+  display: flex;
+  justify-content: center;
+
+  background-color: rgba(128, 128, 128, 0.3);
+  background-size: cover;
+
+  overflow: auto;
+
+  padding-top: 50px;
+}
+
+.popup {
+  width: 50%;
+  height: fit-content;
+  margin-top: 5%;
+  margin-bottom: 5%;
+
+  background-color: white;
+  padding: 2.5% 3%;
+  padding-bottom: 6%;
+  border-radius: 20px;
+
+  box-shadow: rgba(0, 0, 0, 1) 0px 5px 25px;
+}
+
+.cred_modal_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  width: 100%;
+  padding-bottom: 8px;
+  border-bottom: 1px solid black;
+  margin-bottom: 25px;
+}
+
+.header_title {
+  font-size: 1.5em;
+  font-weight: 650;
+  color: $cs-dark-orange;
+}
+
+.close_modal_btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: transparent;
+}
+
+.cred_modal_content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  max-height: 80%;
+  width: 100%;
+}

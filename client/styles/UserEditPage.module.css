@@ -1,0 +1,57 @@
+.form_container {
+    background-color: var(--cs-white-1);
+    display: flex;
+    min-height: calc(100% - var(--navbar-height));
+}
+
+/* make smaller screens form continaer width 1150px for the form-container  (using media queries) */
+
+.form_container * {
+    font-size: 18px;
+    --indicator-width: 4px;
+}
+
+.list_links {
+    list-style: none;
+    padding-left: 0px;
+    padding-right: 0px;
+    border-right: 2px solid var(--cs-grey-1);
+    margin-bottom: 0px;
+    min-height: 100%;
+}
+
+.list_links > li {
+    font-size: 22px;
+    width: 100%;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
+    padding-right: 23px;
+    white-space: nowrap;
+    border-left-width: var(--indicator-width);
+    border-left-style: solid;
+    border-left-color: transparent;
+    position: relative;
+}
+
+.list_links > li > div {
+    font-size: 25px;
+}
+
+.list_links > li:hover {
+    border-left: var(--indicator-width) solid var(--cs-orange-4);
+    background-color: var(--cs-grey-1);
+}
+
+@media (max-width: 710px) {
+    .list_links > li {
+        padding-right: 11px;
+        padding-left: 11px;
+    }
+
+    .list_links {
+        margin-right: 18px;
+    }
+}
+  
