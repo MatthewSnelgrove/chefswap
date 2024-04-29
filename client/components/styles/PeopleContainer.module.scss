@@ -9,14 +9,14 @@ $conversations-banner: rgb(240, 240, 240);
   display: flex;
   flex-direction: column;
 
-  .people_heading {
-    font-size: 1.4em;
-    font-weight: bold;
+  .people-heading {
+    font-size: 2em;
+    font-weight: 500;
     background-color: $conversations-banner;
 
     width: 100%;
     flex: 1.5;
-    min-height: 65px;   // change to scale
+    min-height: 65px; // change to scale
 
     display: flex;
     justify-content: center;
@@ -27,5 +27,17 @@ $conversations-banner: rgb(240, 240, 240);
     padding-top: 8px;
     flex: 8.5;
     overflow-y: auto;
+
+    .username-container {
+      font-size: 16px;
+    }
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .people-container {
+    .people-heading {
+      font-size: 1.2em;
+    }
   }
 }

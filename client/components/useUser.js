@@ -9,6 +9,5 @@ export function useUser() {
     // if (status == "error") {return null}
     if (data.status == 404) {return null}
     
-
     return data.profile
 }

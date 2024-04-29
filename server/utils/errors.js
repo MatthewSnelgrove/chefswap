@@ -1,41 +1,75 @@
-export const accountNotFound = {
+export class BusinessError extends Error {
+  constructor({ status, message, detail }) {
+    super(message);
+    this.status = status;
+    this.message = message;
+    this.detail = detail;
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+export const accountNotFound = new BusinessError({
   status: 404,
   message: "account not found",
   detail: "account with specified accountUid not found",
-};
+});
 
-export const swapperNotFound = {
+export const swapperNotFound = new BusinessError({
   status: 404,
   message: "swapper not found",
   detail: "swapper with specified swapperUid not found",
-};
+});
 
-export const sessionNotFound = {
+export const sessionNotFound = new BusinessError({
   status: 404,
   message: "session not found",
   detail: "no active session",
-};
+});
 
-export const forbidden = {
+export const forbidden = new BusinessError({
   status: 403,
   message: "not authenticated with targeted account",
   detail: "this action requires authentication with targeted account",
-};
+});
 
-export const unauthorized = {
+export const unauthorized = new BusinessError({
   status: 401,
   message: "not authenticated",
   detail: "this action requires authentication with targeted account",
-};
+});
 
-export const swapNotFound = {
+export const invalidLogin = new BusinessError({
+  status: 401,
+  message: "invalid login credentials",
+  detail: "the username or password entered is incorrect",
+});
+
+export const swapNotFound = new BusinessError({
   status: 404,
   message: "swap not found",
   detail: "specified swap does not exist",
-};
+});
 
-export const ratingNotFound = {
+export const ratingNotFound = new BusinessError({
   status: 404,
   message: "rating not found",
   detail: "rating with specified accountUid and swapperUid not found",
-};
+});
+
+export const sameUidMessages = new BusinessError({
+  status: 400,
+  message: "same logged in uid for messaging",
+  detail: "sent in uid from payload same as logged in uid",
+});
+
+export const conversationNotFound = new BusinessError({
+  status: 404,
+  message: "conversation not found",
+  detail: "conversation with specified interlocutorUid and accountUid not found"
+})
+
+export const messageNotFound = new BusinessError({
+  status: 404,
+  message: "message not found",
+  detail: "message with specified messageUid"
+})

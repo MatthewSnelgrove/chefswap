@@ -129,8 +129,10 @@ export async function getAllUsers(latitude, longitude, filter, setFunc) {
       `${global_vars.serverUrl}/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`
     );
     const response = await fetch(
-      `${global_vars.serverUrl}/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`
-    );
+      `${global_vars.serverUrl}/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`,
+      {
+        credentials: "include"
+      });
     const json = await response.json();
     if (setFunc) {
       setFunc(json);
