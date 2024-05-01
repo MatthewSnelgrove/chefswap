@@ -14,7 +14,9 @@ export const sessionMiddleware = session({
   saveUninitialized: false,
   cookie: {
     httpOnly: false,
-    secure: false,
+    sameSite: "none",
+    secure: "auto",
+    partitioned: true,
     maxAge: 1000 * 60 * 60 * 24, //24 hours, reset on activity
   },
 });
