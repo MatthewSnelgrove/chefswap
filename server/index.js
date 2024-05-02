@@ -25,6 +25,11 @@ import { validatePayloadByEvent } from "./socketMiddlewares/socketValidator.js";
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
 const PORT = process.env.PORT || 3001;
 const app = express();
+
+// trust fly proxy
+if (process.env.IS_LOCAL_SERVER !== "true") {
+  app.set("trust proxy", 1);
+}
 const server = http.createServer(app);
 
 app.use(helmet());
