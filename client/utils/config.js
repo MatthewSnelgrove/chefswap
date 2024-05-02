@@ -2,6 +2,9 @@ import * as dotenv from "dotenv";
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
 const isLocalServer = process.env.IS_LOCAL_SERVER === "true";
 export default global.config = {
+  /**
+   * global.config.pages is deprecated
+   */
   pages: {
     homepage: "http://localhost:3000/",
     editProfile: "http://localhost:3000/me",
@@ -13,6 +16,7 @@ export default global.config = {
     mySwaps: "http://localhost:3000/my-swaps",
     searchSwaps: "http://localhost:3000/find-swap/search",
   },
+  // BELOW IN USE
   userStates: {
     loading: "loading",
   },

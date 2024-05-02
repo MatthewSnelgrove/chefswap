@@ -44,14 +44,14 @@ function MySwapsPage() {
 
       <OnlyLoggedIn>
         <div className="navbar-margin" style={{ paddingTop: "20px" }}>
-          <SwapSwitch current={0} />
           <div
             style={{
               display: "flex",
               flexDirection: "column",
               gap: "20px",
               justifyContent: "center",
-              marginTop: "23px",
+              paddingLeft: "30px",
+              paddingRight: "30px",
             }}
           >
             <div>
