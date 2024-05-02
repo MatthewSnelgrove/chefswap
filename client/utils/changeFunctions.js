@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import global_vars from "./config";
 const homepage = "http://localhost:3000/";
 
 //TODO: make a errorMessage for each function that uses makeChangeRequestWithToast
@@ -18,7 +19,7 @@ async function makeChangeRequestWithToast(
 }
 
 export async function addNewPhoto(Uid, formData, linkToGo) {
-  await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/images`, {
+  await fetch(`${global_vars.serverUrl}/accounts/${Uid}/images`, {
     method: "POST",
     body: formData,
     credentials: "include",
@@ -33,7 +34,7 @@ export async function addNewPhoto(Uid, formData, linkToGo) {
 
 export async function deletePhoto(Uid, imgUid) {
   await makeChangeRequestWithToast(
-    `http://localhost:3001/api/v1/accounts/${Uid}/images/${imgUid}`,
+    `${global_vars.serverUrl}/accounts/${Uid}/images/${imgUid}`,
     {
       method: "DELETE",
       credentials: "include",
@@ -43,7 +44,7 @@ export async function deletePhoto(Uid, imgUid) {
 }
 
 export async function changeAddress(Uid, addressInfo) {
-  return await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/address`, {
+  return await fetch(`${global_vars.serverUrl}/accounts/${Uid}/address`, {
     credentials: "include",
     method: "PUT",
     body: JSON.stringify(addressInfo),
@@ -53,7 +54,7 @@ export async function changeAddress(Uid, addressInfo) {
 }
 
 export async function changeEmail(Uid, emailInfo) {
-  return await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/email`, {
+  return await fetch(`${global_vars.serverUrl}/accounts/${Uid}/email`, {
     credentials: "include",
     method: "PUT",
     body: JSON.stringify(emailInfo),
@@ -63,7 +64,7 @@ export async function changeEmail(Uid, emailInfo) {
 }
 
 export async function signoutUser() {
-  const response = await fetch(`http://localhost:3001/api/v1/session`, {
+  const response = await fetch(`${global_vars.serverUrl}/session`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -75,7 +76,7 @@ export async function signoutUser() {
 }
 
 export async function changeBio(Uid, bio) {
-  await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/bio`, {
+  await fetch(`${global_vars.serverUrl}/accounts/${Uid}/bio`, {
     credentials: "include",
     method: "PUT",
     body: JSON.stringify({ bio: bio }),
@@ -85,7 +86,7 @@ export async function changeBio(Uid, bio) {
 
 export async function addPrefrence(Uid, prefrence) {
   await makeChangeRequestWithToast(
-    `http://localhost:3001/api/v1/accounts/${Uid}/cuisinePreferences`,
+    `${global_vars.serverUrl}/accounts/${Uid}/cuisinePreferences`,
     {
       credentials: "include",
       method: "POST",
@@ -98,7 +99,7 @@ export async function addPrefrence(Uid, prefrence) {
 
 export async function deletePrefrence(Uid, prefrence) {
   await makeChangeRequestWithToast(
-    `http://localhost:3001/api/v1/accounts/${Uid}/cuisinePreferences/${prefrence}`,
+    `${global_vars.serverUrl}/accounts/${Uid}/cuisinePreferences/${prefrence}`,
     {
       credentials: "include",
       method: "DELETE",
@@ -110,7 +111,7 @@ export async function deletePrefrence(Uid, prefrence) {
 
 export async function addSpeciality(Uid, speciality) {
   await makeChangeRequestWithToast(
-    `http://localhost:3001/api/v1/accounts/${Uid}/cuisineSpecialities`,
+    `${global_vars.serverUrl}/accounts/${Uid}/cuisineSpecialities`,
     {
       credentials: "include",
       method: "POST",
@@ -123,7 +124,7 @@ export async function addSpeciality(Uid, speciality) {
 
 export async function deleteSpeciality(Uid, speciality) {
   await makeChangeRequestWithToast(
-    `http://localhost:3001/api/v1/accounts/${Uid}/cuisineSpecialities/${speciality}`,
+    `${global_vars.serverUrl}/accounts/${Uid}/cuisineSpecialities/${speciality}`,
     {
       credentials: "include",
       method: "DELETE",
@@ -134,7 +135,7 @@ export async function deleteSpeciality(Uid, speciality) {
 }
 
 export async function changeUserProfile(Uid, profileForm, curLocation) {
-  await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/pfp`, {
+  await fetch(`${global_vars.serverUrl}/accounts/${Uid}/pfp`, {
     method: "PUT",
     body: profileForm,
     credentials: "include",
@@ -144,7 +145,7 @@ export async function changeUserProfile(Uid, profileForm, curLocation) {
 }
 
 export async function changePassword(Uid, password) {
-  return await fetch(`http://localhost:3001/api/v1/accounts/${Uid}/password`, {
+  return await fetch(`${global_vars.serverUrl}/accounts/${Uid}/password`, {
     method: "PUT",
     body: JSON.stringify({ password: password }),
     credentials: "include",
@@ -160,7 +161,7 @@ export async function newSwapRequest(
   requesteeUsername
 ) {
   await makeChangeRequestWithToast(
-    `http://localhost:3001/api/v1/swaps/${accountUid}`,
+    `${global_vars.serverUrl}/swaps/${accountUid}`,
     {
       method: "POST",
       body: JSON.stringify({ requesteeUid: requesteeUid }),
@@ -179,7 +180,7 @@ export async function changeSwapStatus(
   newStatus
 ) {
   await makeChangeRequestWithToast(
-    `http://localhost:3001/api/v1/swaps/${accountUid}/${requesteeUid}/${requestTimestamp}/status`,
+    `${global_vars.serverUrl}/swaps/${accountUid}/${requesteeUid}/${requestTimestamp}/status`,
     {
       method: "PUT",
       body: JSON.stringify({ status: newStatus }),
@@ -197,7 +198,7 @@ export async function cancelSwapRequest(
   requestTimestamp
 ) {
   await makeChangeRequestWithToast(
-    `http://localhost:3001/api/v1/swaps/${accountUid}/${swapperUid}/${requestTimestamp}`,
+    `${global_vars.serverUrl}/swaps/${accountUid}/${swapperUid}/${requestTimestamp}`,
     {
       method: "DELETE",
       credentials: "include",
@@ -213,7 +214,7 @@ export async function changeAvgRating(
   requesteeUsername
 ) {
   await makeChangeRequestWithToast(
-    `http://localhost:3001/api/v1/ratings/${accountUid}/${swapperUid}`,
+    `${global_vars.serverUrl}/ratings/${accountUid}/${swapperUid}`,
     {
       method: "PUT",
       body: JSON.stringify({ rating: rating }),
