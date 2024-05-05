@@ -59,11 +59,13 @@ const useMessages = (interlocutorUid, limit = 3) => {
   // ///////////
 
   useEffect(() => {
+    console.log(user)
     if (!user) {
       return;
     }
 
     socketRef.current = socket;
+    print(socket)
     socketRef.current.emit("getConversations", setConversations);
 
     socketRef.current.on("receiveConversationActivation", (payload) => {

@@ -15,6 +15,7 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import MessageV2 from "../../components/Message2";
 import { useUser } from "../../components/useUser";
 import Link from "next/link";
+import useMessages from "../../utils/useMessages";
 
 function MyMessagesPage() {
   // USER DATA
@@ -52,7 +53,18 @@ function MyMessagesPage() {
    * CURRENT SELECTED CONVERSATION
    * Current selected user conversation data (INTERLOCUTOR)
    */
-  const [currentConversation, setCurrentConversation] = useState(null);
+  const [currentConversation, setCurrentConversation] = useState(1);
+
+  const { conversations, messages, useSocketOperation } = useMessages(null, 10);
+
+  console.log("big ol tiddies");  // TODO: remove
+  console.log(conversations);
+
+  // TEST JOINING CONVO
+  useEffect(() => {
+    useSocketOperation("joinConversation", {interlocutorUid: "9405b073-70ee-4a5d-a2bd-dbfc3709846c"}, () => {})
+  }, [])
+  
 
   /*********** MESSAGE DATA ***********/
 
@@ -319,7 +331,8 @@ function MyMessagesPage() {
                   </button>
                   <div className={styles.recipient_photo}>
                     {/* Change image sizes if css changes */}
-                    <Image src="/corn.jpg" width={55} height={55} />
+                    {/* TODO */}
+                    <Image src="/corn.jpg" width={55} height={55} alt="corn" />
                   </div>
                   <h2 className={styles.recipient_name}>Corn</h2>
                 </div>

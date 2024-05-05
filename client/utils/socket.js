@@ -1,5 +1,7 @@
 import { io } from "socket.io-client";
-const socket = new io("http://localhost:3001", {
+import global_vars from "./config.js";
+
+const socket = new io("https://chefswap-server.fly.dev/", {
   autoConnect: false,
   withCredentials: true,
 });
