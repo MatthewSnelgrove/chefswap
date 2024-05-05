@@ -1,6 +1,5 @@
-import * as dotenv from "dotenv";
-dotenv.config({ path: `.env.${process.env.NODE_ENV || "development"}` });
-const isLocalServer = process.env.IS_LOCAL_SERVER === "true";
+const serverUrl =
+  process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3001/api/v1";
 export default global.config = {
   /**
    * global.config.pages is deprecated
@@ -24,7 +23,5 @@ export default global.config = {
     maxQueryLength: 6,
   },
   cuisineItems: ["Indian", "Italian", "Greek", "Pizza", "Thai"],
-  serverUrl: isLocalServer
-    ? "http://localhost:3001"
-    : "https://chefswap-server.fly.dev/api/v1",
+  serverUrl: serverUrl,
 };
