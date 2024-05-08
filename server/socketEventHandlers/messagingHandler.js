@@ -363,7 +363,6 @@ export default (io, socket) => {
 
   async function getConversations(callback) {
     const loggedUid = getUid(socket);
-    console.log("OOGA BOOGA");//TODO REMOVE
     const { rows } = camelize(
       await pool.query(
         `WITH 

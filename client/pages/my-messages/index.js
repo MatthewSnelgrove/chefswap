@@ -16,6 +16,7 @@ import MessageV2 from "../../components/Message2";
 import { useUser } from "../../components/useUser";
 import Link from "next/link";
 import useMessages from "../../utils/useMessages";
+import useSocketSetup from "../../utils/useSocketSetup";
 
 function MyMessagesPage() {
   // USER DATA
@@ -53,17 +54,24 @@ function MyMessagesPage() {
    * CURRENT SELECTED CONVERSATION
    * Current selected user conversation data (INTERLOCUTOR)
    */
-  const [currentConversation, setCurrentConversation] = useState(1);
+  const [currentConversation, setCurrentConversation] = useState(null);
 
-  const { conversations, messages, useSocketOperation } = useMessages(null, 10);
+  useSocketSetup();
 
-  console.log("big ol tiddies");  // TODO: remove
-  console.log(conversations);
+  const { conversations, messages, useSocketOperation } = useMessages(currentConversation, 10);
+  // TODO: once conversations is loaded, set current convo to conversations[0]
+
+  console.log("big ol CHUNGUS");  // TODO: remove
 
   // TEST JOINING CONVO
+  // useEffect(() => {
+  //   useSocketOperation("joinConversation", {interlocutorUid: "9405b073-70ee-4a5d-a2bd-dbfc3709846c"}, () => {})
+  // }, [])
+
   useEffect(() => {
-    useSocketOperation("joinConversation", {interlocutorUid: "9405b073-70ee-4a5d-a2bd-dbfc3709846c"}, () => {})
-  }, [])
+    // plz i need to print conversations
+    console.log(conversations);
+  }, [conversations]);
   
 
   /*********** MESSAGE DATA ***********/

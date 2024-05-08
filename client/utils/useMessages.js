@@ -59,13 +59,11 @@ const useMessages = (interlocutorUid, limit = 3) => {
   // ///////////
 
   useEffect(() => {
-    console.log(user)
     if (!user) {
       return;
     }
 
     socketRef.current = socket;
-    print(socket)
     socketRef.current.emit("getConversations", setConversations);
 
     socketRef.current.on("receiveConversationActivation", (payload) => {
@@ -137,12 +135,12 @@ const useMessages = (interlocutorUid, limit = 3) => {
       });
     });
 
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.removeAllListeners();
-        socketRef.current.disconnect();
-      }
-    };
+    // return () => {
+    //   if (socketRef.current) {
+    //     socketRef.current.removeAllListeners();
+    //     socketRef.current.disconnect();
+    //   }
+    // };
   }, [user, interlocutorUid]);
 
   useEffect(() => {
@@ -156,8 +154,8 @@ const useMessages = (interlocutorUid, limit = 3) => {
         interlocutorUid: interlocutorUid,
         limit: limit,
       },
-      (messages) => {
-        setMessages(messages.messages);
+      (responseMessage) => {
+        setMessages(responseMessage.messages);
         // setTemp(true);
       }
     );

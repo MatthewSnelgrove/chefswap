@@ -159,6 +159,7 @@ io.use(async (socket, next) => {
 
 io.on("connection", async (socket, next) => {
   socket.accountUid = getUid(socket);
+  console.log("ON CONNECTION WAHOOO");
 
   // socket.use((event, next) => {
   //   console.log("received event", event);

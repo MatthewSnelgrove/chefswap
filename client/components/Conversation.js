@@ -53,7 +53,7 @@ export default function Conversation({
       <div className={styles.left_col}>
         <div className={styles.profile_picture}>
           {/* Change image sizes if css changes */}
-          <Image src="/corn.jpg" width={65} height={65} />
+          <Image src="/corn.jpg" width={65} height={65} alt="corn" />
         </div>
         <div
           className={
