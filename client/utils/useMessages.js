@@ -2,11 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { useUser } from "../components/useUser.js";
 import socket from "../utils/socket.js";
 
-const useMessages = (interlocutorUid, limit = 3) => {
+const useMessages = (interlocutorUidPassed, limit = 3) => {
   const user = useUser();
   const socketRef = useRef();
-  const [conversations, setConversations] = useState([]);
-  const [messages, setMessages] = useState([]);
+  const [conversations, setConversations] = useState(null);
+  const [messages, setMessages] = useState(null);
+  const [interlocutorUid, setInterlocutorUid] = useState(null);
+
+  useEffect(() => {
+    if (interlocutorUidPassed !== interlocutorUid) {
+      setInterlocutorUid(interlocutorUidPassed);
+    }
+  });
 
   function useSocketOperation(socketFunction, ...args) {
     socketRef.current.emit(socketFunction, ...args);
@@ -59,16 +66,21 @@ const useMessages = (interlocutorUid, limit = 3) => {
   // ///////////
 
   useEffect(() => {
+    if (!socketRef.current) {
+      socketRef.current = socket;
+    }
+    
+    socketRef.current.emit("getConversations", setConversations);
+  }, [])
+
+  useEffect(() => {
     if (!user) {
       return;
     }
 
-    socketRef.current = socket;
-    socketRef.current.emit("getConversations", setConversations);
-
-    socketRef.current.on("receiveConversationActivation", (payload) => {
-      console.log("new conversation: " + payload);
-    });
+    if (!socketRef.current) {
+      socketRef.current = socket;
+    }
 
     socketRef.current.on("receiveMessageEdit", (editedMessage) => {
       if (!(editedMessage.interlocutorUid === interlocutorUid)) {
@@ -147,6 +159,9 @@ const useMessages = (interlocutorUid, limit = 3) => {
     if (!interlocutorUid) {
       return;
     }
+
+    // Set messages to null (loading)
+    setMessages(null);
 
     socketRef.current.emit(
       "getMessages",

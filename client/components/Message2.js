@@ -4,12 +4,39 @@ import ReplyRoundedIcon from "@mui/icons-material/ReplyRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 
-// data: {messageUid, interlocutorUid, senderUid, content, createTimestamp, editTimestamp, parentMessageUid}
+/*
+data = {
+  messages:
+  {
+    message: {
+      messageUid,
+      interlocutorUid,
+      senderUid,
+      content,
+      createTimestamp,
+      editTimestamp,
+    },
+    parentMessage: {
+      messageUid,
+      interlocutorUid,
+      senderUid,
+      content,
+      createTimestamp,
+      editTimestamp,
+      parentMessageUid,
+    },
+  }
+}
+
+*/
 export default function MessageV2({ data, onReply, onEdit, onDelete }) {
   const [hovering, setHovering] = useState(false);
+  
+  const message = data.message;
+  const parentMessage = data.parentMessage;
 
-  const isSender = data.interlocutorUid !== data.senderUid;
-  const dateTime = new Date(data.createTimestamp);
+  const isSender = message.interlocutorUid !== message.senderUid;
+  const dateTime = new Date(message.createTimestamp);
   const time = dateTime.toLocaleTimeString([], {
     hour: "numeric",
     minute: "2-digit",
@@ -33,7 +60,7 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
     // USER'S MESSAGE
     <div
       className={styles.right_container}
-      id={`message_${data.messageUid}`}
+      id={`message_${message.messageUid}`}
       onMouseOver={() => setHovering(true)}
       onMouseOut={() => setHovering(false)}
     >
@@ -41,13 +68,13 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
         className={styles.options}
         style={hovering ? { visibility: "visible" } : { visibility: "hidden" }}
       >
-        <button className={styles.edit_option} onClick={() => onEdit(data)}>
+        <button className={styles.edit_option} onClick={() => onEdit(message)}>
           <EditRoundedIcon />
         </button>
-        <button className={styles.reply_option} onClick={() => onReply(data)}>
+        <button className={styles.reply_option} onClick={() => onReply(message)}>
           <ReplyRoundedIcon />
         </button>
-        <button className={styles.delete_option} onClick={() => onDelete(data)}>
+        <button className={styles.delete_option} onClick={() => onDelete(message)}>
           <DeleteRoundedIcon />
         </button>
       </div>
@@ -64,14 +91,13 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
         </div>
 
         <div className={styles.right_bubble_column}>
-          {data.parentMessageUid !== null && (
+          {parentMessage && (
             <div className={styles.right_parent_row}>
               {/* TODO: Change reply bubble color based on sender of referenced message */}
               {/* TODO: Clicking reply should jump to parent message */}
               <button className={styles.right_reply_bubble}>
-                {/* TODO: Load reply content */}
                 <div className={styles.reply_content}>
-                  Lorem ipsum daidh ushsds ds d dsa ds
+                  {parentMessage.content}
                 </div>
               </button>
               <div className={styles.right_reply_line} />
@@ -80,10 +106,10 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
 
           <div className={styles.right_message_bubble}>
             <div className={styles.right_message_tip} />
-            <span className={styles.content}>{data.content}</span>
+            <span className={styles.content}>{message.content}</span>
           </div>
 
-          {data.editTimestamp !== null && (
+          {message.editTimestamp && (
             <div className={styles.edit_stamp} title={dateTimeString}>
               (edited)
             </div>
@@ -95,29 +121,30 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
     // THEIR MESSAGE
     <div
       className={styles.left_container}
-      id={`message_${data.messageUid}`}
+      id={`message_${message.messageUid}`}
       onMouseOver={() => setHovering(true)}
       onMouseOut={() => setHovering(false)}
     >
       <div className={styles.left}>
         <div className={styles.left_bubble_column}>
-          {data.parentMessageUid !== null && (
+          {parentMessage !== null && (
             <div className={styles.left_parent_row}>
               <div className={styles.left_reply_line} />
               {/* TODO: Change reply bubble color based on sender of referenced message */}
               <button className={styles.left_reply_bubble}>
-                {/* TODO: Load reply content */}
-                <div className={styles.reply_content}>Reply</div>
+                <div className={styles.reply_content}>
+                  {parentMessage.content}
+                </div>
               </button>
             </div>
           )}
 
           <div className={styles.left_message_bubble}>
             <div className={styles.left_message_tip} />
-            <div className={styles.content}>{data.content}</div>
+            <div className={styles.content}>{message.content}</div>
           </div>
 
-          {data.editTimestamp !== null && (
+          {message.editTimestamp&& (
             <div className={styles.edit_stamp} title={dateTimeString}>
               (edited)
             </div>
@@ -139,7 +166,7 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
         className={styles.options}
         style={hovering ? { visibility: "visible" } : { visibility: "hidden" }}
       >
-        <button className={styles.reply_option} onClick={() => onReply(data)}>
+        <button className={styles.reply_option} onClick={() => onReply(message)}>
           <ReplyRoundedIcon />
         </button>
       </div>

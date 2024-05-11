@@ -17,11 +17,17 @@ export default function Conversation({
   // Replace with actual seen data
   const seen = false;
 
-  // Replace with actual current data
-  current = false;
-
   // Replace with actual status data
   const mockStatus = "Requested";
+
+  // TODO: Check if last message is null and render appropriately
+
+  const lastMsgDate = new Date(data.lastMessage.createTimestamp);
+  const hours = lastMsgDate.getHours();
+  const minutes = lastMsgDate.getMinutes().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const twelveHourHours = hours % 12 || 12;
+  const lastMsgDateFormatted = `${twelveHourHours}:${minutes} ${ampm}`;
 
   function getContainerClassname() {
     if (current) {
@@ -48,29 +54,27 @@ export default function Conversation({
       className={getContainerClassname()}
       onMouseOver={() => setHover(true)}
       onMouseOut={() => setHover(false)}
-      // onClick={() => onClick()}
+      onClick={() => onClick()}
     >
       <div className={styles.left_col}>
         <div className={styles.profile_picture}>
           {/* Change image sizes if css changes */}
-          <Image src="/corn.jpg" width={65} height={65} alt="corn" />
+          {data.interlocutor.pfpLink ? <img src={data.interlocutor.pfpLink} width={65} height={65} alt={`${data.interlocutor.username}'s profile icon`} /> : <Image src="/corn.jpg" width={65} height={65} alt={`${data.interlocutor.username}'s profile icon`} />}
         </div>
         <div
           className={
             !mockStatus ? styles.recipient_info : styles.recipient_info_wstatus
           }
         >
-          <h2 className={styles.name} title="User0sd awudui whiusa">
-            {"User0sd awudui whiusa"}
+          <h2 className={styles.name} title={data.interlocutor.username}>
+            {data.interlocutor.username}
           </h2>
           {/* TODO: Render bold depending on read or not */}
           <p
-            className={styles.last_message}
-            title="Lorem ipsum dolor swiu sd wdahduhd W DAIW H SUH D"
+            className={seen ? styles.last_message : `${styles.last_message} ${styles.unseen}`}
+            title={data.lastMessage.content}
           >
-            {
-              "Okdjnhadohawdsdadasdsadasoiwa doiaidaodasd as dasd  s sa das d s d "
-            }
+            {data.lastMessage.content}
           </p>
           {/* TODO: Render status color based on status */}
           {!!mockStatus && (
@@ -82,7 +86,7 @@ export default function Conversation({
         </div>
       </div>
       <div className={styles.right_col}>
-        <div className={styles.timestamp}>{"11:59 PM"}</div>
+        <div className={styles.timestamp}>{lastMsgDateFormatted}</div>
         {/* TODO: Render notification ping (1) if unread */}
         {hover ? (
           // TODO: Make this close conversation

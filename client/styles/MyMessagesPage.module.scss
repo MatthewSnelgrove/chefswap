@@ -71,6 +71,14 @@
   overflow-y: auto;
 }
 
+.conversation_loading {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .content {
   flex: 1;
   display: flex;
@@ -201,6 +209,14 @@
   background-color: rgb(250, 250, 250);
   padding-top: 20px;
   padding-bottom: 30px;
+}
+
+.messages_loading {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .input_container {

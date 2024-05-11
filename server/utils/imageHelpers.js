@@ -6,7 +6,7 @@ export const uploadHandler = multer({
 });
 
 export function generateImageLink(name) {
-  return `https://storage.googleapis.com/${process.env.GCS_BUCKET}/${name}`;
+  return name ? `https://storage.googleapis.com/${process.env.GCS_BUCKET}/${name}` : null;
 }
 export function generateImageName(link) {
   return /^https:\/\/storage\.googleapis\.com\/.+$/.test(link)

@@ -55,12 +55,17 @@
   flex-direction: column;
   justify-content: flex-start;
   gap: 8px;
+  font-weight: bold;
 
   .last_message {
     -webkit-line-clamp: 3; /* number of lines to show */
     line-clamp: 3;
     margin: 0;
   }
+}
+
+.unseen {
+  font-weight: 500;
 }
 
 .recipient_info_wstatus {
@@ -189,4 +194,8 @@
   height: 15px;
   border-radius: 999px;
   background-color: rgb(255, 72, 72);
+}
+
+.unseen {
+
 }

@@ -189,6 +189,7 @@ export default (io, socket) => {
         );
       });
     }
+
     const parentMessage = message.parentMessageUid
       ? camelize(
           await pool.query(

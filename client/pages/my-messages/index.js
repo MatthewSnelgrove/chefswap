@@ -17,6 +17,7 @@ import { useUser } from "../../components/useUser";
 import Link from "next/link";
 import useMessages from "../../utils/useMessages";
 import useSocketSetup from "../../utils/useSocketSetup";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function MyMessagesPage() {
   // USER DATA
@@ -56,89 +57,36 @@ function MyMessagesPage() {
    */
   const [currentConversation, setCurrentConversation] = useState(null);
 
+  function handleConversationClick(interlocutorUid) {
+    setCurrentConversation(interlocutorUid);
+  }
+
   useSocketSetup();
 
-  const { conversations, messages, useSocketOperation } = useMessages(currentConversation, 10);
-  // TODO: once conversations is loaded, set current convo to conversations[0]
+  const { conversations, messages, useSocketOperation } = useMessages(
+    currentConversation,
+    10
+  );
 
-  console.log("big ol CHUNGUS");  // TODO: remove
+  // Once conversations are loaded, set the first conversation as the current conversation
+  useEffect(() => {
+    if (conversations !== null && conversations.length > 0) {
+      setCurrentConversation(conversations[0].interlocutor.accountUid);
+    }
+  }, [conversations]);
+
+  // Once messages are loaded, scroll down to the bottom of the messages area
+  useEffect(() => {
+    const messageArea = document.querySelector(`.${styles.messages_area}`);
+    if (messageArea) {
+      messageArea.scrollTop = messageArea.scrollHeight;
+    }
+  }, [messages]);
 
   // TEST JOINING CONVO
   // useEffect(() => {
   //   useSocketOperation("joinConversation", {interlocutorUid: "9405b073-70ee-4a5d-a2bd-dbfc3709846c"}, () => {})
   // }, [])
-
-  useEffect(() => {
-    // plz i need to print conversations
-    console.log(conversations);
-  }, [conversations]);
-  
-
-  /*********** MESSAGE DATA ***********/
-
-  const [messagesLoading, setMessagesLoading] = useState(true);
-
-  // Mock message data in the format: {messageUid, interlocutorUid, senderUid, content, createTimestamp, editTimestamp, parentMessageUid}
-  const mockMessages = [
-    {
-      messageUid: "0",
-      interlocutorUid: "0",
-      senderUid: "0",
-      content:
-        "Lorem ipsum daidh ush aisudh sh sha diaush suaidh aiush asiu haiu his",
-      createTimestamp: "2021-10-01T00:00:00.000Z",
-      editTimestamp: null,
-      parentMessageUid: null,
-    },
-
-    {
-      messageUid: "1",
-      interlocutorUid: "0",
-      senderUid: "1",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      createTimestamp: "2021-10-01T04:59:00.000Z",
-      editTimestamp: "2021-10-01T04:59:00.000Z",
-      parentMessageUid: 0,
-    },
-
-    {
-      messageUid: "2",
-      interlocutorUid: "0",
-      senderUid: "0",
-      content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      createTimestamp: "2021-10-01T00:00:00.000Z",
-      editTimestamp: null,
-      parentMessageUid: 1,
-    },
-
-    {
-      messageUid: "3",
-      interlocutorUid: "0",
-      senderUid: "1",
-      content: "Lorem ipsum indeed my friend!",
-      createTimestamp: "2021-10-01T00:00:00.000Z",
-      editTimestamp: null,
-      parentMessageUid: null,
-    },
-    {
-      messageUid: "4",
-      interlocutorUid: "0",
-      senderUid: "1",
-      content: "!!",
-      createTimestamp: "2021-10-01T00:00:00.000Z",
-      editTimestamp: null,
-      parentMessageUid: null,
-    },
-    {
-      messageUid: "5",
-      interlocutorUid: "0",
-      senderUid: "1",
-      content: "yes",
-      createTimestamp: "2021-10-01T00:00:00.000Z",
-      editTimestamp: null,
-      parentMessageUid: null,
-    },
-  ];
 
   /**
    * CHAT STATE
@@ -151,6 +99,7 @@ function MyMessagesPage() {
   useEffect(() => {
     function handleEsc(e) {
       if (e.key === "Escape") {
+        // TODO: bug where clear chat state clears text even if user is not editing
         clearChatState();
       }
     }
@@ -323,8 +272,20 @@ function MyMessagesPage() {
             </div>
 
             <div className={styles.conversations}>
-              <Conversation />
-              <Conversation />
+              {conversations === null ? (
+                <div className={styles.conversation_loading}>
+                  <CircularProgress />
+                </div>
+              ) : (
+                conversations.map((convo) => (
+                  <Conversation
+                    data={convo}
+                    key={convo.interlocutor.accountUid}
+                    current={convo.interlocutor.accountUid === currentConversation}
+                    onClick={() => handleConversationClick(convo.interlocutor.accountUid)}
+                  />
+                ))
+              )}
             </div>
           </div>
 
@@ -388,42 +349,22 @@ function MyMessagesPage() {
                   {/* TODO: Render loading skeleton if messages are not loaded */}
                   {/* TODO: If no messages in conversation, render no messages text */}
                   {/* TODO: Infinite scroll */}
-                  <MessageV2
-                    data={mockMessages[0]}
-                    onEdit={startEditing}
-                    onReply={startReplying}
-                    onDelete={startDeleting}
-                  />
-                  <MessageV2
-                    data={mockMessages[1]}
-                    onEdit={startEditing}
-                    onReply={startReplying}
-                    onDelete={startDeleting}
-                  />
-                  <MessageV2
-                    data={mockMessages[2]}
-                    onEdit={startEditing}
-                    onReply={startReplying}
-                    onDelete={startDeleting}
-                  />
-                  <MessageV2
-                    data={mockMessages[3]}
-                    onEdit={startEditing}
-                    onReply={startReplying}
-                    onDelete={startDeleting}
-                  />
-                  <MessageV2
-                    data={mockMessages[4]}
-                    onEdit={startEditing}
-                    onReply={startReplying}
-                    onDelete={startDeleting}
-                  />
-                  <MessageV2
-                    data={mockMessages[5]}
-                    onEdit={startEditing}
-                    onReply={startReplying}
-                    onDelete={startDeleting}
-                  />
+
+                  {messages !== null ? 
+                    messages.map((msg) => (
+                      <MessageV2
+                        data={msg}
+                        onEdit={startEditing}
+                        onReply={startReplying}
+                        onDelete={startDeleting}
+                        key={msg.message.messageUid}
+                      />
+                    ))
+                  : (
+                    <div className={styles.messages_loading}>
+                      <CircularProgress />
+                    </div>
+                  )}
                 </div>
 
                 <div className={styles.input_container}>
