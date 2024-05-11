@@ -69,13 +69,11 @@ export default (io, socket) => {
             LEFT JOIN message AS parent_message ON (
               message.parent_message_uid = parent_message.message_uid
             )
-            WHERE message.create_timestamp < (
+            WHERE COALESCE (message.create_timestamp < (
               SELECT create_timestamp
               FROM message
-              WHERE COALESCE (message_uid = $3, true)
-              ORDER BY create_timestamp DESC
-              LIMIT 1
-            )
+              WHERE message_uid = $3
+            ), TRUE)
             ORDER BY message.create_timestamp DESC
             LIMIT $4
           ) temp
