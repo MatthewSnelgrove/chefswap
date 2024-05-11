@@ -74,7 +74,7 @@ export default (io, socket) => {
         WHERE message.create_timestamp < (
            SELECT create_timestamp FROM message WHERE COALESCE (message_uid = $3, true) ORDER BY create_timestamp DESC LIMIT 1
         )
-        ORDER BY message.create_timestamp DESC
+        ORDER BY message.create_timestamp ASC
         LIMIT $4`,
         [loggedUid, interlocutorUid, curMessageId, limit]
       )
