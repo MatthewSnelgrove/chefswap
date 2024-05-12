@@ -90,12 +90,12 @@ export default function Conversation({
         {/* TODO: Render notification ping (1) if unread */}
         {hover ? (
           // TODO: Make this close conversation
-          <button
+          <div
             className={styles.close}
             onClick={(e) => closeConversation(e)}
           >
             <CloseRoundedIcon />
-          </button>
+          </div>
         ) : !seen ? (
           <div className={styles.notification_container}>
             <div className={styles.notification_dot} />

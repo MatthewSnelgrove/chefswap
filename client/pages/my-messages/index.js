@@ -65,8 +65,12 @@ function MyMessagesPage() {
 
   const { conversations, messages, useSocketOperation } = useMessages(
     currentConversation,
-    10
+    20
   );
+
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
 
   // Once conversations are loaded, set the first conversation as the current conversation
   useEffect(() => {
@@ -125,6 +129,7 @@ function MyMessagesPage() {
    * Selected message being edited or replied to (message data)
    */
   const [selectedMessage, setSelectedMessage] = useState(null);
+  console.log(selectedMessage);
 
   /**
    * Handles when a message is selected (being edited or replied to)
@@ -159,6 +164,20 @@ function MyMessagesPage() {
   }
 
   /**
+   * Sends a chat message (not reply or edit) and clear chat text
+   */
+  function sendChat() {
+    useSocketOperation(
+      "sendMessage",
+      {
+        content: chatText,
+        interlocutorUid: currentConversation,
+      },
+      () => {}
+    );
+  }
+
+  /**
    * Starts replying to a message and updates chat state accordingly
    */
   function startReplying(parentMessageData) {
@@ -173,7 +192,15 @@ function MyMessagesPage() {
   }
 
   function sendReply() {
-    // TODO: Implement with Socket
+    useSocketOperation(
+      "sendMessage",
+      {
+        content: chatText,
+        interlocutorUid: currentConversation,
+        parentMessageUid: selectedMessage.messageUid,
+      },
+      () => {}
+    );
   }
 
   /**
@@ -195,7 +222,14 @@ function MyMessagesPage() {
   }
 
   function sendEdit() {
-    // TODO: Implement with Socket
+    useSocketOperation(
+      "editMessage",
+      {
+        content: chatText,
+        messageUid: selectedMessage.messageUid,
+      },
+      () => {}
+    );
   }
 
   function startDeleting(parentMessageData) {
@@ -221,13 +255,14 @@ function MyMessagesPage() {
   /**
    * Handles when user clicks send button
    */
-  function handleSend() {
-    // TODO: Enforce 300 char limit
-    if (chatText === "") return;
+  function handleSend(e) {
+    e.preventDefault();
+
+    if (chatText === "" || chatText.length > 300) return;
 
     // SEND CHAT
     if (chatState === 0) {
-      // TODO: Implement with Socket
+      sendChat();
     }
     // SEND REPLY
     else if (chatState === 1) {
@@ -238,6 +273,7 @@ function MyMessagesPage() {
       sendEdit();
     }
     clearChatState();
+    setChatText("");
   }
 
   // TODO: Add notification to webpage title (e.g., (1) Chefswap | Messages)
@@ -281,8 +317,12 @@ function MyMessagesPage() {
                   <Conversation
                     data={convo}
                     key={convo.interlocutor.accountUid}
-                    current={convo.interlocutor.accountUid === currentConversation}
-                    onClick={() => handleConversationClick(convo.interlocutor.accountUid)}
+                    current={
+                      convo.interlocutor.accountUid === currentConversation
+                    }
+                    onClick={() =>
+                      handleConversationClick(convo.interlocutor.accountUid)
+                    }
                   />
                 ))
               )}
@@ -350,8 +390,8 @@ function MyMessagesPage() {
                   {/* TODO: If no messages in conversation, render no messages text */}
                   {/* TODO: Infinite scroll */}
 
-                  {messages !== null ? 
-                    messages.map((msg) => (
+                  {messages !== null ? (
+                    messages.slice(0).reverse().map((msg) => (
                       <MessageV2
                         data={msg}
                         onEdit={startEditing}
@@ -360,14 +400,14 @@ function MyMessagesPage() {
                         key={msg.message.messageUid}
                       />
                     ))
-                  : (
+                  ) : (
                     <div className={styles.messages_loading}>
                       <CircularProgress />
                     </div>
                   )}
                 </div>
 
-                <div className={styles.input_container}>
+                <form className={styles.input_container} onSubmit={handleSend}>
                   <button className={styles.add_media_button}>
                     <AddRoundedIcon sx={{ color: "#5A5A5A", fontSize: 45 }} />
                   </button>
@@ -403,7 +443,7 @@ function MyMessagesPage() {
                   <button className={styles.send_button} onClick={handleSend}>
                     <SendRoundedIcon sx={{ color: "white", fontSize: 35 }} />
                   </button>
-                </div>
+                </form>
               </>
             )}
           </div>

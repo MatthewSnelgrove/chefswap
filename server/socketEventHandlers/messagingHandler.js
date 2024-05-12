@@ -71,9 +71,13 @@ export default (io, socket) => {
         LEFT JOIN message AS parent_message ON (
           message.parent_message_uid = parent_message.message_uid
         )
-        WHERE message.create_timestamp < (
-           SELECT create_timestamp FROM message WHERE COALESCE (message_uid = $3, true) ORDER BY create_timestamp DESC LIMIT 1
-        )
+        WHERE COALESCE (message.create_timestamp < (
+          SELECT create_timestamp
+          FROM message
+          WHERE message_uid = $3
+          ORDER BY create_timestamp DESC
+          LIMIT 1
+        ), TRUE)
         ORDER BY message.create_timestamp DESC
         LIMIT $4`,
         [loggedUid, interlocutorUid, curMessageId, limit]
@@ -193,11 +197,12 @@ export default (io, socket) => {
     const parentMessage = message.parentMessageUid
       ? camelize(
           await pool.query(
-            ` SELECT 
-                message.sender_uid AS parent_message_sender_uid,
-                message."content" AS parent_message_content,
-                message.create_timestamp AS parent_message_create_timestamp,
-                message.edit_timestamp AS parent_message_edit_timestamp,
+            ` SELECT
+                message.message_uid AS message_uid,
+                message.sender_uid AS sender_uid,
+                message."content" AS content,
+                message.create_timestamp AS create_timestamp,
+                message.edit_timestamp AS edit_timestamp,
                 message.parent_message_uid AS parent_message_parent_message_uid
               FROM message 
               WHERE message_uid = $1`,
@@ -217,7 +222,8 @@ export default (io, socket) => {
     const insertMessage = camelize(
       await pool.query(
         `INSERT INTO message (sender_uid, conversation_uid, content, parent_message_uid) 
-          VALUES ($1, $2, $3, $4)`,
+          VALUES ($1, $2, $3, $4)
+          RETURNING *`,
         [
           loggedUid,
           findConversation[0].conversationUid,
@@ -225,7 +231,7 @@ export default (io, socket) => {
           message.parentMessageUid,
         ]
       )
-    );
+    ).rows[0];
 
     const bothSeen = camelize(
       await pool.query(

@@ -2,18 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { useUser } from "../components/useUser.js";
 import socket from "../utils/socket.js";
 
-const useMessages = (interlocutorUidPassed, limit = 3) => {
+const useMessages = (interlocutorUid, limit = 3) => {
   const user = useUser();
   const socketRef = useRef();
   const [conversations, setConversations] = useState(null);
   const [messages, setMessages] = useState(null);
-  const [interlocutorUid, setInterlocutorUid] = useState(null);
-
-  useEffect(() => {
-    if (interlocutorUidPassed !== interlocutorUid) {
-      setInterlocutorUid(interlocutorUidPassed);
-    }
-  });
 
   function useSocketOperation(socketFunction, ...args) {
     socketRef.current.emit(socketFunction, ...args);
@@ -96,6 +89,7 @@ const useMessages = (interlocutorUidPassed, limit = 3) => {
         senderUid: editedMessage.senderUid,
       };
 
+
       setMessages((oldMessages) => {
         const messageFindIndex = oldMessages.find(
           (curMessage) =>
@@ -122,17 +116,20 @@ const useMessages = (interlocutorUidPassed, limit = 3) => {
     });
 
     socketRef.current.on("receiveMessage", (newMessage) => {
-      if (!(newMessage.interlocutorUid === interlocutorUid)) {
+      if (!(newMessage.message.interlocutorUid === interlocutorUid)) {
         return;
       }
 
+      console.log("Received message: ");
+      console.log(newMessage);
+      
       setMessages((oldMessages) => {
         return [...oldMessages, newMessage];
       });
     });
 
     socketRef.current.on("receiveReadMessage", (updatedReadMessage) => {
-      if (!(updatedReadMessage.interlocutorUid === interlocutorUid)) {
+      if (!(updatedReadMessage.message.interlocutorUid === interlocutorUid)) {
         return;
       }
 
@@ -147,12 +144,11 @@ const useMessages = (interlocutorUidPassed, limit = 3) => {
       });
     });
 
-    // return () => {
-    //   if (socketRef.current) {
-    //     socketRef.current.removeAllListeners();
-    //     socketRef.current.disconnect();
-    //   }
-    // };
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.removeAllListeners();
+      }
+    };
   }, [user, interlocutorUid]);
 
   useEffect(() => {
@@ -170,6 +166,7 @@ const useMessages = (interlocutorUidPassed, limit = 3) => {
         limit: limit,
       },
       (responseMessage) => {
+        console.log(responseMessage)
         setMessages(responseMessage.messages);
         // setTemp(true);
       }
