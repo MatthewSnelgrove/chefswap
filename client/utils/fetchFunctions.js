@@ -123,11 +123,8 @@ export async function getAllUsers(latitude, longitude, filter, setFunc) {
   }
 
   try {
-    console.log(
-      `${global_vars.serverUrl}/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`
-    );
     const response = await fetch(
-      `${global_vars.serverUrl}/accounts?includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`,
+      `${global_vars.serverUrl}/accounts?validMatchOnly=true&includeDistanceFrom[latitude]=${latitude}&includeDistanceFrom[longitude]=${longitude}${filter}`,
       {
         credentials: "include"
       });
