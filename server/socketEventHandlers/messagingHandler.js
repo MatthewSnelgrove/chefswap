@@ -41,10 +41,8 @@ export default (io, socket) => {
 
     const { rows } = camelize(
       await pool.query(
-        `WITH 
-        conversation AS (
-          SELECT 
-            conversation.conversation_uid
+        ` WITH conversation AS (
+            SELECT conversation.conversation_uid
             FROM conversation
             WHERE (
               conversation.lo_account_uid = $1 AND conversation.hi_account_uid = $2
@@ -53,33 +51,33 @@ export default (io, socket) => {
               conversation.lo_account_uid = $2 AND conversation.hi_account_uid = $1
             )
           )
-        SELECT
-            message.message_uid,
-            message.sender_uid,
-            message."content",
-            message.create_timestamp,
-            message.edit_timestamp,
-            message.parent_message_uid,
-            parent_message.sender_uid AS parent_message_sender_uid,
-            parent_message."content" AS parent_message_content,
-            parent_message.create_timestamp AS parent_message_create_timestamp,
-            parent_message.edit_timestamp AS parent_message_edit_timestamp,
-            parent_message.parent_message_uid AS parent_message_parent_message_uid
-        FROM
-            message
-        JOIN conversation USING (conversation_uid)
-        LEFT JOIN message AS parent_message ON (
-          message.parent_message_uid = parent_message.message_uid
-        )
-        WHERE COALESCE (message.create_timestamp < (
-          SELECT create_timestamp
-          FROM message
-          WHERE message_uid = $3
-          ORDER BY create_timestamp DESC
-          LIMIT 1
-        ), TRUE)
-        ORDER BY message.create_timestamp DESC
-        LIMIT $4`,
+          SELECT * FROM (
+            SELECT
+                message.message_uid,
+                message.sender_uid,
+                message."content",
+                message.create_timestamp,
+                message.edit_timestamp,
+                message.parent_message_uid,
+                parent_message.sender_uid AS parent_message_sender_uid,
+                parent_message."content" AS parent_message_content,
+                parent_message.create_timestamp AS parent_message_create_timestamp,
+                parent_message.edit_timestamp AS parent_message_edit_timestamp,
+                parent_message.parent_message_uid AS parent_message_parent_message_uid
+            FROM message
+            JOIN conversation USING (conversation_uid)
+            LEFT JOIN message AS parent_message ON (
+              message.parent_message_uid = parent_message.message_uid
+            )
+            WHERE COALESCE (message.create_timestamp < (
+              SELECT create_timestamp
+              FROM message
+              WHERE message_uid = $3
+            ), TRUE)
+            ORDER BY message.create_timestamp DESC
+            LIMIT $4
+          ) temp
+          ORDER BY create_timestamp ASC`,
         [loggedUid, interlocutorUid, curMessageId, limit]
       )
     );
