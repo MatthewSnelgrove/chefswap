@@ -39,8 +39,7 @@ function UserInfoPage({ user }) {
 export default UserInfoPage;
 
 export async function getStaticPaths() {
-  const server = global_vars.serverUrl;
-  const response = await fetch(`${server}/api/v1/accounts/`);
+  const response = await fetch(`${global_vars.serverUrl}/accounts/`);
   const users = await response.json();
 
   const paths = users.map((user) => ({
@@ -54,9 +53,8 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const { id } = params;
-  const server = global_vars.serverUrl;
 
-  const response = await fetch(`${server}/api/v1/accounts?username=${id}`);
+  const response = await fetch(`${global_vars.serverUrl}/accounts?username=${id}`);
   const similarUsers = await response.json();
   if (similarUsers.length === 0) return { notFound: true };
 

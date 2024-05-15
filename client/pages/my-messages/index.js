@@ -69,7 +69,7 @@ function MyMessagesPage() {
   );
 
   useEffect(() => {
-    console.log(messages);
+    // console.log(messages);
   }, [messages]);
 
   // Once conversations are loaded, set the first conversation as the current conversation
@@ -129,7 +129,6 @@ function MyMessagesPage() {
    * Selected message being edited or replied to (message data)
    */
   const [selectedMessage, setSelectedMessage] = useState(null);
-  console.log(selectedMessage);
 
   /**
    * Handles when a message is selected (being edited or replied to)
@@ -355,6 +354,7 @@ function MyMessagesPage() {
                 <div className={styles.swap_graphic_text}>
                   <div className={styles.swap_graphic}>(graphic)</div>
                   <div className={styles.swap_text}>
+                    {/* TODO: Render name properly */}
                     <span className={styles.swap_requester}>Corn </span>
                     requested to swap with you
                   </div>
@@ -371,9 +371,11 @@ function MyMessagesPage() {
             </div>
 
             {/* MESSAGES AREA */}
-            {!currentConversation ? (
+            {conversations !== null && conversations.length === 0 ? (
               <div className={styles.no_conversation_area}>
-                <div className={styles.nc_graphic}>(graphic)</div>
+                <div className={styles.nc_graphic}>
+                  <Image src="/sad_chef_hat.webp" width={200} height={200} alt="Sad Chefswap logo" />
+                </div>
                 <div className={styles.nc_text}>
                   Looks like there are no conversations.
                   <br />
@@ -391,15 +393,19 @@ function MyMessagesPage() {
                   {/* TODO: Infinite scroll */}
 
                   {messages !== null ? (
-                    messages.slice(0).reverse().map((msg) => (
-                      <MessageV2
-                        data={msg}
-                        onEdit={startEditing}
-                        onReply={startReplying}
-                        onDelete={startDeleting}
-                        key={msg.message.messageUid}
-                      />
-                    ))
+                    messages
+                      .slice(0)
+                      .reverse()
+                      .map((msg) => (
+                        <MessageV2
+                          data={msg}
+                          onEdit={startEditing}
+                          onReply={startReplying}
+                          onDelete={startDeleting}
+                          key={msg.message.messageUid}
+                          userUid={user.accountUid}
+                        />
+                      ))
                   ) : (
                     <div className={styles.messages_loading}>
                       <CircularProgress />

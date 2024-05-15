@@ -50,7 +50,7 @@ function UserProfileContainer(props) {
         </div>
       </div>
       <div className={styles.user_data}>
-        <div style={{ marginTop: "8px" }} class={styles.add_tags}>
+        <div style={{ marginTop: "8px" }} className={styles.add_tags}>
           <span className={styles.type_text}>Cuisine Preferences</span>
           <img
             className={styles.type_edit}

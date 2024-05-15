@@ -78,10 +78,7 @@ function Login() {
           if (res.status !== 200 && res.status !== 201) {
             return res.json();
           } else {
-            // window.location = global_vars.pages.homepage;
-            return [
-              { detail: "TODO: Uncomment above code to redirect to homepage" },
-            ];
+            window.location = global_vars.pages.homepage;
           }
         })
         .then((json) => {

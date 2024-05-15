@@ -29,13 +29,13 @@ data = {
 }
 
 */
-export default function MessageV2({ data, onReply, onEdit, onDelete }) {
+export default function MessageV2({ data, onReply, onEdit, onDelete, userUid }) {
   const [hovering, setHovering] = useState(false);
   
   const message = data.message;
   const parentMessage = data.parentMessage;
 
-  const isSender = message.interlocutorUid !== message.senderUid;
+  const isSender = userUid === message.senderUid;
   const dateTime = new Date(message.createTimestamp);
   const time = dateTime.toLocaleTimeString([], {
     hour: "numeric",
@@ -43,6 +43,16 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
     hour12: true,
   });
   const dateTimeString = dateTime.toLocaleString([], {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  const editDateTime = new Date(message.editTimestamp);
+  const editTimeString = editDateTime.toLocaleTimeString([], {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -110,7 +120,7 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
           </div>
 
           {message.editTimestamp && (
-            <div className={styles.edit_stamp} title={dateTimeString}>
+            <div className={styles.edit_stamp} title={editTimeString}>
               (edited)
             </div>
           )}
@@ -144,8 +154,8 @@ export default function MessageV2({ data, onReply, onEdit, onDelete }) {
             <div className={styles.content}>{message.content}</div>
           </div>
 
-          {message.editTimestamp&& (
-            <div className={styles.edit_stamp} title={dateTimeString}>
+          {message.editTimestamp && (
+            <div className={styles.edit_stamp} title={editTimeString}>
               (edited)
             </div>
           )}

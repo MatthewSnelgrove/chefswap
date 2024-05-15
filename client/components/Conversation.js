@@ -20,14 +20,21 @@ export default function Conversation({
   // Replace with actual status data
   const mockStatus = "Requested";
 
+  const lastMsgExists =
+    data.lastMessage !== null && data.lastMessage !== undefined;
+
   // TODO: Check if last message is null and render appropriately
 
-  const lastMsgDate = new Date(data.lastMessage.createTimestamp);
-  const hours = lastMsgDate.getHours();
-  const minutes = lastMsgDate.getMinutes().toString().padStart(2, '0');
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  const twelveHourHours = hours % 12 || 12;
-  const lastMsgDateFormatted = `${twelveHourHours}:${minutes} ${ampm}`;
+  let lastMsgDate, hours, minutes, ampm, twelveHourHours, lastMsgDateFormatted;
+
+  if (lastMsgExists) {
+    lastMsgDate = new Date(data.lastMessage.createTimestamp);
+    hours = lastMsgDate.getHours();
+    minutes = lastMsgDate.getMinutes().toString().padStart(2, '0');
+    ampm = hours >= 12 ? 'PM' : 'AM';
+    twelveHourHours = hours % 12 || 12;
+    lastMsgDateFormatted = `${twelveHourHours}:${minutes} ${ampm}`;
+  }
 
   function getContainerClassname() {
     if (current) {
@@ -51,6 +58,7 @@ export default function Conversation({
 
   return (
     <button
+      // TODO: change classname to getContainerClassname()
       className={getContainerClassname()}
       onMouseOver={() => setHover(true)}
       onMouseOut={() => setHover(false)}
@@ -59,7 +67,21 @@ export default function Conversation({
       <div className={styles.left_col}>
         <div className={styles.profile_picture}>
           {/* Change image sizes if css changes */}
-          {data.interlocutor.pfpLink ? <img src={data.interlocutor.pfpLink} width={65} height={65} alt={`${data.interlocutor.username}'s profile icon`} /> : <Image src="/corn.jpg" width={65} height={65} alt={`${data.interlocutor.username}'s profile icon`} />}
+          {data.interlocutor.pfpLink ? (
+            <img
+              src={data.interlocutor.pfpLink}
+              width={65}
+              height={65}
+              alt={`${data.interlocutor.username}'s profile icon`}
+            />
+          ) : (
+            <Image
+              src="/corn.jpg"
+              width={65}
+              height={65}
+              alt={`${data.interlocutor.username}'s profile icon`}
+            />
+          )}
         </div>
         <div
           className={
@@ -69,13 +91,21 @@ export default function Conversation({
           <h2 className={styles.name} title={data.interlocutor.username}>
             {data.interlocutor.username}
           </h2>
-          {/* TODO: Render bold depending on read or not */}
-          <p
-            className={seen ? styles.last_message : `${styles.last_message} ${styles.unseen}`}
-            title={data.lastMessage.content}
-          >
-            {data.lastMessage.content}
-          </p>
+          {lastMsgExists ? (
+            <p
+              className={
+                seen
+                  ? styles.last_message
+                  : `${styles.last_message} ${styles.unseen}`
+              }
+              title={data.lastMessage.content}
+            >
+              {data.lastMessage.content}
+            </p>
+          ) : (
+            <p className={`${styles.last_message} ${styles.new_convo_last_message}`}>Send the first message!</p>
+          )}
+
           {/* TODO: Render status color based on status */}
           {!!mockStatus && (
             <div className={styles.orange_status_container}>
@@ -90,10 +120,7 @@ export default function Conversation({
         {/* TODO: Render notification ping (1) if unread */}
         {hover ? (
           // TODO: Make this close conversation
-          <div
-            className={styles.close}
-            onClick={(e) => closeConversation(e)}
-          >
+          <div className={styles.close} onClick={(e) => closeConversation(e)}>
             <CloseRoundedIcon />
           </div>
         ) : !seen ? (

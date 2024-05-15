@@ -278,7 +278,7 @@ export default (io, socket) => {
 
     const updatedMessage = camelize(
       await pool.query(
-        `UPDATE message SET content = $1 WHERE message_uid = $2
+        `UPDATE message SET content = $1, edit_timestamp = now() WHERE message_uid = $2
          RETURNING message_uid, sender_uid, content, create_timestamp, edit_timestamp, parent_message_uid`,
         [payload.content, payload.messageUid]
       )

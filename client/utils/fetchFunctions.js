@@ -64,7 +64,7 @@ export async function fetchSpecific(Uid, specific, setFunc) {
 }
 
 export async function signupUser(userObj) {
-  const response = await fetch("${global_vars.serverUrl}/accounts", {
+  const response = await fetch(`${global_vars.serverUrl}/accounts`, {
     method: "POST",
     mode: "cors",
     body: JSON.stringify(userObj),
@@ -88,8 +88,6 @@ export async function fetchUser() {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
-
-  console.log(response);
 
   if (response.status == 404) {
     return response;

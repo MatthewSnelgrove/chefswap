@@ -76,24 +76,24 @@ const useMessages = (interlocutorUid, limit = 3) => {
     }
 
     socketRef.current.on("receiveMessageEdit", (editedMessage) => {
-      if (!(editedMessage.interlocutorUid === interlocutorUid)) {
-        return;
-      }
+      // TODO: figure out why below code is useful, going to comment out for now
+      // if (!(editedMessage.interlocutorUid === interlocutorUid)) {
+      //   return;
+      // }
 
       const formattedEditMessage = {
-        content: editedMessage.content,
-        createTimestamp: editedMessage.createTimestamp,
-        editedMessage: editedMessage.editTimestamp,
-        interlocutorUid: editedMessage.interlocutorUid,
-        messageUid: editedMessage.messageUid,
-        senderUid: editedMessage.senderUid,
+        content: editedMessage[0].content,
+        createTimestamp: editedMessage[0].createTimestamp,
+        editTimestamp: editedMessage[0].editTimestamp,
+        interlocutorUid: editedMessage[0].interlocutorUid,
+        messageUid: editedMessage[0].messageUid,
+        senderUid: editedMessage[0].senderUid,
       };
 
-
       setMessages((oldMessages) => {
-        const messageFindIndex = oldMessages.find(
+        const messageFindIndex = oldMessages.findIndex(
           (curMessage) =>
-            curMessage.message.messageUid === editedMessage.messageUid
+            curMessage.message.messageUid === formattedEditMessage.messageUid
         );
 
         oldMessages[messageFindIndex].message = formattedEditMessage;
@@ -116,13 +116,11 @@ const useMessages = (interlocutorUid, limit = 3) => {
     });
 
     socketRef.current.on("receiveMessage", (newMessage) => {
-      if (!(newMessage.message.interlocutorUid === interlocutorUid)) {
-        return;
-      }
-
-      console.log("Received message: ");
-      console.log(newMessage);
-      
+      // TODO: figure out why who and what below code is before deleting
+      // if (!(newMessage.message.interlocutorUid === interlocutorUid)) {
+      //   return;
+      // }
+      console.log(newMessage)
       setMessages((oldMessages) => {
         return [...oldMessages, newMessage];
       });
@@ -166,7 +164,6 @@ const useMessages = (interlocutorUid, limit = 3) => {
         limit: limit,
       },
       (responseMessage) => {
-        console.log(responseMessage)
         setMessages(responseMessage.messages);
         // setTemp(true);
       }

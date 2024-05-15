@@ -104,6 +104,11 @@
   // hyphens: auto;
 }
 
+.new_convo_last_message {
+  color: rgb(90, 90, 90);
+  font-style: italic;
+}
+
 .orange_status_container, .green_status_container {
   border-radius: 999px;
   border: 1.5px solid orange;
@@ -194,8 +199,4 @@
   height: 15px;
   border-radius: 999px;
   background-color: rgb(255, 72, 72);
-}
-
-.unseen {
-
 }
